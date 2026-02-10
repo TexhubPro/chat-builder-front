@@ -9,6 +9,8 @@ const EXACT_AUTH_MESSAGE_MAP: Record<string, AuthResolver> = {
     auth.tooManyVerificationAttempts,
   'too many resend requests try again later': (auth) => auth.tooManyResendRequests,
   'too many login attempts please try again later': (auth) => auth.tooManyLoginAttempts,
+  'too many password reset requests please try again later': (auth) =>
+    auth.tooManyPasswordResetRequests,
   'verification code has expired request a new code': (auth) => auth.verificationCodeExpired,
   'verification attempts exceeded request a new code': (auth) =>
     auth.verificationAttemptsExceeded,
@@ -35,6 +37,8 @@ const EXACT_AUTH_MESSAGE_MAP: Record<string, AuthResolver> = {
   'the code field must be 6 digits': (auth) => auth.invalidVerificationCode,
   'the password field confirmation does not match': (auth) => auth.passwordMismatch,
   'account is under moderation': (auth) => auth.accountUnderModeration,
+  'if the account exists a temporary password has been sent': (auth) =>
+    auth.forgotPasswordSuccess,
 }
 
 const PARTIAL_AUTH_MESSAGE_RULES: Array<{

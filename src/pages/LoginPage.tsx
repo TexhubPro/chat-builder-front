@@ -352,7 +352,7 @@ export default function LoginPage() {
               variant="light"
               size="md"
               className="text-medium"
-              onPress={() => setGlobalError(messages.auth.resetNotReady)}
+              onPress={() => navigate("/forgot-password")}
             >
               {messages.auth.forgotPassword}
             </Button>

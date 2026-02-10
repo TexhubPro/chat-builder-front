@@ -49,9 +49,19 @@ export type ResendVerificationCodeResponse = {
   retry_after?: number
 }
 
+export type ForgotPasswordResponse = {
+  message: string
+  retry_after?: number
+}
+
 export type ModerationStatusResponse = {
   message: string
   requires_moderation: boolean
+  user: AuthUser
+}
+
+export type UpdateProfileResponse = {
+  message: string
   user: AuthUser
 }
 
@@ -79,13 +89,28 @@ async function parseJson(response: Response): Promise<unknown> {
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const headers = new Headers(init.headers ?? {})
+  const isFormDataBody =
+    typeof FormData !== 'undefined' &&
+    typeof init.body !== 'undefined' &&
+    init.body instanceof FormData
+
+  if (!headers.has('Accept')) {
+    headers.set('Accept', 'application/json')
+  }
+
+  if (
+    !isFormDataBody &&
+    typeof init.body !== 'undefined' &&
+    init.body !== null &&
+    !headers.has('Content-Type')
+  ) {
+    headers.set('Content-Type', 'application/json')
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      ...(init.headers ?? {}),
-    },
+    headers,
   })
 
   const data = await parseJson(response)
@@ -148,6 +173,15 @@ export async function resendVerificationCodeRequest(payload: {
   })
 }
 
+export async function forgotPasswordRequest(payload: {
+  email: string
+}): Promise<ForgotPasswordResponse> {
+  return request<ForgotPasswordResponse>('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
 export async function meRequest(token: string): Promise<AuthUser> {
   const data = await request<MeResponse>('/auth/me', {
     method: 'GET',
@@ -184,5 +218,49 @@ export async function socialRedirectRequest(
 ): Promise<SocialRedirectResponse> {
   return request<SocialRedirectResponse>(`/auth/oauth/${provider}/redirect`, {
     method: 'GET',
+  })
+}
+
+export async function updateProfileRequest(
+  token: string,
+  payload: {
+    name: string
+    avatarFile?: File | null
+    removeAvatar?: boolean
+    currentPassword?: string
+    newPassword?: string
+    newPasswordConfirmation?: string
+  },
+): Promise<UpdateProfileResponse> {
+  const formData = new FormData()
+
+  formData.append('name', payload.name)
+
+  if (payload.avatarFile) {
+    formData.append('avatar', payload.avatarFile)
+  }
+
+  if (payload.removeAvatar) {
+    formData.append('remove_avatar', '1')
+  }
+
+  if (payload.currentPassword) {
+    formData.append('current_password', payload.currentPassword)
+  }
+
+  if (payload.newPassword) {
+    formData.append('new_password', payload.newPassword)
+  }
+
+  if (payload.newPasswordConfirmation) {
+    formData.append('new_password_confirmation', payload.newPasswordConfirmation)
+  }
+
+  return request<UpdateProfileResponse>('/auth/profile', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
   })
 }

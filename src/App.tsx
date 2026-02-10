@@ -1,30 +1,38 @@
+import { Suspense, lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { GuestRoute, ModerationRoute, ProtectedRoute } from './auth/RouteGuards'
-import EmailVerificationPage from './pages/EmailVerificationPage'
-import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
-import ModerationPage from './pages/ModerationPage'
-import RegisterPage from './pages/RegisterPage'
+
+const EmailVerificationPage = lazy(() => import('./pages/EmailVerificationPage'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
+const HomePage = lazy(() => import('./pages/HomePage'))
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const ModerationPage = lazy(() => import('./pages/ModerationPage'))
+const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 
 function App() {
   return (
-    <Routes>
-      <Route element={<GuestRoute />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/verify-email" element={<EmailVerificationPage />} />
-      </Route>
+    <Suspense fallback={null}>
+      <Routes>
+        <Route element={<GuestRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify-email" element={<EmailVerificationPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        </Route>
 
-      <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<HomePage />} />
-      </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Route>
 
-      <Route element={<ModerationRoute />}>
-        <Route path="/moderation" element={<ModerationPage />} />
-      </Route>
+        <Route element={<ModerationRoute />}>
+          <Route path="/moderation" element={<ModerationPage />} />
+        </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   )
 }
 

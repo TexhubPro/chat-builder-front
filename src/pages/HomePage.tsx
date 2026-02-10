@@ -1,46 +1,50 @@
-import { Button, Card, CardBody } from '@heroui/react'
-import { useState } from 'react'
-import { useAuth } from '../auth/AuthProvider'
-import { useI18n } from '../i18n/useI18n'
+import { Card, CardBody } from "@heroui/react";
+import { useState } from "react";
+import { useAuth } from "../auth/AuthProvider";
+import DashboardLayout from "../components/dashboard/DashboardLayout";
+import { useI18n } from "../i18n/useI18n";
 
 export default function HomePage() {
-  const { user, logout } = useAuth()
-  const { messages } = useI18n()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { user, logout } = useAuth();
+  const { locale, messages } = useI18n();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    setIsLoggingOut(true)
+    setIsLoggingOut(true);
 
     try {
-      await logout()
+      await logout();
     } finally {
-      setIsLoggingOut(false)
+      setIsLoggingOut(false);
     }
-  }
+  };
+
+  const emptyText =
+    locale === "ru"
+      ? "Рабочая область дашборда готова. Подключим разделы и виджеты на следующем шаге."
+      : "Dashboard workspace is ready. Sections and widgets can be connected next.";
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-100 via-cyan-50 to-emerald-100 px-4 py-6 sm:px-6 sm:py-10">
-      <Card className="mx-auto w-full max-w-4xl border border-white/70 bg-white/85 shadow-xl backdrop-blur">
-        <CardBody className="flex min-h-[70vh] items-center justify-center p-6 sm:p-10">
-          <div className="flex w-full max-w-md flex-col items-center gap-6 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">
+    <DashboardLayout
+      title={messages.home.title}
+      user={user}
+      onLogout={handleLogout}
+      isLoggingOut={isLoggingOut}
+      defaultSelectedKey="dashboard"
+    >
+      <Card shadow="none" className="border border-default-200 bg-white">
+        <CardBody className="min-h-[280px] p-6 sm:p-8">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-default-500">
               {messages.home.badge}
             </p>
-            <h1 className="text-4xl font-black text-slate-900">{messages.home.title}</h1>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-default-700">
               {messages.home.signedInAs}: <strong>{user?.name}</strong>
             </p>
-            <Button
-              color="danger"
-              variant="flat"
-              onPress={handleLogout}
-              isLoading={isLoggingOut}
-            >
-              {messages.home.logout}
-            </Button>
+            <p className="text-sm text-default-500">{emptyText}</p>
           </div>
         </CardBody>
       </Card>
-    </main>
-  )
+    </DashboardLayout>
+  );
 }

@@ -26,6 +26,14 @@ export type Messages = {
     passwordRulesHint: string;
     rememberMe: string;
     forgotPassword: string;
+    forgotPasswordTitle: string;
+    forgotPasswordSubtitle: string;
+    forgotPasswordEmailLabel: string;
+    forgotPasswordEmailPlaceholder: string;
+    forgotPasswordButton: string;
+    forgotPasswordSuccess: string;
+    forgotPasswordFailed: string;
+    tooManyPasswordResetRequests: string;
     loginButton: string;
     noAccount: string;
     signUp: string;
@@ -107,7 +115,46 @@ export type Messages = {
     badge: string;
     title: string;
     signedInAs: string;
+    profile: string;
+    settings: string;
+    notifications: string;
     logout: string;
+  };
+  profile: {
+    title: string;
+    subtitle: string;
+    avatarTitle: string;
+    avatarHint: string;
+    uploadAvatar: string;
+    removeAvatar: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    emailLabel: string;
+    phoneLabel: string;
+    emailReadonlyHint: string;
+    phoneReadonlyHint: string;
+    phoneNotSet: string;
+    passwordSectionTitle: string;
+    currentPasswordLabel: string;
+    currentPasswordPlaceholder: string;
+    newPasswordLabel: string;
+    newPasswordPlaceholder: string;
+    confirmPasswordLabel: string;
+    confirmPasswordPlaceholder: string;
+    saveButton: string;
+    successTitle: string;
+    errorTitle: string;
+    nameRequired: string;
+    nameInvalid: string;
+    avatarInvalidType: string;
+    avatarTooLarge: string;
+    currentPasswordRequired: string;
+    newPasswordRequired: string;
+    confirmPasswordRequired: string;
+    currentPasswordInvalid: string;
+    newPasswordDifferent: string;
+    profileUpdated: string;
+    updateFailed: string;
   };
 };
 
@@ -137,6 +184,18 @@ export const MESSAGES: Record<Locale, Messages> = {
         "Минимум 10 символов, с буквами, цифрой и спецсимволом.",
       rememberMe: "Запомнить",
       forgotPassword: "Забыли пароль?",
+      forgotPasswordTitle: "Сброс пароля",
+      forgotPasswordSubtitle:
+        "Введите email. Мы отправим временный пароль для входа.",
+      forgotPasswordEmailLabel: "Email",
+      forgotPasswordEmailPlaceholder: "Введите email",
+      forgotPasswordButton: "Отправить временный пароль",
+      forgotPasswordSuccess:
+        "Если аккаунт существует, временный пароль отправлен на email.",
+      forgotPasswordFailed:
+        "Не удалось сбросить пароль. Попробуйте снова позже.",
+      tooManyPasswordResetRequests:
+        "Слишком много запросов на сброс пароля. Пожалуйста, попробуйте позже.",
       loginButton: "Войти",
       noAccount: "Нет аккаунта?",
       signUp: "Зарегистрироваться",
@@ -235,7 +294,46 @@ export const MESSAGES: Record<Locale, Messages> = {
       badge: "Главная",
       title: "Добро пожаловать",
       signedInAs: "Авторизован",
+      profile: "Профиль",
+      settings: "Настройки",
+      notifications: "Уведомления",
       logout: "Выйти",
+    },
+    profile: {
+      title: "Профиль",
+      subtitle: "Управляйте личными данными аккаунта",
+      avatarTitle: "Фото профиля",
+      avatarHint: "Загрузите JPG, PNG, WEBP или AVIF до 4 МБ.",
+      uploadAvatar: "Загрузить фото",
+      removeAvatar: "Удалить фото",
+      nameLabel: "Имя",
+      namePlaceholder: "Введите имя",
+      emailLabel: "Email",
+      phoneLabel: "Телефон",
+      emailReadonlyHint: "Email нельзя изменить.",
+      phoneReadonlyHint: "Телефон нельзя изменить.",
+      phoneNotSet: "Не указан",
+      passwordSectionTitle: "Смена пароля",
+      currentPasswordLabel: "Текущий пароль",
+      currentPasswordPlaceholder: "Введите текущий пароль",
+      newPasswordLabel: "Новый пароль",
+      newPasswordPlaceholder: "Введите новый пароль",
+      confirmPasswordLabel: "Подтверждение нового пароля",
+      confirmPasswordPlaceholder: "Повторите новый пароль",
+      saveButton: "Сохранить изменения",
+      successTitle: "Сохранено",
+      errorTitle: "Ошибка",
+      nameRequired: "Введите имя.",
+      nameInvalid: "Имя должно быть не короче 2 символов.",
+      avatarInvalidType: "Выберите файл изображения.",
+      avatarTooLarge: "Размер файла не должен превышать 4 МБ.",
+      currentPasswordRequired: "Введите текущий пароль.",
+      newPasswordRequired: "Введите новый пароль.",
+      confirmPasswordRequired: "Подтвердите новый пароль.",
+      currentPasswordInvalid: "Текущий пароль указан неверно.",
+      newPasswordDifferent: "Новый пароль должен отличаться от текущего.",
+      profileUpdated: "Профиль успешно обновлён.",
+      updateFailed: "Не удалось обновить профиль. Попробуйте снова.",
     },
   },
   en: {
@@ -263,6 +361,17 @@ export const MESSAGES: Record<Locale, Messages> = {
         "Use at least 10 chars with letters, a number, and a symbol.",
       rememberMe: "Remember me",
       forgotPassword: "Forgot password?",
+      forgotPasswordTitle: "Reset password",
+      forgotPasswordSubtitle:
+        "Enter your email. We will send a temporary password for sign in.",
+      forgotPasswordEmailLabel: "Email",
+      forgotPasswordEmailPlaceholder: "Enter email",
+      forgotPasswordButton: "Send temporary password",
+      forgotPasswordSuccess:
+        "If the account exists, a temporary password has been sent to your email.",
+      forgotPasswordFailed: "Failed to reset password. Please try again later.",
+      tooManyPasswordResetRequests:
+        "Too many password reset requests. Please try again later.",
       loginButton: "Sign In",
       noAccount: "Don't have an account?",
       signUp: "Sign Up",
@@ -360,7 +469,46 @@ export const MESSAGES: Record<Locale, Messages> = {
       badge: "Home",
       title: "Welcome",
       signedInAs: "Signed in as",
+      profile: "Profile",
+      settings: "Settings",
+      notifications: "Notifications",
       logout: "Logout",
+    },
+    profile: {
+      title: "Profile",
+      subtitle: "Manage your account personal information",
+      avatarTitle: "Profile photo",
+      avatarHint: "Upload JPG, PNG, WEBP or AVIF up to 4 MB.",
+      uploadAvatar: "Upload photo",
+      removeAvatar: "Remove photo",
+      nameLabel: "Name",
+      namePlaceholder: "Enter your name",
+      emailLabel: "Email",
+      phoneLabel: "Phone",
+      emailReadonlyHint: "Email cannot be changed.",
+      phoneReadonlyHint: "Phone cannot be changed.",
+      phoneNotSet: "Not set",
+      passwordSectionTitle: "Change password",
+      currentPasswordLabel: "Current password",
+      currentPasswordPlaceholder: "Enter current password",
+      newPasswordLabel: "New password",
+      newPasswordPlaceholder: "Enter new password",
+      confirmPasswordLabel: "Confirm new password",
+      confirmPasswordPlaceholder: "Repeat new password",
+      saveButton: "Save changes",
+      successTitle: "Saved",
+      errorTitle: "Error",
+      nameRequired: "Enter your name.",
+      nameInvalid: "Name must be at least 2 characters long.",
+      avatarInvalidType: "Select an image file.",
+      avatarTooLarge: "File size must not exceed 4 MB.",
+      currentPasswordRequired: "Enter current password.",
+      newPasswordRequired: "Enter new password.",
+      confirmPasswordRequired: "Confirm new password.",
+      currentPasswordInvalid: "Current password is incorrect.",
+      newPasswordDifferent: "New password must differ from current password.",
+      profileUpdated: "Profile updated successfully.",
+      updateFailed: "Failed to update profile. Please try again.",
     },
   },
 };
