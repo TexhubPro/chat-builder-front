@@ -1,0 +1,4 @@
+export const BRANDING = {
+  logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg',
+  logoAlt: 'Application logo',
+} as const
