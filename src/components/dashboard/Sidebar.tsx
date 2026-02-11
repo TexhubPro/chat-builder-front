@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Button, ScrollShadow } from "@heroui/react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import type { SidebarSection } from "./sidebar-items";
 
 type SidebarProps = {
@@ -10,6 +11,8 @@ type SidebarProps = {
 };
 
 function SidebarComponent({ sections, selectedKey, onSelect }: SidebarProps) {
+  const navigate = useNavigate();
+
   return (
     <ScrollShadow className="h-full">
       <div className="space-y-3 p-3">
@@ -36,7 +39,13 @@ function SidebarComponent({ sections, selectedKey, onSelect }: SidebarProps) {
                         className={isActive ? "text-foreground" : "text-default-500"}
                       />
                     }
-                    onPress={() => onSelect(item.key)}
+                    onPress={() => {
+                      if (item.key === "dashboard" && item.href) {
+                        navigate(item.href);
+                      }
+
+                      onSelect(item.key);
+                    }}
                   >
                     {item.title}
                   </Button>

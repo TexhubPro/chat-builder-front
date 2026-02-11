@@ -29,6 +29,7 @@ import {
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { BRANDING } from "../config/branding";
 import { useI18n } from "../i18n/useI18n";
+import { usePageSeo } from "../seo/usePageSeo";
 
 type LoginLocationState = {
   from?: string;
@@ -131,7 +132,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, setSession } = useAuth();
-  const { messages } = useI18n();
+  const { locale, messages } = useI18n();
   const [loginValue, setLoginValue] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
@@ -148,6 +149,12 @@ export default function LoginPage() {
     locationState?.from && locationState.from !== "/login"
       ? locationState.from
       : "/";
+
+  usePageSeo({
+    title: `${messages.auth.loginTitle} | ${messages.app.name}`,
+    description: messages.auth.subtitle,
+    locale,
+  });
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

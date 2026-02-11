@@ -3,11 +3,21 @@ import { useState } from "react";
 import { useAuth } from "../auth/AuthProvider";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { useI18n } from "../i18n/useI18n";
+import { usePageSeo } from "../seo/usePageSeo";
 
 export default function HomePage() {
   const { user, logout } = useAuth();
   const { locale, messages } = useI18n();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  usePageSeo({
+    title: `${messages.home.title} | ${messages.app.name}`,
+    description:
+      locale === "ru"
+        ? "Главная страница дашборда и рабочей области."
+        : "Main dashboard page and workspace.",
+    locale,
+  });
 
   const handleLogout = async () => {
     setIsLoggingOut(true);

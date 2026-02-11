@@ -25,6 +25,7 @@ import {
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { BRANDING } from "../config/branding";
 import { useI18n } from "../i18n/useI18n";
+import { usePageSeo } from "../seo/usePageSeo";
 
 type VerificationLocationState = {
   email?: string;
@@ -95,7 +96,7 @@ export default function EmailVerificationPage() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const { setSession } = useAuth();
-  const { messages } = useI18n();
+  const { locale, messages } = useI18n();
   const locationState = location.state as VerificationLocationState | null;
   const initialEmail = searchParams.get("email") ?? locationState?.email ?? "";
   const defaultResendCooldown = parsePositiveNumber(
@@ -114,6 +115,12 @@ export default function EmailVerificationPage() {
     Partial<Record<VerifyField, string>>
   >({});
   const [info, setInfo] = useState<string | null>(null);
+
+  usePageSeo({
+    title: `${messages.auth.verifyTitle} | ${messages.app.name}`,
+    description: messages.auth.verifySubtitle,
+    locale,
+  });
 
   useEffect(() => {
     if (cooldownSeconds <= 0) {

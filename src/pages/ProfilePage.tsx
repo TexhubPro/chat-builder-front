@@ -17,6 +17,7 @@ import { hasStrongPassword, normalizeName, sanitizeNameInput } from "../auth/val
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import type { I18nContextValue } from "../i18n/I18nContext";
 import { useI18n } from "../i18n/useI18n";
+import { usePageSeo } from "../seo/usePageSeo";
 
 const MAX_AVATAR_SIZE_BYTES = 4 * 1024 * 1024;
 
@@ -130,6 +131,12 @@ export default function ProfilePage() {
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [globalSuccess, setGlobalSuccess] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<ProfileField, string>>>({});
+
+  usePageSeo({
+    title: `${messages.profile.title} | ${messages.app.name}`,
+    description: messages.profile.subtitle,
+    locale,
+  });
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 

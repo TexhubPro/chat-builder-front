@@ -5,13 +5,20 @@ import { useAuth } from "../auth/AuthProvider";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { BRANDING } from "../config/branding";
 import { useI18n } from "../i18n/useI18n";
+import { usePageSeo } from "../seo/usePageSeo";
 
 export default function ModerationPage() {
   const navigate = useNavigate();
   const { status, user, refreshSession, logout } = useAuth();
-  const { messages } = useI18n();
+  const { locale, messages } = useI18n();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  usePageSeo({
+    title: `${messages.auth.moderationTitle} | ${messages.app.name}`,
+    description: messages.auth.moderationSubtitle,
+    locale,
+  });
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -104,4 +111,3 @@ export default function ModerationPage() {
     </main>
   );
 }
-

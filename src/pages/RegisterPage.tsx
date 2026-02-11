@@ -19,6 +19,7 @@ import {
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { BRANDING } from "../config/branding";
 import { useI18n } from "../i18n/useI18n";
+import { usePageSeo } from "../seo/usePageSeo";
 
 type ApiErrorData = {
   errors?: Record<string, string[]>;
@@ -75,7 +76,7 @@ function extractRegisterFieldErrors(
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { messages } = useI18n();
+  const { locale, messages } = useI18n();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -86,6 +87,12 @@ export default function RegisterPage() {
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<RegisterField, string>>
   >({});
+
+  usePageSeo({
+    title: `${messages.auth.registerTitle} | ${messages.app.name}`,
+    description: messages.auth.registerSubtitle,
+    locale,
+  });
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

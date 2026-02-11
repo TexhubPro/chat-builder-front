@@ -10,6 +10,7 @@ import { isValidEmail, normalizeEmail } from "../auth/validation";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { BRANDING } from "../config/branding";
 import { useI18n } from "../i18n/useI18n";
+import { usePageSeo } from "../seo/usePageSeo";
 
 type ForgotPasswordField = "email";
 
@@ -37,7 +38,7 @@ function extractForgotPasswordFieldErrors(
 }
 
 export default function ForgotPasswordPage() {
-  const { messages } = useI18n();
+  const { locale, messages } = useI18n();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -45,6 +46,12 @@ export default function ForgotPasswordPage() {
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<ForgotPasswordField, string>>
   >({});
+
+  usePageSeo({
+    title: `${messages.auth.forgotPasswordTitle} | ${messages.app.name}`,
+    description: messages.auth.forgotPasswordSubtitle,
+    locale,
+  });
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
