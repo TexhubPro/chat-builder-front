@@ -765,9 +765,6 @@ export default function BillingPage() {
                     <p className="text-sm font-medium text-default-500">
                       {messages.billing.currentSubscriptionTitle}
                     </p>
-                    <p className="mt-1 text-2xl font-semibold text-foreground">
-                      {subscription?.plan?.name ?? currentPlan?.name ?? "-"}
-                    </p>
                   </div>
                   <Chip
                     size="sm"
@@ -781,9 +778,6 @@ export default function BillingPage() {
                 <div className="rounded-large bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-4 text-white">
                   <div className="flex items-end justify-between gap-3">
                     <div>
-                      <p className="text-xs text-white/80">
-                        {messages.billing.currentPlanLabel}
-                      </p>
                       <p className="text-xl font-semibold">
                         {subscription?.plan?.name ?? "-"}
                       </p>
@@ -801,23 +795,10 @@ export default function BillingPage() {
 
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-white/90">
                     <p>
-                      {messages.billing.quantityLabel}:{" "}
-                      <strong>{subscription?.quantity ?? 0}</strong>
-                    </p>
-                    <p>
                       {messages.billing.cycleLabel}:{" "}
                       <strong>
                         {formatCycle(
                           subscription?.billing_cycle_days ?? 30,
-                          locale,
-                        )}
-                      </strong>
-                    </p>
-                    <p>
-                      {messages.billing.renewalLabel}:{" "}
-                      <strong>
-                        {formatDate(
-                          subscription?.renewal_due_at ?? null,
                           locale,
                         )}
                       </strong>
@@ -896,19 +877,6 @@ export default function BillingPage() {
                       </p>
                     </div>
                   ))}
-                </div>
-
-                <div className="rounded-medium bg-default-100 p-3">
-                  <p className="text-xs text-default-500">
-                    {messages.billing.overagePrice}
-                  </p>
-                  <p className="text-lg font-semibold text-foreground">
-                    {formatMoney(
-                      usage?.overage_chat_price ?? "0.00",
-                      selectedPlan?.currency ?? "TJS",
-                      locale,
-                    )}
-                  </p>
                 </div>
               </CardBody>
             </Card>
