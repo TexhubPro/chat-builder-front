@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { GuestRoute, ModerationRoute, ProtectedRoute } from './auth/RouteGuards'
 
 const EmailVerificationPage = lazy(() => import('./pages/EmailVerificationPage'))
+const BillingPage = lazy(() => import('./pages/BillingPage'))
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
 const HomePage = lazy(() => import('./pages/HomePage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
@@ -23,6 +24,7 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/billing" element={<BillingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
 

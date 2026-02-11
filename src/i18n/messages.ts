@@ -156,6 +156,80 @@ export type Messages = {
     profileUpdated: string;
     updateFailed: string;
   };
+  billing: {
+    title: string;
+    subtitle: string;
+    currentPlanLabel: string;
+    pricePerPeriod: string;
+    usageProgress: string;
+    nextPaymentDate: string;
+    plansTitle: string;
+    plansSubtitle: string;
+    renewSubscriptionTitle: string;
+    paymentMethodLabel: string;
+    choosePlanLabel: string;
+    totalToPayLabel: string;
+    noPlansAvailable: string;
+    premiumTitle: string;
+    premiumDescription: string;
+    premiumAction: string;
+    supportTitle: string;
+    supportDescription: string;
+    supportAction: string;
+    currentSubscriptionTitle: string;
+    currentSubscriptionEmpty: string;
+    statusLabel: string;
+    quantityLabel: string;
+    cycleLabel: string;
+    renewalLabel: string;
+    expiresLabel: string;
+    usageTitle: string;
+    includedChats: string;
+    usedChats: string;
+    remainingChats: string;
+    overageChats: string;
+    overagePrice: string;
+    assistantLimit: string;
+    integrationLimit: string;
+    quantityInputLabel: string;
+    quantityRangeError: string;
+    planFeaturesTitle: string;
+    selectedPlan: string;
+    checkoutButton: string;
+    checkoutProcessing: string;
+    invoicesTitle: string;
+    invoicesSubtitle: string;
+    invoiceNumber: string;
+    invoiceDate: string;
+    invoiceDue: string;
+    invoiceTotal: string;
+    invoiceStatus: string;
+    noInvoices: string;
+    payButton: string;
+    payingButton: string;
+    refreshButton: string;
+    statusActive: string;
+    statusPendingPayment: string;
+    statusInactive: string;
+    statusPastDue: string;
+    statusUnpaid: string;
+    statusExpired: string;
+    statusCanceled: string;
+    statusIssued: string;
+    statusPaid: string;
+    statusOverdue: string;
+    statusFailed: string;
+    statusVoid: string;
+    statusUnknown: string;
+    checkoutCreated: string;
+    paymentCompleted: string;
+    paymentAlreadyCompleted: string;
+    checkoutFailed: string;
+    loadFailed: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
 };
 
 export const MESSAGES: Record<Locale, Messages> = {
@@ -335,6 +409,81 @@ export const MESSAGES: Record<Locale, Messages> = {
       profileUpdated: "Профиль успешно обновлён.",
       updateFailed: "Не удалось обновить профиль. Попробуйте снова.",
     },
+    billing: {
+      title: "Подписка и платежи",
+      subtitle: "Управляйте тарифом, лимитами и счетами компании.",
+      currentPlanLabel: "Текущий тариф",
+      pricePerPeriod: "/ месяц",
+      usageProgress: "Использование",
+      nextPaymentDate: "Следующий платеж",
+      plansTitle: "Доступные тарифы",
+      plansSubtitle: "Выберите тариф и количество пакетов.",
+      renewSubscriptionTitle: "Продлить подписку",
+      paymentMethodLabel: "Способ оплаты",
+      choosePlanLabel: "Выберите тариф",
+      totalToPayLabel: "К оплате",
+      noPlansAvailable: "Тарифы пока недоступны.",
+      premiumTitle: "Премиум",
+      premiumDescription:
+        "Безлимитные чаты, приоритетная поддержка и расширенная аналитика.",
+      premiumAction: "Узнать больше",
+      supportTitle: "Нужна помощь?",
+      supportDescription: "Свяжитесь с нашей командой поддержки.",
+      supportAction: "Написать в поддержку",
+      currentSubscriptionTitle: "Текущая подписка",
+      currentSubscriptionEmpty: "Подписка еще не активирована.",
+      statusLabel: "Статус",
+      quantityLabel: "Количество пакетов",
+      cycleLabel: "Период",
+      renewalLabel: "Продление",
+      expiresLabel: "Истекает",
+      usageTitle: "Лимиты и использование",
+      includedChats: "Включено чатов",
+      usedChats: "Использовано чатов",
+      remainingChats: "Осталось чатов",
+      overageChats: "Чатов сверх лимита",
+      overagePrice: "Цена сверх лимита",
+      assistantLimit: "Лимит ассистентов",
+      integrationLimit: "Лимит интеграций",
+      quantityInputLabel: "Количество",
+      quantityRangeError: "Введите число от 1 до 50.",
+      planFeaturesTitle: "В тариф входит",
+      selectedPlan: "Выбрано",
+      checkoutButton: "Выставить счет",
+      checkoutProcessing: "Создаем счет...",
+      invoicesTitle: "Счета",
+      invoicesSubtitle: "История выставленных счетов и оплаты.",
+      invoiceNumber: "Номер",
+      invoiceDate: "Дата",
+      invoiceDue: "Оплатить до",
+      invoiceTotal: "Сумма",
+      invoiceStatus: "Статус",
+      noInvoices: "Счета пока не выставлялись.",
+      payButton: "Оплатить",
+      payingButton: "Оплата...",
+      refreshButton: "Обновить",
+      statusActive: "Активна",
+      statusPendingPayment: "Ожидает оплату",
+      statusInactive: "Неактивна",
+      statusPastDue: "Просрочена",
+      statusUnpaid: "Не оплачена",
+      statusExpired: "Истекла",
+      statusCanceled: "Отменена",
+      statusIssued: "Выставлен",
+      statusPaid: "Оплачен",
+      statusOverdue: "Просрочен",
+      statusFailed: "Ошибка оплаты",
+      statusVoid: "Аннулирован",
+      statusUnknown: "Неизвестно",
+      checkoutCreated: "Счет создан. Завершите оплату для активации подписки.",
+      paymentCompleted: "Оплата выполнена успешно.",
+      paymentAlreadyCompleted: "Этот счет уже оплачен.",
+      checkoutFailed: "Не удалось создать счет. Попробуйте снова.",
+      loadFailed: "Не удалось загрузить данные подписки.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
   },
   en: {
     app: {
@@ -509,6 +658,82 @@ export const MESSAGES: Record<Locale, Messages> = {
       newPasswordDifferent: "New password must differ from current password.",
       profileUpdated: "Profile updated successfully.",
       updateFailed: "Failed to update profile. Please try again.",
+    },
+    billing: {
+      title: "Subscription and Billing",
+      subtitle: "Manage company plan, limits, and invoices.",
+      currentPlanLabel: "Current plan",
+      pricePerPeriod: "/ month",
+      usageProgress: "Usage",
+      nextPaymentDate: "Next payment",
+      plansTitle: "Available plans",
+      plansSubtitle: "Select a plan and package quantity.",
+      renewSubscriptionTitle: "Renew subscription",
+      paymentMethodLabel: "Payment method",
+      choosePlanLabel: "Choose plan",
+      totalToPayLabel: "Total to pay",
+      noPlansAvailable: "No plans are available now.",
+      premiumTitle: "Premium",
+      premiumDescription:
+        "Unlimited chats, priority support, and advanced analytics.",
+      premiumAction: "Learn more",
+      supportTitle: "Need help?",
+      supportDescription: "Contact our support team.",
+      supportAction: "Contact support",
+      currentSubscriptionTitle: "Current subscription",
+      currentSubscriptionEmpty: "Subscription is not activated yet.",
+      statusLabel: "Status",
+      quantityLabel: "Package quantity",
+      cycleLabel: "Billing period",
+      renewalLabel: "Renewal",
+      expiresLabel: "Expires",
+      usageTitle: "Limits and usage",
+      includedChats: "Included chats",
+      usedChats: "Used chats",
+      remainingChats: "Remaining chats",
+      overageChats: "Overage chats",
+      overagePrice: "Overage price",
+      assistantLimit: "Assistant limit",
+      integrationLimit: "Integrations per channel",
+      quantityInputLabel: "Quantity",
+      quantityRangeError: "Enter a value from 1 to 50.",
+      planFeaturesTitle: "Plan includes",
+      selectedPlan: "Selected",
+      checkoutButton: "Create invoice",
+      checkoutProcessing: "Creating invoice...",
+      invoicesTitle: "Invoices",
+      invoicesSubtitle: "Issued invoices and payment history.",
+      invoiceNumber: "Number",
+      invoiceDate: "Date",
+      invoiceDue: "Due date",
+      invoiceTotal: "Amount",
+      invoiceStatus: "Status",
+      noInvoices: "No invoices yet.",
+      payButton: "Pay now",
+      payingButton: "Processing...",
+      refreshButton: "Refresh",
+      statusActive: "Active",
+      statusPendingPayment: "Pending payment",
+      statusInactive: "Inactive",
+      statusPastDue: "Past due",
+      statusUnpaid: "Unpaid",
+      statusExpired: "Expired",
+      statusCanceled: "Canceled",
+      statusIssued: "Issued",
+      statusPaid: "Paid",
+      statusOverdue: "Overdue",
+      statusFailed: "Payment failed",
+      statusVoid: "Voided",
+      statusUnknown: "Unknown",
+      checkoutCreated:
+        "Invoice created. Complete payment to activate subscription.",
+      paymentCompleted: "Payment completed successfully.",
+      paymentAlreadyCompleted: "This invoice is already paid.",
+      checkoutFailed: "Failed to create invoice. Please try again.",
+      loadFailed: "Failed to load subscription data.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
     },
   },
 };

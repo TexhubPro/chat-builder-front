@@ -40,7 +40,7 @@ function SidebarComponent({ sections, selectedKey, onSelect }: SidebarProps) {
                       />
                     }
                     onPress={() => {
-                      if (item.key === "dashboard" && item.href) {
+                      if (item.href) {
                         navigate(item.href);
                       }
 
