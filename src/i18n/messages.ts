@@ -159,7 +159,6 @@ export type Messages = {
   billing: {
     title: string;
     subtitle: string;
-    currentPlanLabel: string;
     pricePerPeriod: string;
     usageProgress: string;
     nextPaymentDate: string;
@@ -239,6 +238,116 @@ export type Messages = {
     unauthorized: string;
     errorTitle: string;
     successTitle: string;
+  };
+  clientChats: {
+    title: string;
+    subtitle: string;
+    allChatsTab: string;
+    instagramTab: string;
+    telegramTab: string;
+    widgetTab: string;
+    apiTab: string;
+    assistantTab: string;
+    searchPlaceholder: string;
+    loadingChats: string;
+    loadingMessages: string;
+    emptyChats: string;
+    emptyMessages: string;
+    noPreview: string;
+    backToList: string;
+    channelLabel: string;
+    assistantTargetLabel: string;
+    assistantAutoOption: string;
+    messagePlaceholder: string;
+    askAssistantButton: string;
+    sendButton: string;
+    selectChatTitle: string;
+    selectChatDescription: string;
+    senderCustomer: string;
+    senderAssistant: string;
+    senderAgent: string;
+    senderSystem: string;
+    sentSuccess: string;
+    assistantReplySuccess: string;
+    sendFailed: string;
+    assistantReplyFailed: string;
+    loadFailed: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
+  assistantTraining: {
+    title: string;
+    subtitle: string;
+    trainingTitle: string;
+    listTitle: string;
+    limitLabel: string;
+    createButton: string;
+    createModalTitle: string;
+    createModalNameLabel: string;
+    createModalNamePlaceholder: string;
+    createModalCancel: string;
+    createModalCreate: string;
+    noAssistants: string;
+    selectAssistantTitle: string;
+    selectAssistantHint: string;
+    backToAssistantsButton: string;
+    nameLabel: string;
+    nameValidation: string;
+    instructionsLabel: string;
+    restrictionsLabel: string;
+    toneLabel: string;
+    tonePolite: string;
+    toneFriendly: string;
+    toneConcise: string;
+    toneFormal: string;
+    toneCustom: string;
+    settingsTitle: string;
+    fileSearchLabel: string;
+    fileAnalysisLabel: string;
+    voiceLabel: string;
+    webSearchLabel: string;
+    triggersTitle: string;
+    addTriggerButton: string;
+    noTriggers: string;
+    triggerLabel: string;
+    triggerResponseLabel: string;
+    removeTriggerButton: string;
+    filesTitle: string;
+    uploadFilesButton: string;
+    noFiles: string;
+    openFileButton: string;
+    deleteFileButton: string;
+    saveButton: string;
+    saveSuccess: string;
+    saveFailed: string;
+    createSuccess: string;
+    createFailed: string;
+    startButton: string;
+    stopButton: string;
+    deleteButton: string;
+    startSuccess: string;
+    stopSuccess: string;
+    deleteSuccess: string;
+    actionFailed: string;
+    statusRunning: string;
+    statusStopped: string;
+    inactiveSubscriptionTitle: string;
+    inactiveSubscriptionDescription: string;
+    limitReachedTitle: string;
+    limitReachedDescription: string;
+    deleteModalTitle: string;
+    deleteModalDescription: string;
+    deleteModalCancel: string;
+    deleteModalConfirm: string;
+    loading: string;
+    unauthorized: string;
+    loadFailed: string;
+    errorTitle: string;
+    successTitle: string;
+    warningTitle: string;
+    filesUploadedSuccess: string;
+    fileDeletedSuccess: string;
   };
 };
 
@@ -422,7 +531,6 @@ export const MESSAGES: Record<Locale, Messages> = {
     billing: {
       title: "Подписка и платежи",
       subtitle: "Управляйте тарифом, лимитами и счетами компании.",
-      currentPlanLabel: "Текущий тариф",
       pricePerPeriod: "/ месяц",
       usageProgress: "Использование",
       nextPaymentDate: "Следующий платеж",
@@ -504,6 +612,121 @@ export const MESSAGES: Record<Locale, Messages> = {
       unauthorized: "Сессия истекла. Войдите снова.",
       errorTitle: "Ошибка",
       successTitle: "Успешно",
+    },
+    clientChats: {
+      title: "Чаты клиентов",
+      subtitle: "Список диалогов по всем подключенным каналам.",
+      allChatsTab: "Все",
+      instagramTab: "Instagram",
+      telegramTab: "Telegram",
+      widgetTab: "Веб виджет",
+      apiTab: "API",
+      assistantTab: "Ассистент",
+      searchPlaceholder: "Поиск по имени, сообщению или ID чата",
+      loadingChats: "Загружаем чаты...",
+      loadingMessages: "Загружаем сообщения...",
+      emptyChats: "Чаты не найдены. Проверьте фильтры или дождитесь новых сообщений.",
+      emptyMessages: "Сообщений пока нет.",
+      noPreview: "Нет предпросмотра",
+      backToList: "Назад к списку",
+      channelLabel: "Канал",
+      assistantTargetLabel: "Ассистент для теста",
+      assistantAutoOption: "Авто",
+      messagePlaceholder: "Введите сообщение...",
+      askAssistantButton: "Спросить ассистента",
+      sendButton: "Отправить вручную",
+      selectChatTitle: "Выберите чат",
+      selectChatDescription:
+        "Выберите чат слева, чтобы открыть переписку и отправить сообщение.",
+      senderCustomer: "Клиент",
+      senderAssistant: "Ассистент",
+      senderAgent: "Оператор",
+      senderSystem: "Система",
+      sentSuccess: "Сообщение отправлено.",
+      assistantReplySuccess: "Ответ ассистента получен.",
+      sendFailed: "Не удалось отправить сообщение.",
+      assistantReplyFailed: "Не удалось получить ответ ассистента.",
+      loadFailed: "Не удалось загрузить чаты.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
+    assistantTraining: {
+      title: "Обучение ассистента",
+      subtitle: "Настройте инструкции, ограничения, ответы и инструменты ассистента.",
+      trainingTitle: "Настройки и обучение",
+      listTitle: "Ассистенты",
+      limitLabel: "Лимит ассистентов",
+      createButton: "Создать",
+      createModalTitle: "Создать ассистента",
+      createModalNameLabel: "Имя ассистента",
+      createModalNamePlaceholder: "Например: Ассистент продаж",
+      createModalCancel: "Отмена",
+      createModalCreate: "Создать",
+      noAssistants: "Ассистенты еще не созданы.",
+      selectAssistantTitle: "Выберите ассистента",
+      selectAssistantHint:
+        "Выберите ассистента из списка, чтобы открыть настройки обучения.",
+      backToAssistantsButton: "Назад",
+      nameLabel: "Имя ассистента",
+      nameValidation: "Имя ассистента должно быть не короче 2 символов.",
+      instructionsLabel: "Инструкции",
+      restrictionsLabel: "Ограничения",
+      toneLabel: "Тон разговора",
+      tonePolite: "Вежливый",
+      toneFriendly: "Дружелюбный",
+      toneConcise: "Короткий",
+      toneFormal: "Формальный",
+      toneCustom: "Кастомный",
+      settingsTitle: "Настройки",
+      fileSearchLabel: "Поиск по файлам",
+      fileAnalysisLabel: "Анализ файлов",
+      voiceLabel: "Голосовой режим",
+      webSearchLabel: "Веб-поиск",
+      triggersTitle: "Триггеры: вопрос -> ответ",
+      addTriggerButton: "Добавить триггер",
+      noTriggers: "Триггеры пока не добавлены.",
+      triggerLabel: "Триггер",
+      triggerResponseLabel: "Ответ на триггер",
+      removeTriggerButton: "Удалить триггер",
+      filesTitle: "Файлы для инструкций",
+      uploadFilesButton: "Загрузить файлы",
+      noFiles: "Файлы инструкций пока не добавлены.",
+      openFileButton: "Открыть",
+      deleteFileButton: "Удалить файл",
+      saveButton: "Сохранить изменения",
+      saveSuccess: "Настройки ассистента сохранены.",
+      saveFailed: "Не удалось сохранить настройки ассистента.",
+      createSuccess: "Ассистент создан.",
+      createFailed: "Не удалось создать ассистента.",
+      startButton: "Старт",
+      stopButton: "Стоп",
+      deleteButton: "Удалить",
+      startSuccess: "Ассистент запущен.",
+      stopSuccess: "Ассистент остановлен.",
+      deleteSuccess: "Ассистент удален.",
+      actionFailed: "Не удалось выполнить действие с ассистентом.",
+      statusRunning: "Запущен",
+      statusStopped: "Остановлен",
+      inactiveSubscriptionTitle: "Подписка неактивна",
+      inactiveSubscriptionDescription:
+        "Создание и запуск ассистентов доступны только при активной подписке.",
+      limitReachedTitle: "Лимит достигнут",
+      limitReachedDescription:
+        "Для создания нового ассистента обновите тариф или удалите текущий ассистент.",
+      deleteModalTitle: "Удаление ассистента",
+      deleteModalDescription:
+        "Вы уверены, что хотите удалить ассистента? Это действие необратимо.",
+      deleteModalCancel: "Отмена",
+      deleteModalConfirm: "Удалить",
+      loading: "Загружаем ассистентов...",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      loadFailed: "Не удалось загрузить данные ассистентов.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+      warningTitle: "Внимание",
+      filesUploadedSuccess: "Файлы успешно загружены.",
+      fileDeletedSuccess: "Файл удален.",
     },
   },
   en: {
@@ -683,7 +906,6 @@ export const MESSAGES: Record<Locale, Messages> = {
     billing: {
       title: "Subscription and Billing",
       subtitle: "Manage company plan, limits, and invoices.",
-      currentPlanLabel: "Current plan",
       pricePerPeriod: "/ month",
       usageProgress: "Usage",
       nextPaymentDate: "Next payment",
@@ -766,6 +988,121 @@ export const MESSAGES: Record<Locale, Messages> = {
       unauthorized: "Session expired. Please sign in again.",
       errorTitle: "Error",
       successTitle: "Success",
+    },
+    clientChats: {
+      title: "Client Chats",
+      subtitle: "Unified inbox for all connected channels.",
+      allChatsTab: "All",
+      instagramTab: "Instagram",
+      telegramTab: "Telegram",
+      widgetTab: "Web widget",
+      apiTab: "API",
+      assistantTab: "Assistant",
+      searchPlaceholder: "Search by name, message, or chat ID",
+      loadingChats: "Loading chats...",
+      loadingMessages: "Loading messages...",
+      emptyChats: "No chats found. Adjust filters or wait for new messages.",
+      emptyMessages: "No messages yet.",
+      noPreview: "No preview",
+      backToList: "Back to list",
+      channelLabel: "Channel",
+      assistantTargetLabel: "Assistant for test",
+      assistantAutoOption: "Auto",
+      messagePlaceholder: "Type your message...",
+      askAssistantButton: "Ask assistant",
+      sendButton: "Send manually",
+      selectChatTitle: "Select a chat",
+      selectChatDescription:
+        "Pick a chat from the list to open the conversation and send messages.",
+      senderCustomer: "Customer",
+      senderAssistant: "Assistant",
+      senderAgent: "Operator",
+      senderSystem: "System",
+      sentSuccess: "Message sent.",
+      assistantReplySuccess: "Assistant response received.",
+      sendFailed: "Failed to send message.",
+      assistantReplyFailed: "Failed to get assistant response.",
+      loadFailed: "Failed to load chats.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
+    },
+    assistantTraining: {
+      title: "Assistant Training",
+      subtitle: "Configure instructions, limits, responses, and assistant tools.",
+      trainingTitle: "Training and settings",
+      listTitle: "Assistants",
+      limitLabel: "Assistant limit",
+      createButton: "Create",
+      createModalTitle: "Create assistant",
+      createModalNameLabel: "Assistant name",
+      createModalNamePlaceholder: "For example: Sales assistant",
+      createModalCancel: "Cancel",
+      createModalCreate: "Create",
+      noAssistants: "No assistants created yet.",
+      selectAssistantTitle: "Select assistant",
+      selectAssistantHint:
+        "Select an assistant from the list to open training settings.",
+      backToAssistantsButton: "Back",
+      nameLabel: "Assistant name",
+      nameValidation: "Assistant name must be at least 2 characters long.",
+      instructionsLabel: "Instructions",
+      restrictionsLabel: "Restrictions",
+      toneLabel: "Conversation tone",
+      tonePolite: "Polite",
+      toneFriendly: "Friendly",
+      toneConcise: "Concise",
+      toneFormal: "Formal",
+      toneCustom: "Custom",
+      settingsTitle: "Settings",
+      fileSearchLabel: "File search",
+      fileAnalysisLabel: "File analysis",
+      voiceLabel: "Voice mode",
+      webSearchLabel: "Web search",
+      triggersTitle: "Triggers: prompt -> response",
+      addTriggerButton: "Add trigger",
+      noTriggers: "No triggers added yet.",
+      triggerLabel: "Trigger",
+      triggerResponseLabel: "Trigger response",
+      removeTriggerButton: "Remove trigger",
+      filesTitle: "Instruction files",
+      uploadFilesButton: "Upload files",
+      noFiles: "No instruction files uploaded yet.",
+      openFileButton: "Open",
+      deleteFileButton: "Delete file",
+      saveButton: "Save changes",
+      saveSuccess: "Assistant settings have been saved.",
+      saveFailed: "Failed to save assistant settings.",
+      createSuccess: "Assistant created.",
+      createFailed: "Failed to create assistant.",
+      startButton: "Start",
+      stopButton: "Stop",
+      deleteButton: "Delete",
+      startSuccess: "Assistant started.",
+      stopSuccess: "Assistant stopped.",
+      deleteSuccess: "Assistant deleted.",
+      actionFailed: "Failed to complete assistant action.",
+      statusRunning: "Running",
+      statusStopped: "Stopped",
+      inactiveSubscriptionTitle: "Subscription is inactive",
+      inactiveSubscriptionDescription:
+        "Creating and running assistants is available only with an active subscription.",
+      limitReachedTitle: "Limit reached",
+      limitReachedDescription:
+        "To create a new assistant, upgrade your plan or remove an existing assistant.",
+      deleteModalTitle: "Delete assistant",
+      deleteModalDescription:
+        "Are you sure you want to delete this assistant? This action cannot be undone.",
+      deleteModalCancel: "Cancel",
+      deleteModalConfirm: "Delete",
+      loading: "Loading assistants...",
+      unauthorized: "Session expired. Please sign in again.",
+      loadFailed: "Failed to load assistant data.",
+      errorTitle: "Error",
+      successTitle: "Success",
+      warningTitle: "Warning",
+      filesUploadedSuccess: "Files uploaded successfully.",
+      fileDeletedSuccess: "File deleted.",
     },
   },
 };

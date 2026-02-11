@@ -3,7 +3,9 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { GuestRoute, ModerationRoute, ProtectedRoute } from './auth/RouteGuards'
 
 const EmailVerificationPage = lazy(() => import('./pages/EmailVerificationPage'))
+const AssistantTrainingPage = lazy(() => import('./pages/AssistantTrainingPage'))
 const BillingPage = lazy(() => import('./pages/BillingPage'))
+const ClientChatsPage = lazy(() => import('./pages/ClientChatsPage'))
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
 const HomePage = lazy(() => import('./pages/HomePage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
@@ -24,6 +26,8 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/client-chats" element={<ClientChatsPage />} />
+          <Route path="/assistant/training" element={<AssistantTrainingPage />} />
           <Route path="/billing" element={<BillingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
