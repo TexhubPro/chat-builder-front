@@ -83,6 +83,13 @@ export type PayInvoiceResponse = {
   message: string;
   invoice: BillingInvoice;
   subscription: BillingSubscription | null;
+  payment?: {
+    provider: "alifbank";
+    mode: "test" | "production";
+    method: "post";
+    checkout_url: string;
+    payload: Record<string, string>;
+  } | null;
 };
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api").replace(

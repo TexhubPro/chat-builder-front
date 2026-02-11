@@ -200,6 +200,11 @@ export type Messages = {
     updatePlanButton: string;
     hidePlanUpdateButton: string;
     creditAppliedLabel: string;
+    downgradeWarningTitle: string;
+    downgradeWarningDescription: string;
+    downgradeWarningForfeit: string;
+    downgradeCancelButton: string;
+    downgradeConfirmButton: string;
     invoicesTitle: string;
     invoicesSubtitle: string;
     invoiceNumber: string;
@@ -213,6 +218,7 @@ export type Messages = {
     refreshButton: string;
     statusActive: string;
     statusPendingPayment: string;
+    statusPending: string;
     statusInactive: string;
     statusPastDue: string;
     statusUnpaid: string;
@@ -225,6 +231,7 @@ export type Messages = {
     statusVoid: string;
     statusUnknown: string;
     checkoutCreated: string;
+    paymentSessionCreated: string;
     paymentCompleted: string;
     paymentAlreadyCompleted: string;
     checkoutFailed: string;
@@ -457,6 +464,12 @@ export const MESSAGES: Record<Locale, Messages> = {
       updatePlanButton: "Обновить тарифный план",
       hidePlanUpdateButton: "Скрыть тарифы",
       creditAppliedLabel: "Списан остаток текущего тарифа",
+      downgradeWarningTitle: "Подтверждение смены тарифа",
+      downgradeWarningDescription:
+        "Вы переходите на более дешевый тариф. Часть остатка текущего тарифа не переносится и не возвращается.",
+      downgradeWarningForfeit: "Сумма, которая сгорит",
+      downgradeCancelButton: "Отмена",
+      downgradeConfirmButton: "Подтвердить смену",
       invoicesTitle: "Счета",
       invoicesSubtitle: "История выставленных счетов и оплаты.",
       invoiceNumber: "Номер",
@@ -470,6 +483,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       refreshButton: "Обновить",
       statusActive: "Активна",
       statusPendingPayment: "Ожидает оплату",
+      statusPending: "Ожидает подтверждения",
       statusInactive: "Неактивна",
       statusPastDue: "Просрочена",
       statusUnpaid: "Не оплачена",
@@ -482,6 +496,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       statusVoid: "Аннулирован",
       statusUnknown: "Неизвестно",
       checkoutCreated: "Счет создан. Завершите оплату для активации подписки.",
+      paymentSessionCreated: "Переход к оплате через Alif.",
       paymentCompleted: "Оплата выполнена успешно.",
       paymentAlreadyCompleted: "Этот счет уже оплачен.",
       checkoutFailed: "Не удалось создать счет. Попробуйте снова.",
@@ -710,6 +725,12 @@ export const MESSAGES: Record<Locale, Messages> = {
       updatePlanButton: "Update plan",
       hidePlanUpdateButton: "Hide plans",
       creditAppliedLabel: "Unused current plan credit",
+      downgradeWarningTitle: "Confirm plan change",
+      downgradeWarningDescription:
+        "You are switching to a cheaper plan. Part of your current plan balance will be forfeited and is non-refundable.",
+      downgradeWarningForfeit: "Amount to be forfeited",
+      downgradeCancelButton: "Cancel",
+      downgradeConfirmButton: "Confirm change",
       invoicesTitle: "Invoices",
       invoicesSubtitle: "Issued invoices and payment history.",
       invoiceNumber: "Number",
@@ -723,6 +744,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       refreshButton: "Refresh",
       statusActive: "Active",
       statusPendingPayment: "Pending payment",
+      statusPending: "Pending confirmation",
       statusInactive: "Inactive",
       statusPastDue: "Past due",
       statusUnpaid: "Unpaid",
@@ -736,6 +758,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       statusUnknown: "Unknown",
       checkoutCreated:
         "Invoice created. Complete payment to activate subscription.",
+      paymentSessionCreated: "Redirecting to Alif payment.",
       paymentCompleted: "Payment completed successfully.",
       paymentAlreadyCompleted: "This invoice is already paid.",
       checkoutFailed: "Failed to create invoice. Please try again.",

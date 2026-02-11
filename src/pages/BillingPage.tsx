@@ -5,7 +5,14 @@ import {
   Card,
   CardBody,
   Chip,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Progress,
+  Tab,
+  Tabs,
 } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
 import { ApiError } from "../auth/authClient";
@@ -27,6 +34,19 @@ import { useI18n } from "../i18n/useI18n";
 import { usePageSeo } from "../seo/usePageSeo";
 
 type ChipColor = "default" | "success" | "warning" | "danger" | "primary";
+type BillingDurationTab = "30" | "90" | "180";
+
+function resolveDurationTabByDays(days: number | null | undefined): BillingDurationTab {
+  if (days === 90) {
+    return "90";
+  }
+
+  if (days === 180) {
+    return "180";
+  }
+
+  return "30";
+}
 
 function formatMoney(
   amount: string | number,
@@ -118,7 +138,8 @@ function calculatePlanChangeCredit(
     return 0;
   }
 
-  const credit = (currentPlanPrice * currentQuantity * remainingChats) / includedChats;
+  const credit =
+    (currentPlanPrice * currentQuantity * remainingChats) / includedChats;
 
   if (!Number.isFinite(credit) || credit <= 0) {
     return 0;
@@ -131,6 +152,83 @@ function calculatePlanChangeCredit(
   }
 
   return Math.min(credit, selectedPrice);
+}
+
+function calculatePlanChangeRawCredit(
+  currentPlan: BillingPlan | null,
+  subscription: BillingSubscription | null,
+  usage: BillingUsage | null,
+): number {
+  if (!currentPlan || !subscription || !usage) {
+    return 0;
+  }
+
+  if (subscription.status !== "active") {
+    return 0;
+  }
+
+  const includedChats = Math.max(usage.included_chats, 0);
+  const usedChats = Math.max(usage.used_chats, 0);
+  const remainingChats = Math.max(includedChats - usedChats, 0);
+
+  if (includedChats <= 0 || remainingChats <= 0) {
+    return 0;
+  }
+
+  const currentPlanPrice = Number(currentPlan.price);
+  const currentQuantity = Math.max(subscription.quantity, 1);
+
+  if (!Number.isFinite(currentPlanPrice) || currentPlanPrice <= 0) {
+    return 0;
+  }
+
+  const credit =
+    (currentPlanPrice * currentQuantity * remainingChats) / includedChats;
+
+  if (!Number.isFinite(credit) || credit <= 0) {
+    return 0;
+  }
+
+  return credit;
+}
+
+function isDowngradePlan(
+  selectedPlan: BillingPlan | null,
+  currentPlan: BillingPlan | null,
+  subscription: BillingSubscription | null,
+): boolean {
+  if (!selectedPlan || !currentPlan || !subscription) {
+    return false;
+  }
+
+  if (subscription.status !== "active") {
+    return false;
+  }
+
+  if (selectedPlan.code === currentPlan.code) {
+    return false;
+  }
+
+  const selectedCycleMonths = Math.max(
+    selectedPlan.billing_period_days / 30,
+    1,
+  );
+  const currentCycleMonths = Math.max(currentPlan.billing_period_days / 30, 1);
+  const selectedMonthly = Number(selectedPlan.price) / selectedCycleMonths;
+  const currentMonthly = Number(currentPlan.price) / currentCycleMonths;
+
+  const hasLowerLimits =
+    selectedPlan.included_chats < currentPlan.included_chats ||
+    selectedPlan.assistant_limit < currentPlan.assistant_limit ||
+    selectedPlan.integrations_per_channel_limit <
+      currentPlan.integrations_per_channel_limit;
+
+  const hasLowerMonthlyPrice =
+    Number.isFinite(selectedMonthly) &&
+    Number.isFinite(currentMonthly) &&
+    selectedMonthly < currentMonthly;
+
+  return hasLowerLimits || hasLowerMonthlyPrice;
 }
 
 function getPlanDiscountPercent(plan: BillingPlan): number {
@@ -177,6 +275,8 @@ function invoiceStatus(
   billingMessages: ReturnType<typeof useI18n>["messages"]["billing"],
 ): { label: string; color: ChipColor } {
   switch (status) {
+    case "pending":
+      return { label: billingMessages.statusPending, color: "warning" };
     case "paid":
       return { label: billingMessages.statusPaid, color: "success" };
     case "issued":
@@ -198,12 +298,19 @@ function localizeBillingMessage(
 ): string {
   const normalized = rawMessage.trim().toLowerCase();
 
-  if (normalized === "checkout created. complete payment to activate subscription.") {
+  if (
+    normalized ===
+    "checkout created. complete payment to activate subscription."
+  ) {
     return billingMessages.checkoutCreated;
   }
 
   if (normalized === "payment completed successfully.") {
     return billingMessages.paymentCompleted;
+  }
+
+  if (normalized === "payment session created. continue in alif.") {
+    return billingMessages.paymentSessionCreated;
   }
 
   if (normalized === "invoice is already paid.") {
@@ -236,12 +343,32 @@ function isPayableInvoice(status: string): boolean {
   return status === "issued" || status === "overdue" || status === "failed";
 }
 
+function submitPostForm(url: string, payload: Record<string, string>): void {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = url;
+  form.style.display = "none";
+
+  for (const [key, value] of Object.entries(payload)) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
 export default function BillingPage() {
   const { user, logout } = useAuth();
   const { locale, messages } = useI18n();
 
   const [plans, setPlans] = useState<BillingPlan[]>([]);
-  const [subscription, setSubscription] = useState<BillingSubscription | null>(null);
+  const [subscription, setSubscription] = useState<BillingSubscription | null>(
+    null,
+  );
   const [usage, setUsage] = useState<BillingUsage | null>(null);
   const [invoices, setInvoices] = useState<BillingInvoice[]>([]);
   const [selectedPlanCode, setSelectedPlanCode] = useState("");
@@ -251,6 +378,9 @@ export default function BillingPage() {
   const [payingInvoiceId, setPayingInvoiceId] = useState<number | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isPlanUpdaterOpen, setIsPlanUpdaterOpen] = useState(false);
+  const [isDowngradeModalOpen, setIsDowngradeModalOpen] = useState(false);
+  const [selectedDurationTab, setSelectedDurationTab] =
+    useState<BillingDurationTab>("30");
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [globalSuccess, setGlobalSuccess] = useState<string | null>(null);
 
@@ -287,26 +417,32 @@ export default function BillingPage() {
       setUsage(subscriptionResponse.usage);
       setInvoices(invoiceList);
 
-      const hasActiveSubscription = subscriptionResponse.subscription?.status === "active";
-      setIsPlanUpdaterOpen((currentValue) => (hasActiveSubscription ? currentValue : true));
+      const hasActiveSubscription =
+        subscriptionResponse.subscription?.status === "active";
+      setIsPlanUpdaterOpen((currentValue) =>
+        hasActiveSubscription ? currentValue : true,
+      );
 
-      setSelectedPlanCode((currentCode) => {
-        if (currentCode && planList.some((plan) => plan.code === currentCode)) {
-          return currentCode;
-        }
+      const currentSubscriptionPlanCode =
+        subscriptionResponse.subscription?.plan?.code;
 
-        const currentSubscriptionPlanCode = subscriptionResponse.subscription?.plan?.code;
+      const initialPlanCode =
+        currentSubscriptionPlanCode &&
+        planList.some((plan) => plan.code === currentSubscriptionPlanCode)
+          ? currentSubscriptionPlanCode
+          : planList[0]?.code ?? "";
 
-        if (
-          currentSubscriptionPlanCode
-          && planList.some((plan) => plan.code === currentSubscriptionPlanCode)
-        ) {
-          return currentSubscriptionPlanCode;
-        }
+      const initialPlan = planList.find((plan) => plan.code === initialPlanCode) ?? null;
+      const initialTab = resolveDurationTabByDays(initialPlan?.billing_period_days);
+      const plansForTab = planList.filter(
+        (plan) => String(plan.billing_period_days) === initialTab,
+      );
+      const normalizedPlanCode = plansForTab.some((plan) => plan.code === initialPlanCode)
+        ? initialPlanCode
+        : plansForTab[0]?.code ?? initialPlanCode;
 
-        return planList[0]?.code ?? "";
-      });
-
+      setSelectedDurationTab(initialTab);
+      setSelectedPlanCode(normalizedPlanCode);
     } catch (error) {
       setGlobalError(billingErrorMessage(error, messages.billing));
     } finally {
@@ -325,11 +461,21 @@ export default function BillingPage() {
     [plans, selectedPlanCode],
   );
 
+  const visiblePlans = useMemo(
+    () =>
+      plans.filter(
+        (plan) => String(plan.billing_period_days) === selectedDurationTab,
+      ),
+    [plans, selectedDurationTab],
+  );
+
   const currentPlan = useMemo(() => {
     const currentSubscriptionPlanCode = subscription?.plan?.code;
 
     if (currentSubscriptionPlanCode) {
-      const match = plans.find((plan) => plan.code === currentSubscriptionPlanCode);
+      const match = plans.find(
+        (plan) => plan.code === currentSubscriptionPlanCode,
+      );
 
       if (match) {
         return match;
@@ -339,17 +485,39 @@ export default function BillingPage() {
     return selectedPlan;
   }, [plans, selectedPlan, subscription?.plan?.code]);
 
+  const rawPlanCredit = useMemo(
+    () => calculatePlanChangeRawCredit(currentPlan, subscription, usage),
+    [currentPlan, subscription, usage],
+  );
   const planChangeCredit = useMemo(
-    () => calculatePlanChangeCredit(selectedPlan, currentPlan, subscription, usage),
+    () =>
+      calculatePlanChangeCredit(selectedPlan, currentPlan, subscription, usage),
     [selectedPlan, currentPlan, subscription, usage],
   );
+  const forfeitedCredit = useMemo(() => {
+    if (!selectedPlan) {
+      return 0;
+    }
 
-  const totalToPay = selectedPlan ? Math.max(Number(selectedPlan.price) - planChangeCredit, 0) : 0;
+    return Math.max(rawPlanCredit - Number(selectedPlan.price), 0);
+  }, [rawPlanCredit, selectedPlan]);
+  const totalToPay = selectedPlan
+    ? Math.max(Number(selectedPlan.price) - planChangeCredit, 0)
+    : 0;
   const usagePercent = calculateUsagePercent(usage);
   const hasActiveSubscription = subscription?.status === "active";
   const showPlanUpdater = !hasActiveSubscription || isPlanUpdaterOpen;
+  const isDowngradeSelected = useMemo(
+    () => isDowngradePlan(selectedPlan, currentPlan, subscription),
+    [selectedPlan, currentPlan, subscription],
+  );
+  const requiresDowngradeConfirmation =
+    isDowngradeSelected && forfeitedCredit > 0;
 
-  const subscriptionStatusInfo = subscriptionStatus(subscription?.status, messages.billing);
+  const subscriptionStatusInfo = subscriptionStatus(
+    subscription?.status,
+    messages.billing,
+  );
 
   const usageCards = [
     {
@@ -406,7 +574,7 @@ export default function BillingPage() {
     await loadBillingData(false);
   };
 
-  const handleCheckout = async (): Promise<void> => {
+  const performCheckout = async (): Promise<void> => {
     setGlobalError(null);
     setGlobalSuccess(null);
 
@@ -430,13 +598,49 @@ export default function BillingPage() {
         quantity: 1,
       });
 
-      setGlobalSuccess(localizeBillingMessage(checkoutResponse.message, messages.billing));
+      setGlobalSuccess(
+        localizeBillingMessage(checkoutResponse.message, messages.billing),
+      );
       await loadBillingData(false);
     } catch (error) {
       setGlobalError(billingErrorMessage(error, messages.billing));
     } finally {
       setIsCheckingOut(false);
     }
+  };
+
+  const handleCheckout = async (): Promise<void> => {
+    if (requiresDowngradeConfirmation) {
+      setIsDowngradeModalOpen(true);
+      return;
+    }
+
+    await performCheckout();
+  };
+
+  const handleConfirmDowngradeCheckout = async (): Promise<void> => {
+    setIsDowngradeModalOpen(false);
+    await performCheckout();
+  };
+
+  const handleDurationTabChange = (nextKey: string): void => {
+    if (nextKey !== "30" && nextKey !== "90" && nextKey !== "180") {
+      return;
+    }
+
+    const normalizedTab = nextKey as BillingDurationTab;
+    const plansForTab = plans.filter(
+      (plan) => String(plan.billing_period_days) === normalizedTab,
+    );
+
+    setSelectedDurationTab(normalizedTab);
+    setSelectedPlanCode((currentCode) => {
+      if (plansForTab.some((plan) => plan.code === currentCode)) {
+        return currentCode;
+      }
+
+      return plansForTab[0]?.code ?? currentCode;
+    });
   };
 
   const handlePayInvoice = async (invoiceId: number): Promise<void> => {
@@ -454,7 +658,25 @@ export default function BillingPage() {
 
     try {
       const paymentResponse = await billingPayInvoiceRequest(token, invoiceId);
-      setGlobalSuccess(localizeBillingMessage(paymentResponse.message, messages.billing));
+
+      if (
+        paymentResponse.payment?.provider === "alifbank" &&
+        paymentResponse.payment.method === "post" &&
+        paymentResponse.payment.checkout_url
+      ) {
+        setGlobalSuccess(
+          localizeBillingMessage(paymentResponse.message, messages.billing),
+        );
+        submitPostForm(
+          paymentResponse.payment.checkout_url,
+          paymentResponse.payment.payload,
+        );
+        return;
+      }
+
+      setGlobalSuccess(
+        localizeBillingMessage(paymentResponse.message, messages.billing),
+      );
       setIsPlanUpdaterOpen(false);
       await loadBillingData(false);
     } catch (error) {
@@ -473,6 +695,43 @@ export default function BillingPage() {
       defaultSelectedKey="billing"
     >
       <div className="space-y-4">
+        <Modal
+          isOpen={isDowngradeModalOpen}
+          onOpenChange={setIsDowngradeModalOpen}
+          placement="center"
+        >
+          <ModalContent>
+            <ModalHeader>{messages.billing.downgradeWarningTitle}</ModalHeader>
+            <ModalBody>
+              <p className="text-sm text-default-700">
+                {messages.billing.downgradeWarningDescription}
+              </p>
+              <p className="text-sm font-semibold text-danger-600">
+                {messages.billing.downgradeWarningForfeit}:{" "}
+                {selectedPlan
+                  ? formatMoney(forfeitedCredit, selectedPlan.currency, locale)
+                  : formatMoney("0", "USD", locale)}
+              </p>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="light"
+                onPress={() => setIsDowngradeModalOpen(false)}
+                isDisabled={isCheckingOut}
+              >
+                {messages.billing.downgradeCancelButton}
+              </Button>
+              <Button
+                color="danger"
+                onPress={handleConfirmDowngradeCheckout}
+                isLoading={isCheckingOut}
+              >
+                {messages.billing.downgradeConfirmButton}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
         {globalError ? (
           <Alert
             color="danger"
@@ -493,7 +752,9 @@ export default function BillingPage() {
 
         <div
           className={`grid grid-cols-1 gap-4 ${
-            hasActiveSubscription ? "xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" : ""
+            hasActiveSubscription
+              ? "xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
+              : ""
           }`}
         >
           {hasActiveSubscription ? (
@@ -508,7 +769,11 @@ export default function BillingPage() {
                       {subscription?.plan?.name ?? currentPlan?.name ?? "-"}
                     </p>
                   </div>
-                  <Chip size="sm" color={subscriptionStatusInfo.color} variant="flat">
+                  <Chip
+                    size="sm"
+                    color={subscriptionStatusInfo.color}
+                    variant="flat"
+                  >
                     {subscriptionStatusInfo.label}
                   </Chip>
                 </div>
@@ -516,35 +781,61 @@ export default function BillingPage() {
                 <div className="rounded-large bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-4 text-white">
                   <div className="flex items-end justify-between gap-3">
                     <div>
-                      <p className="text-xs text-white/80">{messages.billing.currentPlanLabel}</p>
-                      <p className="text-xl font-semibold">{subscription?.plan?.name ?? "-"}</p>
+                      <p className="text-xs text-white/80">
+                        {messages.billing.currentPlanLabel}
+                      </p>
+                      <p className="text-xl font-semibold">
+                        {subscription?.plan?.name ?? "-"}
+                      </p>
                     </div>
                     <p className="text-xl font-bold">
                       {currentPlan
-                        ? formatMoney(currentPlan.price, currentPlan.currency, locale)
+                        ? formatMoney(
+                            currentPlan.price,
+                            currentPlan.currency,
+                            locale,
+                          )
                         : formatMoney("0", "TJS", locale)}
                     </p>
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-white/90">
                     <p>
-                      {messages.billing.quantityLabel}: <strong>{subscription?.quantity ?? 0}</strong>
+                      {messages.billing.quantityLabel}:{" "}
+                      <strong>{subscription?.quantity ?? 0}</strong>
                     </p>
                     <p>
-                      {messages.billing.cycleLabel}: <strong>{formatCycle(subscription?.billing_cycle_days ?? 30, locale)}</strong>
+                      {messages.billing.cycleLabel}:{" "}
+                      <strong>
+                        {formatCycle(
+                          subscription?.billing_cycle_days ?? 30,
+                          locale,
+                        )}
+                      </strong>
                     </p>
                     <p>
-                      {messages.billing.renewalLabel}: <strong>{formatDate(subscription?.renewal_due_at ?? null, locale)}</strong>
+                      {messages.billing.renewalLabel}:{" "}
+                      <strong>
+                        {formatDate(
+                          subscription?.renewal_due_at ?? null,
+                          locale,
+                        )}
+                      </strong>
                     </p>
                     <p>
-                      {messages.billing.expiresLabel}: <strong>{formatDate(subscription?.expires_at ?? null, locale)}</strong>
+                      {messages.billing.expiresLabel}:{" "}
+                      <strong>
+                        {formatDate(subscription?.expires_at ?? null, locale)}
+                      </strong>
                     </p>
                   </div>
 
                   <div className="mt-3 space-y-1.5">
                     <div className="flex items-center justify-between text-xs text-white/85">
                       <span>{messages.billing.usageProgress}</span>
-                      <span className="font-semibold text-white">{usagePercent}%</span>
+                      <span className="font-semibold text-white">
+                        {usagePercent}%
+                      </span>
                     </div>
                     <Progress
                       aria-label={messages.billing.usageProgress}
@@ -560,7 +851,11 @@ export default function BillingPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <Button variant="bordered" onPress={handleRefresh} isLoading={isRefreshing}>
+                  <Button
+                    variant="bordered"
+                    onPress={handleRefresh}
+                    isLoading={isRefreshing}
+                  >
                     {messages.billing.refreshButton}
                   </Button>
                   <Button
@@ -580,7 +875,9 @@ export default function BillingPage() {
           {hasActiveSubscription ? (
             <Card shadow="none" className="border border-default-200 bg-white">
               <CardBody className="space-y-3 p-5">
-                <p className="text-sm font-medium text-default-500">{messages.billing.usageTitle}</p>
+                <p className="text-sm font-medium text-default-500">
+                  {messages.billing.usageTitle}
+                </p>
 
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {usageCards.map((item) => (
@@ -590,15 +887,21 @@ export default function BillingPage() {
                     >
                       <div className="flex items-center gap-1.5 text-default-500">
                         <Icon icon={item.icon} width={14} />
-                        <p className="text-[11px] leading-tight">{item.label}</p>
+                        <p className="text-[11px] leading-tight">
+                          {item.label}
+                        </p>
                       </div>
-                      <p className="mt-1 text-lg font-semibold text-foreground">{item.value}</p>
+                      <p className="mt-1 text-lg font-semibold text-foreground">
+                        {item.value}
+                      </p>
                     </div>
                   ))}
                 </div>
 
                 <div className="rounded-medium bg-default-100 p-3">
-                  <p className="text-xs text-default-500">{messages.billing.overagePrice}</p>
+                  <p className="text-xs text-default-500">
+                    {messages.billing.overagePrice}
+                  </p>
                   <p className="text-lg font-semibold text-foreground">
                     {formatMoney(
                       usage?.overage_chat_price ?? "0.00",
@@ -617,7 +920,9 @@ export default function BillingPage() {
             <CardBody className="space-y-4 p-5">
               <div className="flex flex-col gap-1">
                 <h2 className="text-lg font-semibold text-foreground">
-                  {locale === "ru" ? "Доступные тарифы для вас" : "Available plans for you"}
+                  {locale === "ru"
+                    ? "Доступные тарифы для вас"
+                    : "Available plans for you"}
                 </h2>
                 <p className="text-sm text-default-500">
                   {locale === "ru"
@@ -626,11 +931,59 @@ export default function BillingPage() {
                 </p>
               </div>
 
-              {plans.length === 0 ? (
-                <p className="text-sm text-default-500">{messages.billing.noPlansAvailable}</p>
+              <Tabs
+                aria-label={locale === "ru" ? "Период тарифа" : "Plan duration"}
+                selectedKey={selectedDurationTab}
+                onSelectionChange={(key) =>
+                  handleDurationTabChange(String(key))
+                }
+                color="primary"
+                variant="bordered"
+                radius="full"
+                size="sm"
+                fullWidth
+                disableAnimation
+              >
+                <Tab key="30" title={locale === "ru" ? "1 месяц" : "1 month"} />
+                <Tab
+                  key="90"
+                  title={
+                    <span
+                      className={`inline-flex items-center gap-2 ${
+                        selectedDurationTab === "90" ? "py-0.5 pr-0.5" : ""
+                      }`}
+                    >
+                      <span>{locale === "ru" ? "3 месяца" : "3 months"}</span>
+                      <span className="rounded-full bg-success-100 px-2 py-0 text-[11px] font-semibold text-success-700">
+                        -10%
+                      </span>
+                    </span>
+                  }
+                />
+                <Tab
+                  key="180"
+                  title={
+                    <span
+                      className={`inline-flex items-center gap-2 ${
+                        selectedDurationTab === "180" ? "py-0.5 pr-0" : ""
+                      }`}
+                    >
+                      <span>{locale === "ru" ? "6 месяцев" : "6 months"}</span>
+                      <span className="rounded-full bg-success-100 px-2 py-0.5 text-[11px] font-semibold text-success-700">
+                        -20%
+                      </span>
+                    </span>
+                  }
+                />
+              </Tabs>
+
+              {visiblePlans.length === 0 ? (
+                <p className="text-sm text-default-500">
+                  {messages.billing.noPlansAvailable}
+                </p>
               ) : (
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-                  {plans.map((plan) => {
+                  {visiblePlans.map((plan) => {
                     const isSelected = selectedPlanCode === plan.code;
                     const discountPercent = getPlanDiscountPercent(plan);
 
@@ -647,7 +1000,9 @@ export default function BillingPage() {
                       >
                         <div className="mb-3 flex items-start justify-between gap-2">
                           <div>
-                            <p className="text-base font-semibold text-foreground">{plan.name}</p>
+                            <p className="text-base font-semibold text-foreground">
+                              {plan.name}
+                            </p>
                             <div className="mt-0.5 flex flex-wrap items-center gap-2">
                               <p className="text-xs text-default-500">
                                 {formatCycle(plan.billing_period_days, locale)}
@@ -669,24 +1024,48 @@ export default function BillingPage() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 text-sm text-default-700">
                             <Icon icon="solar:chat-line-linear" width={16} />
-                            <span>{messages.billing.includedChats}: {plan.included_chats}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-default-700">
-                            <Icon icon="solar:users-group-rounded-linear" width={16} />
-                            <span>{messages.billing.assistantLimit}: {plan.assistant_limit}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-default-700">
-                            <Icon icon="solar:link-minimalistic-2-linear" width={16} />
                             <span>
-                              {messages.billing.integrationLimit}: {plan.integrations_per_channel_limit}
+                              {messages.billing.includedChats}:{" "}
+                              {plan.included_chats}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-default-700">
-                            <Icon icon="solar:dollar-minimalistic-linear" width={16} />
+                            <Icon
+                              icon="solar:users-group-rounded-linear"
+                              width={16}
+                            />
+                            <span>
+                              {messages.billing.assistantLimit}:{" "}
+                              {plan.assistant_limit}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon
+                              icon="solar:link-minimalistic-2-linear"
+                              width={16}
+                            />
+                            <span>
+                              {messages.billing.integrationLimit}:{" "}
+                              {plan.integrations_per_channel_limit}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon
+                              icon="solar:dollar-minimalistic-linear"
+                              width={16}
+                            />
                             <span>
                               {locale === "ru"
-                                ? `После исчерпания лимита: ${formatMoney(plan.overage_chat_price, plan.currency, locale)} за 1 чат`
-                                : `After included limit: ${formatMoney(plan.overage_chat_price, plan.currency, locale)} per extra chat`}
+                                ? `После исчерпания лимита: ${formatMoney(
+                                    plan.overage_chat_price,
+                                    plan.currency,
+                                    locale,
+                                  )} за 1 чат`
+                                : `After included limit: ${formatMoney(
+                                    plan.overage_chat_price,
+                                    plan.currency,
+                                    locale,
+                                  )} per extra chat`}
                             </span>
                           </div>
 
@@ -697,21 +1076,31 @@ export default function BillingPage() {
                           </div>
                           <div className="flex items-center gap-2 text-sm text-default-700">
                             <Icon icon="fa6-brands:instagram" width={15} />
-                            <span>{locale === "ru" ? "Instagram" : "Instagram"}</span>
+                            <span>
+                              {locale === "ru" ? "Instagram" : "Instagram"}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-default-700">
                             <Icon icon="solar:plain-2-linear" width={16} />
-                            <span>{locale === "ru" ? "Telegram" : "Telegram"}</span>
+                            <span>
+                              {locale === "ru" ? "Telegram" : "Telegram"}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-default-700">
                             <Icon icon="solar:widget-2-linear" width={16} />
                             <span>
-                              {locale === "ru" ? "Виджет чата для сайта" : "Website chat widget"}
+                              {locale === "ru"
+                                ? "Виджет чата для сайта"
+                                : "Website chat widget"}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-default-700">
                             <Icon icon="solar:code-square-linear" width={16} />
-                            <span>{locale === "ru" ? "API интеграция" : "API integration"}</span>
+                            <span>
+                              {locale === "ru"
+                                ? "API интеграция"
+                                : "API integration"}
+                            </span>
                           </div>
                         </div>
 
@@ -729,7 +1118,9 @@ export default function BillingPage() {
 
               <div className="flex flex-col gap-3 rounded-medium border border-default-200 bg-default-50 p-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs text-default-500">{messages.billing.totalToPayLabel}</p>
+                  <p className="text-xs text-default-500">
+                    {messages.billing.totalToPayLabel}
+                  </p>
                   <p className="text-xl font-semibold text-foreground">
                     {selectedPlan
                       ? formatMoney(totalToPay, selectedPlan.currency, locale)
@@ -738,13 +1129,23 @@ export default function BillingPage() {
                   {planChangeCredit > 0 && selectedPlan ? (
                     <p className="text-xs text-success-600">
                       {messages.billing.creditAppliedLabel}:{" "}
-                      {formatMoney(planChangeCredit, selectedPlan.currency, locale)}
+                      {formatMoney(
+                        planChangeCredit,
+                        selectedPlan.currency,
+                        locale,
+                      )}
                     </p>
                   ) : null}
                 </div>
 
-                <Button color="primary" isLoading={isCheckingOut} onPress={handleCheckout}>
-                  {isCheckingOut ? messages.billing.checkoutProcessing : messages.billing.checkoutButton}
+                <Button
+                  color="primary"
+                  isLoading={isCheckingOut}
+                  onPress={handleCheckout}
+                >
+                  {isCheckingOut
+                    ? messages.billing.checkoutProcessing
+                    : messages.billing.checkoutButton}
                 </Button>
               </div>
             </CardBody>
@@ -754,18 +1155,29 @@ export default function BillingPage() {
         <Card shadow="none" className="border border-default-200 bg-white">
           <CardBody className="space-y-3 p-5">
             <div>
-              <h2 className="text-lg font-semibold text-foreground">{messages.billing.invoicesTitle}</h2>
-              <p className="text-sm text-default-500">{messages.billing.invoicesSubtitle}</p>
+              <h2 className="text-lg font-semibold text-foreground">
+                {messages.billing.invoicesTitle}
+              </h2>
+              <p className="text-sm text-default-500">
+                {messages.billing.invoicesSubtitle}
+              </p>
             </div>
 
             {isLoading ? (
-              <p className="text-sm text-default-500">{messages.common.loadingSession}</p>
+              <p className="text-sm text-default-500">
+                {messages.common.loadingSession}
+              </p>
             ) : invoices.length === 0 ? (
-              <p className="text-sm text-default-500">{messages.billing.noInvoices}</p>
+              <p className="text-sm text-default-500">
+                {messages.billing.noInvoices}
+              </p>
             ) : (
               <div className="space-y-2">
                 {invoices.map((invoice) => {
-                  const statusInfo = invoiceStatus(invoice.status, messages.billing);
+                  const statusInfo = invoiceStatus(
+                    invoice.status,
+                    messages.billing,
+                  );
                   const canPay = isPayableInvoice(invoice.status);
 
                   return (
@@ -774,12 +1186,16 @@ export default function BillingPage() {
                       className="flex flex-col gap-3 rounded-medium border border-default-200 p-3 sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="space-y-0.5">
-                        <p className="text-sm font-semibold text-foreground">{invoice.number}</p>
-                        <p className="text-xs text-default-500">
-                          {messages.billing.invoiceDate}: {formatDate(invoice.created_at, locale)}
+                        <p className="text-sm font-semibold text-foreground">
+                          {invoice.number}
                         </p>
                         <p className="text-xs text-default-500">
-                          {messages.billing.invoiceDue}: {formatDate(invoice.due_at, locale)}
+                          {messages.billing.invoiceDate}:{" "}
+                          {formatDate(invoice.created_at, locale)}
+                        </p>
+                        <p className="text-xs text-default-500">
+                          {messages.billing.invoiceDue}:{" "}
+                          {formatDate(invoice.due_at, locale)}
                         </p>
                       </div>
 
