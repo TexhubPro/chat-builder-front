@@ -197,6 +197,9 @@ export type Messages = {
     selectedPlan: string;
     checkoutButton: string;
     checkoutProcessing: string;
+    updatePlanButton: string;
+    hidePlanUpdateButton: string;
+    creditAppliedLabel: string;
     invoicesTitle: string;
     invoicesSubtitle: string;
     invoiceNumber: string;
@@ -451,6 +454,9 @@ export const MESSAGES: Record<Locale, Messages> = {
       selectedPlan: "Выбрано",
       checkoutButton: "Выставить счет",
       checkoutProcessing: "Создаем счет...",
+      updatePlanButton: "Обновить тарифный план",
+      hidePlanUpdateButton: "Скрыть тарифы",
+      creditAppliedLabel: "Списан остаток текущего тарифа",
       invoicesTitle: "Счета",
       invoicesSubtitle: "История выставленных счетов и оплаты.",
       invoiceNumber: "Номер",
@@ -701,6 +707,9 @@ export const MESSAGES: Record<Locale, Messages> = {
       selectedPlan: "Selected",
       checkoutButton: "Create invoice",
       checkoutProcessing: "Creating invoice...",
+      updatePlanButton: "Update plan",
+      hidePlanUpdateButton: "Hide plans",
+      creditAppliedLabel: "Unused current plan credit",
       invoicesTitle: "Invoices",
       invoicesSubtitle: "Issued invoices and payment history.",
       invoiceNumber: "Number",

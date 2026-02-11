@@ -85,6 +85,54 @@ function calculateUsagePercent(usage: BillingUsage | null): number {
   );
 }
 
+function calculatePlanChangeCredit(
+  selectedPlan: BillingPlan | null,
+  currentPlan: BillingPlan | null,
+  subscription: BillingSubscription | null,
+  usage: BillingUsage | null,
+): number {
+  if (!selectedPlan || !currentPlan || !subscription || !usage) {
+    return 0;
+  }
+
+  if (subscription.status !== "active") {
+    return 0;
+  }
+
+  if (selectedPlan.currency !== currentPlan.currency) {
+    return 0;
+  }
+
+  const includedChats = Math.max(usage.included_chats, 0);
+  const usedChats = Math.max(usage.used_chats, 0);
+  const remainingChats = Math.max(includedChats - usedChats, 0);
+
+  if (includedChats <= 0 || remainingChats <= 0) {
+    return 0;
+  }
+
+  const currentPlanPrice = Number(currentPlan.price);
+  const currentQuantity = Math.max(subscription.quantity, 1);
+
+  if (!Number.isFinite(currentPlanPrice) || currentPlanPrice <= 0) {
+    return 0;
+  }
+
+  const credit = (currentPlanPrice * currentQuantity * remainingChats) / includedChats;
+
+  if (!Number.isFinite(credit) || credit <= 0) {
+    return 0;
+  }
+
+  const selectedPrice = Number(selectedPlan.price);
+
+  if (!Number.isFinite(selectedPrice) || selectedPrice <= 0) {
+    return 0;
+  }
+
+  return Math.min(credit, selectedPrice);
+}
+
 function subscriptionStatus(
   status: string | null | undefined,
   billingMessages: ReturnType<typeof useI18n>["messages"]["billing"],
@@ -187,6 +235,7 @@ export default function BillingPage() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [payingInvoiceId, setPayingInvoiceId] = useState<number | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isPlanUpdaterOpen, setIsPlanUpdaterOpen] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [globalSuccess, setGlobalSuccess] = useState<string | null>(null);
 
@@ -222,6 +271,9 @@ export default function BillingPage() {
       setSubscription(subscriptionResponse.subscription);
       setUsage(subscriptionResponse.usage);
       setInvoices(invoiceList);
+
+      const hasActiveSubscription = subscriptionResponse.subscription?.status === "active";
+      setIsPlanUpdaterOpen((currentValue) => (hasActiveSubscription ? currentValue : true));
 
       setSelectedPlanCode((currentCode) => {
         if (currentCode && planList.some((plan) => plan.code === currentCode)) {
@@ -272,9 +324,15 @@ export default function BillingPage() {
     return selectedPlan;
   }, [plans, selectedPlan, subscription?.plan?.code]);
 
-  const totalToPay = selectedPlan ? Number(selectedPlan.price) : 0;
+  const planChangeCredit = useMemo(
+    () => calculatePlanChangeCredit(selectedPlan, currentPlan, subscription, usage),
+    [selectedPlan, currentPlan, subscription, usage],
+  );
+
+  const totalToPay = selectedPlan ? Math.max(Number(selectedPlan.price) - planChangeCredit, 0) : 0;
   const usagePercent = calculateUsagePercent(usage);
   const hasActiveSubscription = subscription?.status === "active";
+  const showPlanUpdater = !hasActiveSubscription || isPlanUpdaterOpen;
 
   const subscriptionStatusInfo = subscriptionStatus(subscription?.status, messages.billing);
 
@@ -382,6 +440,7 @@ export default function BillingPage() {
     try {
       const paymentResponse = await billingPayInvoiceRequest(token, invoiceId);
       setGlobalSuccess(localizeBillingMessage(paymentResponse.message, messages.billing));
+      setIsPlanUpdaterOpen(false);
       await loadBillingData(false);
     } catch (error) {
       setGlobalError(billingErrorMessage(error, messages.billing));
@@ -485,9 +544,20 @@ export default function BillingPage() {
                   </div>
                 </div>
 
-                <Button variant="bordered" onPress={handleRefresh} isLoading={isRefreshing}>
-                  {messages.billing.refreshButton}
-                </Button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button variant="bordered" onPress={handleRefresh} isLoading={isRefreshing}>
+                    {messages.billing.refreshButton}
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant={isPlanUpdaterOpen ? "solid" : "flat"}
+                    onPress={() => setIsPlanUpdaterOpen((current) => !current)}
+                  >
+                    {isPlanUpdaterOpen
+                      ? messages.billing.hidePlanUpdateButton
+                      : messages.billing.updatePlanButton}
+                  </Button>
+                </div>
               </CardBody>
             </Card>
           ) : null}
@@ -527,126 +597,134 @@ export default function BillingPage() {
           ) : null}
         </div>
 
-        <Card shadow="none" className="border border-default-200 bg-white">
-          <CardBody className="space-y-4 p-5">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-lg font-semibold text-foreground">
-                {locale === "ru" ? "Доступные тарифы для вас" : "Available plans for you"}
-              </h2>
-              <p className="text-sm text-default-500">
-                {locale === "ru"
-                  ? "Выберите подходящий тариф и выставьте счет."
-                  : "Choose the right plan and create an invoice."}
-              </p>
-            </div>
-
-            {plans.length === 0 ? (
-              <p className="text-sm text-default-500">{messages.billing.noPlansAvailable}</p>
-            ) : (
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {plans.map((plan) => {
-                  const isSelected = selectedPlanCode === plan.code;
-
-                  return (
-                    <button
-                      key={plan.id}
-                      type="button"
-                      onClick={() => setSelectedPlanCode(plan.code)}
-                      className={`rounded-large border p-4 text-left transition-colors ${
-                        isSelected
-                          ? "border-primary bg-primary/10"
-                          : "border-default-200 bg-white hover:bg-default-50"
-                      }`}
-                    >
-                      <div className="mb-3 flex items-start justify-between gap-2">
-                        <div>
-                          <p className="text-base font-semibold text-foreground">{plan.name}</p>
-                          <p className="text-xs text-default-500">
-                            {formatCycle(plan.billing_period_days, locale)}
-                          </p>
-                        </div>
-                        <p className="text-lg font-bold text-foreground">
-                          {formatMoney(plan.price, plan.currency, locale)}
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-sm text-default-700">
-                          <Icon icon="solar:chat-line-linear" width={16} />
-                          <span>{messages.billing.includedChats}: {plan.included_chats}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-default-700">
-                          <Icon icon="solar:users-group-rounded-linear" width={16} />
-                          <span>{messages.billing.assistantLimit}: {plan.assistant_limit}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-default-700">
-                          <Icon icon="solar:link-minimalistic-2-linear" width={16} />
-                          <span>
-                            {messages.billing.integrationLimit}: {plan.integrations_per_channel_limit}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-default-700">
-                          <Icon icon="solar:dollar-minimalistic-linear" width={16} />
-                          <span>
-                            {locale === "ru"
-                              ? `После исчерпания лимита: ${formatMoney(plan.overage_chat_price, plan.currency, locale)} за 1 чат`
-                              : `After included limit: ${formatMoney(plan.overage_chat_price, plan.currency, locale)} per extra chat`}
-                          </span>
-                        </div>
-
-                        <div className="pt-1 text-xs font-medium text-default-500">
-                          {locale === "ru"
-                            ? "Доступные каналы интеграции"
-                            : "Available channels"}
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-default-700">
-                          <Icon icon="fa6-brands:instagram" width={15} />
-                          <span>{locale === "ru" ? "Instagram" : "Instagram"}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-default-700">
-                          <Icon icon="solar:plain-2-linear" width={16} />
-                          <span>{locale === "ru" ? "Telegram" : "Telegram"}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-default-700">
-                          <Icon icon="solar:widget-2-linear" width={16} />
-                          <span>
-                            {locale === "ru" ? "Виджет чата для сайта" : "Website chat widget"}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-default-700">
-                          <Icon icon="solar:code-square-linear" width={16} />
-                          <span>{locale === "ru" ? "API интеграция" : "API integration"}</span>
-                        </div>
-                      </div>
-
-                      {isSelected ? (
-                        <div className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-1 text-xs font-medium text-primary">
-                          <Icon icon="solar:check-circle-linear" width={14} />
-                          <span>{messages.billing.selectedPlan}</span>
-                        </div>
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            <div className="flex flex-col gap-3 rounded-medium border border-default-200 bg-default-50 p-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-xs text-default-500">{messages.billing.totalToPayLabel}</p>
-                <p className="text-xl font-semibold text-foreground">
-                  {selectedPlan
-                    ? formatMoney(totalToPay, selectedPlan.currency, locale)
-                    : formatMoney("0", "TJS", locale)}
+        {showPlanUpdater ? (
+          <Card shadow="none" className="border border-default-200 bg-white">
+            <CardBody className="space-y-4 p-5">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-lg font-semibold text-foreground">
+                  {locale === "ru" ? "Доступные тарифы для вас" : "Available plans for you"}
+                </h2>
+                <p className="text-sm text-default-500">
+                  {locale === "ru"
+                    ? "Выберите подходящий тариф и выставьте счет."
+                    : "Choose the right plan and create an invoice."}
                 </p>
               </div>
 
-              <Button color="primary" isLoading={isCheckingOut} onPress={handleCheckout}>
-                {isCheckingOut ? messages.billing.checkoutProcessing : messages.billing.checkoutButton}
-              </Button>
-            </div>
-          </CardBody>
-        </Card>
+              {plans.length === 0 ? (
+                <p className="text-sm text-default-500">{messages.billing.noPlansAvailable}</p>
+              ) : (
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {plans.map((plan) => {
+                    const isSelected = selectedPlanCode === plan.code;
+
+                    return (
+                      <button
+                        key={plan.id}
+                        type="button"
+                        onClick={() => setSelectedPlanCode(plan.code)}
+                        className={`rounded-large border p-4 text-left transition-colors ${
+                          isSelected
+                            ? "border-primary bg-primary/10"
+                            : "border-default-200 bg-white hover:bg-default-50"
+                        }`}
+                      >
+                        <div className="mb-3 flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-base font-semibold text-foreground">{plan.name}</p>
+                            <p className="text-xs text-default-500">
+                              {formatCycle(plan.billing_period_days, locale)}
+                            </p>
+                          </div>
+                          <p className="text-lg font-bold text-foreground">
+                            {formatMoney(plan.price, plan.currency, locale)}
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon icon="solar:chat-line-linear" width={16} />
+                            <span>{messages.billing.includedChats}: {plan.included_chats}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon icon="solar:users-group-rounded-linear" width={16} />
+                            <span>{messages.billing.assistantLimit}: {plan.assistant_limit}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon icon="solar:link-minimalistic-2-linear" width={16} />
+                            <span>
+                              {messages.billing.integrationLimit}: {plan.integrations_per_channel_limit}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon icon="solar:dollar-minimalistic-linear" width={16} />
+                            <span>
+                              {locale === "ru"
+                                ? `После исчерпания лимита: ${formatMoney(plan.overage_chat_price, plan.currency, locale)} за 1 чат`
+                                : `After included limit: ${formatMoney(plan.overage_chat_price, plan.currency, locale)} per extra chat`}
+                            </span>
+                          </div>
+
+                          <div className="pt-1 text-xs font-medium text-default-500">
+                            {locale === "ru"
+                              ? "Доступные каналы интеграции"
+                              : "Available channels"}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon icon="fa6-brands:instagram" width={15} />
+                            <span>{locale === "ru" ? "Instagram" : "Instagram"}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon icon="solar:plain-2-linear" width={16} />
+                            <span>{locale === "ru" ? "Telegram" : "Telegram"}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon icon="solar:widget-2-linear" width={16} />
+                            <span>
+                              {locale === "ru" ? "Виджет чата для сайта" : "Website chat widget"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-default-700">
+                            <Icon icon="solar:code-square-linear" width={16} />
+                            <span>{locale === "ru" ? "API интеграция" : "API integration"}</span>
+                          </div>
+                        </div>
+
+                        {isSelected ? (
+                          <div className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-1 text-xs font-medium text-primary">
+                            <Icon icon="solar:check-circle-linear" width={14} />
+                            <span>{messages.billing.selectedPlan}</span>
+                          </div>
+                        ) : null}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex flex-col gap-3 rounded-medium border border-default-200 bg-default-50 p-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1">
+                  <p className="text-xs text-default-500">{messages.billing.totalToPayLabel}</p>
+                  <p className="text-xl font-semibold text-foreground">
+                    {selectedPlan
+                      ? formatMoney(totalToPay, selectedPlan.currency, locale)
+                      : formatMoney("0", "TJS", locale)}
+                  </p>
+                  {planChangeCredit > 0 && selectedPlan ? (
+                    <p className="text-xs text-success-600">
+                      {messages.billing.creditAppliedLabel}:{" "}
+                      {formatMoney(planChangeCredit, selectedPlan.currency, locale)}
+                    </p>
+                  ) : null}
+                </div>
+
+                <Button color="primary" isLoading={isCheckingOut} onPress={handleCheckout}>
+                  {isCheckingOut ? messages.billing.checkoutProcessing : messages.billing.checkoutButton}
+                </Button>
+              </div>
+            </CardBody>
+          </Card>
+        ) : null}
 
         <Card shadow="none" className="border border-default-200 bg-white">
           <CardBody className="space-y-3 p-5">
