@@ -133,6 +133,21 @@ function calculatePlanChangeCredit(
   return Math.min(credit, selectedPrice);
 }
 
+function getPlanDiscountPercent(plan: BillingPlan): number {
+  if (!plan.features || typeof plan.features !== "object") {
+    return 0;
+  }
+
+  const rawValue = (plan.features as Record<string, unknown>).discount_percent;
+  const parsed = typeof rawValue === "number" ? rawValue : Number(rawValue);
+
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return 0;
+  }
+
+  return Math.round(parsed);
+}
+
 function subscriptionStatus(
   status: string | null | undefined,
   billingMessages: ReturnType<typeof useI18n>["messages"]["billing"],
@@ -614,9 +629,10 @@ export default function BillingPage() {
               {plans.length === 0 ? (
                 <p className="text-sm text-default-500">{messages.billing.noPlansAvailable}</p>
               ) : (
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
                   {plans.map((plan) => {
                     const isSelected = selectedPlanCode === plan.code;
+                    const discountPercent = getPlanDiscountPercent(plan);
 
                     return (
                       <button
@@ -632,9 +648,18 @@ export default function BillingPage() {
                         <div className="mb-3 flex items-start justify-between gap-2">
                           <div>
                             <p className="text-base font-semibold text-foreground">{plan.name}</p>
-                            <p className="text-xs text-default-500">
-                              {formatCycle(plan.billing_period_days, locale)}
-                            </p>
+                            <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                              <p className="text-xs text-default-500">
+                                {formatCycle(plan.billing_period_days, locale)}
+                              </p>
+                              {discountPercent > 0 ? (
+                                <Chip size="sm" color="success" variant="flat">
+                                  {locale === "ru"
+                                    ? `Скидка ${discountPercent}%`
+                                    : `Save ${discountPercent}%`}
+                                </Chip>
+                              ) : null}
+                            </div>
                           </div>
                           <p className="text-lg font-bold text-foreground">
                             {formatMoney(plan.price, plan.currency, locale)}
