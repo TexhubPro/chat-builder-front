@@ -1,4 +1,5 @@
 import { ApiError } from "../auth/authClient";
+import { API_BASE_URL } from "../config/apiBaseUrl";
 
 export type BillingPlan = {
   id: number;
@@ -91,11 +92,6 @@ export type PayInvoiceResponse = {
     payload: Record<string, string>;
   } | null;
 };
-
-const API_BASE_URL = (import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api").replace(
-  /\/$/,
-  "",
-);
 
 async function parseJson(response: Response): Promise<unknown> {
   const contentType = response.headers.get("content-type") ?? "";
