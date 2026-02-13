@@ -70,7 +70,18 @@ Example:
 </VirtualHost>
 ```
 
-### 5) Troubleshooting blank page
+### 5) sManager / shared hosting quick fix
+
+If your hosting panel points domain root to `front/` (not `front/dist/`):
+
+1. Upload full `front/` project.
+2. Run build (`npm run build`) so `dist/` exists.
+3. Keep `front/.htaccess` in root (it forces serving files from `dist/`).
+4. Keep `AllowOverride All` enabled.
+
+This prevents loading source `index.html` with `/src/main.tsx` on production.
+
+### 6) Troubleshooting blank page
 
 If `bot.texhub.pro` shows a blank page, check page source:
 
