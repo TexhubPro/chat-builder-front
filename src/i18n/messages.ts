@@ -271,6 +271,39 @@ export type Messages = {
     assistantReplySuccess: string;
     sendFailed: string;
     assistantReplyFailed: string;
+    chatInfoButton: string;
+    chatInfoTitle: string;
+    chatInfoDescription: string;
+    chatInfoClient: string;
+    chatInfoAiToggle: string;
+    chatInfoAiEnabled: string;
+    chatInfoAiDisabled: string;
+    chatInfoContactsToggle: string;
+    chatInfoContactsTitle: string;
+    chatInfoNoContacts: string;
+    chatInfoCreateOrderButton: string;
+    orderModalTitle: string;
+    orderModalPhoneLabel: string;
+    orderModalPhonePlaceholder: string;
+    orderModalServiceLabel: string;
+    orderModalServicePlaceholder: string;
+    orderModalAddressLabel: string;
+    orderModalAddressPlaceholder: string;
+    orderModalAmountLabel: string;
+    orderModalAmountPlaceholder: string;
+    orderModalNoteLabel: string;
+    orderModalNotePlaceholder: string;
+    orderModalCancelButton: string;
+    orderModalSubmitButton: string;
+    orderModalRequiredFields: string;
+    orderModalInvalidAmount: string;
+    chatInfoHistoryTitle: string;
+    chatInfoNoHistory: string;
+    chatInfoHistoryJumpHint: string;
+    historyTypeTask: string;
+    historyTypeQuestion: string;
+    historyTypeOrder: string;
+    orderCreated: string;
     loadFailed: string;
     unauthorized: string;
     errorTitle: string;
@@ -646,6 +679,39 @@ export const MESSAGES: Record<Locale, Messages> = {
       assistantReplySuccess: "Ответ ассистента получен.",
       sendFailed: "Не удалось отправить сообщение.",
       assistantReplyFailed: "Не удалось получить ответ ассистента.",
+      chatInfoButton: "Информация о чате",
+      chatInfoTitle: "Информация о чате",
+      chatInfoDescription: "Детали клиента и история по этому диалогу.",
+      chatInfoClient: "Клиент",
+      chatInfoAiToggle: "AI-ответы для этого чата",
+      chatInfoAiEnabled: "ИИ для этого чата включен",
+      chatInfoAiDisabled: "ИИ для этого чата отключен",
+      chatInfoContactsToggle: "Показать контакты клиента",
+      chatInfoContactsTitle: "Контакты клиента",
+      chatInfoNoContacts: "Контакты пока не добавлены.",
+      chatInfoCreateOrderButton: "Создать заявку",
+      orderModalTitle: "Создать заказ",
+      orderModalPhoneLabel: "Номер телефона",
+      orderModalPhonePlaceholder: "Введите номер телефона",
+      orderModalServiceLabel: "Услуга",
+      orderModalServicePlaceholder: "Например: Консультация",
+      orderModalAddressLabel: "Адрес",
+      orderModalAddressPlaceholder: "Введите адрес",
+      orderModalAmountLabel: "Сумма (опционально)",
+      orderModalAmountPlaceholder: "Например: 120.50",
+      orderModalNoteLabel: "Заметка (опционально)",
+      orderModalNotePlaceholder: "Комментарий к заказу",
+      orderModalCancelButton: "Отмена",
+      orderModalSubmitButton: "Создать заказ",
+      orderModalRequiredFields: "Заполните номер телефона, услугу и адрес.",
+      orderModalInvalidAmount: "Сумма должна быть числом не меньше 0.",
+      chatInfoHistoryTitle: "История по чату",
+      chatInfoNoHistory: "Связанных записей пока нет.",
+      chatInfoHistoryJumpHint: "Нажмите, чтобы перейти к сообщению",
+      historyTypeTask: "Заявка",
+      historyTypeQuestion: "Вопрос",
+      historyTypeOrder: "Заказ",
+      orderCreated: "Заказ создан.",
       loadFailed: "Не удалось загрузить чаты.",
       unauthorized: "Сессия истекла. Войдите снова.",
       errorTitle: "Ошибка",
@@ -1022,6 +1088,39 @@ export const MESSAGES: Record<Locale, Messages> = {
       assistantReplySuccess: "Assistant response received.",
       sendFailed: "Failed to send message.",
       assistantReplyFailed: "Failed to get assistant response.",
+      chatInfoButton: "Chat info",
+      chatInfoTitle: "Chat information",
+      chatInfoDescription: "Client details and history for this dialog.",
+      chatInfoClient: "Client",
+      chatInfoAiToggle: "AI replies for this chat",
+      chatInfoAiEnabled: "AI is enabled for this chat",
+      chatInfoAiDisabled: "AI is disabled for this chat",
+      chatInfoContactsToggle: "Show client contacts",
+      chatInfoContactsTitle: "Client contacts",
+      chatInfoNoContacts: "No contacts provided yet.",
+      chatInfoCreateOrderButton: "Create lead",
+      orderModalTitle: "Create order",
+      orderModalPhoneLabel: "Phone",
+      orderModalPhonePlaceholder: "Enter phone number",
+      orderModalServiceLabel: "Service",
+      orderModalServicePlaceholder: "For example: Consultation",
+      orderModalAddressLabel: "Address",
+      orderModalAddressPlaceholder: "Enter address",
+      orderModalAmountLabel: "Amount (optional)",
+      orderModalAmountPlaceholder: "For example: 120.50",
+      orderModalNoteLabel: "Note (optional)",
+      orderModalNotePlaceholder: "Order comment",
+      orderModalCancelButton: "Cancel",
+      orderModalSubmitButton: "Create order",
+      orderModalRequiredFields: "Fill in phone, service and address.",
+      orderModalInvalidAmount: "Amount must be a number greater than or equal to 0.",
+      chatInfoHistoryTitle: "Chat history",
+      chatInfoNoHistory: "No linked records yet.",
+      chatInfoHistoryJumpHint: "Click to jump to message",
+      historyTypeTask: "Task",
+      historyTypeQuestion: "Question",
+      historyTypeOrder: "Order",
+      orderCreated: "Order created.",
       loadFailed: "Failed to load chats.",
       unauthorized: "Session expired. Please sign in again.",
       errorTitle: "Error",

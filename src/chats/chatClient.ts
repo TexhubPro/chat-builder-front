@@ -64,6 +64,28 @@ export type ChatSubscriptionInfo = {
   status: string | null;
 };
 
+export type ChatInsightClient = {
+  id: number;
+  name: string;
+  status: string | null;
+};
+
+export type ChatInsightContact = {
+  key: string;
+  label: string;
+  value: string;
+};
+
+export type ChatInsightHistoryItem = {
+  id: string;
+  record_id: number;
+  type: "task" | "question" | "order" | string;
+  title: string;
+  status: string | null;
+  created_at: string | null;
+  chat_message_id: number | null;
+};
+
 type ChatsListResponse = {
   chats: ChatItem[];
   assistants: ChatAssistant[];
@@ -94,6 +116,26 @@ type ChatAssistantReplyResponse = {
   chat: ChatItem;
   incoming_message: ChatMessageItem;
   assistant_message: ChatMessageItem;
+};
+
+type ChatInsightsResponse = {
+  chat: ChatItem;
+  client: ChatInsightClient | null;
+  contacts: ChatInsightContact[];
+  history: ChatInsightHistoryItem[];
+};
+
+type ChatTaskCreateResponse = {
+  message: string;
+  task: ChatInsightHistoryItem;
+  client: ChatInsightClient | null;
+};
+
+type ChatOrderCreateResponse = {
+  message: string;
+  order: ChatInsightHistoryItem;
+  client: ChatInsightClient | null;
+  contacts: ChatInsightContact[];
 };
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api").replace(
@@ -268,6 +310,61 @@ export async function chatAssistantReplyRequest(
   },
 ): Promise<ChatAssistantReplyResponse> {
   return request<ChatAssistantReplyResponse>(`/chats/${chatId}/assistant-reply`, token, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function chatInsightsRequest(
+  token: string,
+  chatId: number,
+): Promise<ChatInsightsResponse> {
+  return request<ChatInsightsResponse>(`/chats/${chatId}/insights`, token, {
+    method: "GET",
+  });
+}
+
+export async function chatSetAiEnabledRequest(
+  token: string,
+  chatId: number,
+  enabled: boolean,
+): Promise<ChatMutationResponse> {
+  return request<ChatMutationResponse>(`/chats/${chatId}/ai-enabled`, token, {
+    method: "PATCH",
+    body: JSON.stringify({
+      enabled,
+    }),
+  });
+}
+
+export async function chatCreateTaskRequest(
+  token: string,
+  chatId: number,
+  payload: {
+    description?: string;
+    chat_message_id?: number;
+    priority?: "low" | "normal" | "high" | "urgent";
+  } = {},
+): Promise<ChatTaskCreateResponse> {
+  return request<ChatTaskCreateResponse>(`/chats/${chatId}/tasks`, token, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function chatCreateOrderRequest(
+  token: string,
+  chatId: number,
+  payload: {
+    phone: string;
+    service_name: string;
+    address: string;
+    amount?: number;
+    note?: string;
+    chat_message_id?: number;
+  },
+): Promise<ChatOrderCreateResponse> {
+  return request<ChatOrderCreateResponse>(`/chats/${chatId}/orders`, token, {
     method: "POST",
     body: JSON.stringify(payload),
   });
