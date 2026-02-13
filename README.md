@@ -5,7 +5,7 @@
 `.env.production` is configured as:
 
 ```env
-VITE_API_URL=https://bot.texhub.pro/api
+VITE_API_URL=https://safina.texhub.pro/api
 ```
 
 Build:
@@ -16,6 +16,7 @@ npm run build
 ```
 
 Deploy `dist/` to server (for example: `/var/www/chat-flow-front/dist`).
+Build script also creates `dist/.htaccess` for Apache SPA fallback.
 
 ### 2) Nginx config (important for React Router)
 
@@ -47,7 +48,29 @@ server {
 
 Configure HTTPS certificate for `bot.texhub.pro` (Let's Encrypt or your provider).
 
-### 4) Troubleshooting blank page
+### 4) Apache config
+
+If frontend runs on Apache instead of Nginx:
+
+1. Enable `mod_rewrite` and `mod_headers`.
+2. Point `DocumentRoot` to built `dist/`.
+3. Ensure `AllowOverride All` for that directory (so `.htaccess` works).
+
+Example:
+
+```apache
+<VirtualHost *:80>
+    ServerName bot.texhub.pro
+    DocumentRoot /var/www/chat-flow-front/dist
+
+    <Directory /var/www/chat-flow-front/dist>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+
+### 5) Troubleshooting blank page
 
 If `bot.texhub.pro` shows a blank page, check page source:
 
