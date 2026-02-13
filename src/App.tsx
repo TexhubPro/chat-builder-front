@@ -8,6 +8,7 @@ const BillingPage = lazy(() => import('./pages/BillingPage'))
 const ClientChatsPage = lazy(() => import('./pages/ClientChatsPage'))
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
 const HomePage = lazy(() => import('./pages/HomePage'))
+const IntegrationsPage = lazy(() => import('./pages/IntegrationsPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const ModerationPage = lazy(() => import('./pages/ModerationPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
@@ -28,6 +29,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/client-chats" element={<ClientChatsPage />} />
           <Route path="/assistant/training" element={<AssistantTrainingPage />} />
+          <Route path="/integrations" element={<IntegrationsPage />} />
           <Route path="/billing" element={<BillingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>

@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardBody,
-  Chip,
   Divider,
   Drawer,
   DrawerBody,
@@ -923,21 +922,6 @@ export default function ClientChatsPage() {
     ],
   );
 
-  const channelIcon = useCallback((channel: string): string => {
-    switch (channel) {
-      case "instagram":
-        return "solar:instagram-linear";
-      case "telegram":
-        return "solar:plain-2-linear";
-      case "widget":
-        return "solar:widget-2-outline";
-      case "api":
-        return "solar:code-square-linear";
-      default:
-        return "solar:chat-round-line-outline";
-    }
-  }, []);
-
   const channelTabTitles = useMemo(
     () => ({
       all: messages.clientChats.allChatsTab,
@@ -1226,6 +1210,10 @@ export default function ClientChatsPage() {
     "Assistant";
   const selectedAssistantIsOnline = Boolean(selectedChat?.assistant?.is_active);
   const selectedChatAiEnabled = isChatAiEnabled(selectedChat);
+  const composerBusy = isSendingMessage || isAskingAssistant;
+  const primarySendLoading = isAssistantConversation
+    ? isAskingAssistant
+    : isSendingMessage;
 
   return (
     <DashboardLayout
@@ -1422,11 +1410,7 @@ export default function ClientChatsPage() {
                         </Button>
 
                         <Avatar
-                          src={
-                            isAssistantConversation
-                              ? undefined
-                              : selectedChat.avatar ?? undefined
-                          }
+                          src={selectedChat.avatar ?? undefined}
                           name={selectedChat.name ?? `#${selectedChat.id}`}
                           showFallback
                           fallback={
@@ -1443,43 +1427,23 @@ export default function ClientChatsPage() {
                           <p className="truncate text-sm font-semibold text-foreground sm:text-base">
                             {selectedChat.name?.trim() || `#${selectedChat.id}`}
                           </p>
-                          {isAssistantConversation ? (
-                            <p className="text-xs text-default-500">
-                              Assistant ·{" "}
-                              {selectedAssistantIsOnline
-                                ? locale === "ru"
-                                  ? "Онлайн"
-                                  : "Online"
-                                : locale === "ru"
-                                ? "Оффлайн"
-                                : "Offline"}
-                            </p>
-                          ) : (
-                            <p className="text-xs text-default-500">
-                              {messages.clientChats.channelLabel}:{" "}
-                              {channelTitle(selectedChat.channel)}
-                            </p>
-                          )}
+                          <p className="text-xs text-default-500">
+                            {isAssistantConversation
+                              ? `Assistant · ${
+                                  selectedAssistantIsOnline
+                                    ? locale === "ru"
+                                      ? "Онлайн"
+                                      : "Online"
+                                    : locale === "ru"
+                                    ? "Оффлайн"
+                                    : "Offline"
+                                }`
+                              : `${messages.clientChats.channelLabel}: ${channelTitle(selectedChat.channel)}`}
+                          </p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        {!isAssistantConversation ? (
-                          <Chip
-                            size="sm"
-                            variant="flat"
-                            startContent={
-                              <Icon
-                                icon={channelIcon(selectedChat.channel)}
-                                width={14}
-                                className="text-default-600"
-                              />
-                            }
-                          >
-                            {channelTitle(selectedChat.channel)}
-                          </Chip>
-                        ) : null}
-
                         <Button
                           isIconOnly
                           size="sm"
@@ -1495,55 +1459,9 @@ export default function ClientChatsPage() {
                         </Button>
                       </div>
                     </div>
-
-                    {!isAssistantConversation ? (
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs text-default-500">
-                          {messages.clientChats.assistantTargetLabel}
-                        </span>
-
-                        <div className="max-w-full overflow-x-auto rounded-large bg-default-100 p-1">
-                          <Tabs
-                            selectedKey={replyAssistantKey}
-                            onSelectionChange={(key) =>
-                              setReplyAssistantKey(String(key))
-                            }
-                            size="sm"
-                            radius="full"
-                            variant="light"
-                            classNames={{
-                              base: "min-w-max",
-                              tabList:
-                                "bg-transparent p-0 flex-nowrap min-w-max gap-1",
-                              tab: "h-8 px-3 rounded-[12px] border border-transparent data-[selected=true]:bg-white data-[selected=true]:border-default-300 data-[selected=true]:shadow-none",
-                              tabContent:
-                                "text-default-600 group-data-[selected=true]:text-foreground",
-                              cursor: "hidden",
-                            }}
-                          >
-                            <Tab
-                              key="auto"
-                              title={messages.clientChats.assistantAutoOption}
-                            />
-                            {assistants.map((assistant) => (
-                              <Tab
-                                key={String(assistant.id)}
-                                title={assistant.name}
-                              />
-                            ))}
-                          </Tabs>
-                        </div>
-                      </div>
-                    ) : null}
                   </div>
 
-                  <ScrollShadow
-                    className={`flex-1 ${
-                      isAssistantConversation
-                        ? "bg-default-50 px-3 py-4 sm:px-4"
-                        : "px-4 py-4"
-                    }`}
-                  >
+                  <ScrollShadow className="flex-1 bg-default-50 px-3 py-4 sm:px-4">
                     {isLoadingMessages ? (
                       <div className="flex h-full items-center justify-center">
                         <Spinner
@@ -1556,18 +1474,18 @@ export default function ClientChatsPage() {
                         {messages.clientChats.emptyMessages}
                       </p>
                     ) : (
-                      <div
-                        className={
-                          isAssistantConversation
-                            ? "mx-auto w-full max-w-[980px] space-y-5"
-                            : "space-y-3"
-                        }
-                      >
+                      <div className="mx-auto w-full max-w-[980px] space-y-5">
                         {chatMessages.map((message) => {
                           const isOutgoing = isAssistantConversation
                             ? message.sender_type === "customer" ||
                               message.sender_type === "agent"
                             : message.direction === "outbound";
+                          const inboundAvatarName = isAssistantConversation
+                            ? selectedAssistantName
+                            : selectedChat.name?.trim() || `#${selectedChat.id}`;
+                          const inboundAvatarSrc = isAssistantConversation
+                            ? undefined
+                            : selectedChat.avatar ?? undefined;
                           const messageTime = formatChatDate(
                             message.sent_at ?? message.created_at,
                             locale,
@@ -1586,16 +1504,14 @@ export default function ClientChatsPage() {
                                   isOutgoing ? "flex-row-reverse" : "flex-row"
                                 }`}
                               >
-                                {isAssistantConversation && !isOutgoing ? (
+                                {!isOutgoing ? (
                                   <Avatar
-                                    src={undefined}
-                                    name={selectedAssistantName}
+                                    src={inboundAvatarSrc}
+                                    name={inboundAvatarName}
                                     showFallback
                                     fallback={
                                       <span className="text-[11px] font-semibold text-default-700">
-                                        {initialsFromName(
-                                          selectedAssistantName,
-                                        )}
+                                        {initialsFromName(inboundAvatarName)}
                                       </span>
                                     }
                                     className="h-8 w-8 shrink-0"
@@ -1610,15 +1526,7 @@ export default function ClientChatsPage() {
                                     focusedMessageId === message.id
                                       ? "ring-2 ring-primary-300 ring-offset-1 ring-offset-background"
                                       : ""
-                                  } ${
-                                    isAssistantConversation
-                                      ? isOutgoing
-                                        ? "max-w-[88%] min-w-[148px] border-default-200 bg-default-100 sm:max-w-[74%]"
-                                        : "max-w-[88%] min-w-[148px] border-default-200 bg-default-100 sm:max-w-[74%]"
-                                      : isOutgoing
-                                      ? "max-w-[86%] border-primary-200 bg-primary-50"
-                                      : "max-w-[86%] border-default-200 bg-default-50"
-                                  }`}
+                                  } max-w-[88%] min-w-[148px] border-default-200 bg-default-100 sm:max-w-[74%]`}
                                 >
                                   <p className="whitespace-pre-wrap break-words text-sm text-foreground">
                                     {preview}
@@ -1692,107 +1600,71 @@ export default function ClientChatsPage() {
 
                   <Divider />
 
-                  {isAssistantConversation ? (
-                    <div className="border-t border-default-200 bg-white px-2 pt-2 pb-1 sm:px-2 sm:pb-2">
-                      <div className="mx-auto w-full max-w-full">
-                        <div className="flex items-center gap-2 rounded-xl border border-default-200 bg-white px-2 py-0.5">
+                  <div className="border-t border-default-200 bg-white px-2 pt-2 pb-1 sm:px-2 sm:pb-2">
+                    <div className="mx-auto w-full max-w-full">
+                      <div className="flex items-center gap-2 rounded-xl border border-default-200 bg-white px-2 py-0.5">
                         <Button
                           isIconOnly
                           size="sm"
                           variant="light"
                           onPress={handleOpenFilePicker}
-                          isDisabled={isSendingMessage}
+                          isDisabled={composerBusy}
                           aria-label="Attach file"
                         >
                           <Icon icon="solar:paperclip-linear" width={17} />
-                          </Button>
+                        </Button>
 
-                          <Input
-                            value={composerValue}
-                            onValueChange={setComposerValue}
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter") {
-                                event.preventDefault();
-                                void handleAskAssistant();
-                              }
-                            }}
-                            placeholder={
-                              messages.clientChats.messagePlaceholder
+                        <Input
+                          value={composerValue}
+                          onValueChange={setComposerValue}
+                          onKeyDown={(event) => {
+                            if (event.key !== "Enter") {
+                              return;
                             }
-                            variant="flat"
-                            className="flex-1 bg-transparent hover:bg-transparent focus:bg-transparent"
-                            classNames={{
-                              inputWrapper: "bg-transparent shadow-none",
-                            }}
-                          />
 
-                          <Button
-                            isIconOnly
-                            size="sm"
-                            color="primary"
-                            radius="md"
-                            onPress={handleAskAssistant}
-                            isDisabled={
-                              isSendingMessage || composerValue.trim() === ""
+                            event.preventDefault();
+
+                            if (isAssistantConversation) {
+                              void handleAskAssistant();
+                              return;
                             }
-                            aria-label={messages.clientChats.askAssistantButton}
-                          >
-                            <Icon icon="solar:arrow-up-linear" width={16} />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-3 px-4 py-3">
-                      <Textarea
-                        minRows={2}
-                        maxRows={6}
-                        value={composerValue}
-                        onValueChange={setComposerValue}
-                        placeholder={messages.clientChats.messagePlaceholder}
-                        variant="bordered"
-                      />
 
-                      <div className="flex flex-col gap-2 sm:flex-row">
+                            void handleSendMessage();
+                          }}
+                          placeholder={messages.clientChats.messagePlaceholder}
+                          variant="flat"
+                          className="flex-1 bg-transparent hover:bg-transparent focus:bg-transparent"
+                          classNames={{
+                            inputWrapper: "bg-transparent shadow-none",
+                          }}
+                        />
+
                         <Button
+                          isIconOnly
+                          size="sm"
                           color="primary"
-                          className="sm:flex-1"
-                          onPress={handleAskAssistant}
-                          isLoading={isAskingAssistant}
-                          isDisabled={
-                            isSendingMessage || composerValue.trim() === ""
-                          }
-                          startContent={
-                            !isAskingAssistant ? (
-                              <Icon
-                                icon="solar:stars-line-duotone"
-                                width={16}
-                              />
-                            ) : null
-                          }
-                        >
-                          {messages.clientChats.askAssistantButton}
-                        </Button>
+                          radius="md"
+                          onPress={() => {
+                            if (isAssistantConversation) {
+                              void handleAskAssistant();
+                              return;
+                            }
 
-                        <Button
-                          variant="bordered"
-                          className="sm:flex-1"
-                          onPress={handleSendMessage}
-                          isLoading={isSendingMessage}
-                          isDisabled={
-                            isAskingAssistant || composerValue.trim() === ""
-                          }
-                          startContent={
-                            !isSendingMessage ? (
-                              <Icon icon="solar:plain-2-linear" width={16} />
-                            ) : null
+                            void handleSendMessage();
+                          }}
+                          isLoading={primarySendLoading}
+                          isDisabled={composerBusy || composerValue.trim() === ""}
+                          aria-label={
+                            isAssistantConversation
+                              ? messages.clientChats.askAssistantButton
+                              : messages.clientChats.sendButton
                           }
                         >
-                          {messages.clientChats.sendButton}
+                          <Icon icon="solar:arrow-up-linear" width={16} />
                         </Button>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               ) : (
                 <div className="flex h-[calc(100vh-180px)] items-center justify-center px-6">

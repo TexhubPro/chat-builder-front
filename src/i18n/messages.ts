@@ -10,6 +10,7 @@ export type Messages = {
   common: {
     loadingSession: string;
     separatorOr: string;
+    cancel: string;
     language: {
       ru: string;
       en: string;
@@ -309,6 +310,49 @@ export type Messages = {
     errorTitle: string;
     successTitle: string;
   };
+  integrations: {
+    title: string;
+    subtitle: string;
+    assistantsTitle: string;
+    assistantsSubtitle: string;
+    channelsTitle: string;
+    channelsSubtitle: string;
+    selectAssistantTitle: string;
+    selectAssistantDescription: string;
+    backToAssistants: string;
+    noAssistants: string;
+    loadingAssistants: string;
+    loadingChannels: string;
+    assistantRunning: string;
+    assistantStopped: string;
+    activeIntegrationsLabel: string;
+    integrationLimitLabel: string;
+    statusEnabled: string;
+    statusDisabled: string;
+    channelInstagram: string;
+    channelTelegram: string;
+    channelWidget: string;
+    channelApi: string;
+    channelInstagramDescription: string;
+    channelTelegramDescription: string;
+    channelWidgetDescription: string;
+    channelApiDescription: string;
+    accountLabel: string;
+    noConnection: string;
+    connectButton: string;
+    disconnectButton: string;
+    toggleLabel: string;
+    telegramTokenModalTitle: string;
+    telegramTokenModalDescription: string;
+    telegramTokenLabel: string;
+    telegramTokenPlaceholder: string;
+    telegramTokenRequired: string;
+    loadFailed: string;
+    updateFailed: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
   assistantTraining: {
     title: string;
     subtitle: string;
@@ -393,6 +437,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     common: {
       loadingSession: "Проверяем сессию...",
       separatorOr: "ИЛИ",
+      cancel: "Отмена",
       language: {
         ru: "RU",
         en: "EN",
@@ -717,6 +762,51 @@ export const MESSAGES: Record<Locale, Messages> = {
       errorTitle: "Ошибка",
       successTitle: "Успешно",
     },
+    integrations: {
+      title: "Интеграции",
+      subtitle: "Подключайте каналы к ассистентам и управляйте их активностью.",
+      assistantsTitle: "Ассистенты",
+      assistantsSubtitle: "Выберите ассистента для настройки интеграций.",
+      channelsTitle: "Каналы интеграции",
+      channelsSubtitle: "Включайте или отключайте каналы для выбранного ассистента.",
+      selectAssistantTitle: "Выберите ассистента",
+      selectAssistantDescription:
+        "Выберите ассистента слева, чтобы открыть настройки Instagram, Telegram, веб-виджета и API.",
+      backToAssistants: "Назад к ассистентам",
+      noAssistants: "Ассистенты пока не созданы.",
+      loadingAssistants: "Загружаем ассистентов...",
+      loadingChannels: "Загружаем интеграции...",
+      assistantRunning: "Запущен",
+      assistantStopped: "Остановлен",
+      activeIntegrationsLabel: "Активные интеграции",
+      integrationLimitLabel: "Лимит",
+      statusEnabled: "Включено",
+      statusDisabled: "Отключено",
+      channelInstagram: "Instagram",
+      channelTelegram: "Telegram",
+      channelWidget: "Веб-виджет",
+      channelApi: "API",
+      channelInstagramDescription: "Принимайте и отправляйте сообщения из Instagram.",
+      channelTelegramDescription: "Работайте с клиентами через Telegram Bot.",
+      channelWidgetDescription: "Подключите чат-виджет для сайта компании.",
+      channelApiDescription: "Интеграция через API для внешних систем.",
+      accountLabel: "Аккаунт",
+      noConnection: "Канал пока не подключен.",
+      connectButton: "Подключить",
+      disconnectButton: "Отключить",
+      toggleLabel: "Статус канала",
+      telegramTokenModalTitle: "Подключение Telegram Bot",
+      telegramTokenModalDescription:
+        "Вставьте токен Telegram бота. Система проверит токен и автоматически установит webhook.",
+      telegramTokenLabel: "Токен бота",
+      telegramTokenPlaceholder: "Например: 123456789:AA...",
+      telegramTokenRequired: "Введите токен Telegram бота.",
+      loadFailed: "Не удалось загрузить интеграции.",
+      updateFailed: "Не удалось обновить состояние интеграции.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
     assistantTraining: {
       title: "Обучение ассистента",
       subtitle: "Настройте инструкции, ограничения, ответы и инструменты ассистента.",
@@ -803,6 +893,7 @@ export const MESSAGES: Record<Locale, Messages> = {
     common: {
       loadingSession: "Checking session...",
       separatorOr: "OR",
+      cancel: "Cancel",
       language: {
         ru: "RU",
         en: "EN",
@@ -1122,6 +1213,51 @@ export const MESSAGES: Record<Locale, Messages> = {
       historyTypeOrder: "Order",
       orderCreated: "Order created.",
       loadFailed: "Failed to load chats.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
+    },
+    integrations: {
+      title: "Integrations",
+      subtitle: "Connect channels to assistants and control channel activity.",
+      assistantsTitle: "Assistants",
+      assistantsSubtitle: "Select an assistant to configure integrations.",
+      channelsTitle: "Integration channels",
+      channelsSubtitle: "Enable or disable channels for the selected assistant.",
+      selectAssistantTitle: "Select an assistant",
+      selectAssistantDescription:
+        "Choose an assistant from the left side to configure Instagram, Telegram, web widget, and API channels.",
+      backToAssistants: "Back to assistants",
+      noAssistants: "No assistants created yet.",
+      loadingAssistants: "Loading assistants...",
+      loadingChannels: "Loading integrations...",
+      assistantRunning: "Running",
+      assistantStopped: "Stopped",
+      activeIntegrationsLabel: "Active integrations",
+      integrationLimitLabel: "Limit",
+      statusEnabled: "Enabled",
+      statusDisabled: "Disabled",
+      channelInstagram: "Instagram",
+      channelTelegram: "Telegram",
+      channelWidget: "Web widget",
+      channelApi: "API",
+      channelInstagramDescription: "Receive and send customer messages from Instagram.",
+      channelTelegramDescription: "Communicate with clients via Telegram bot.",
+      channelWidgetDescription: "Connect a web chat widget for your website.",
+      channelApiDescription: "API integration for external systems.",
+      accountLabel: "Account",
+      noConnection: "Channel is not connected yet.",
+      connectButton: "Connect",
+      disconnectButton: "Disconnect",
+      toggleLabel: "Channel status",
+      telegramTokenModalTitle: "Connect Telegram Bot",
+      telegramTokenModalDescription:
+        "Paste Telegram bot token. The system will validate it and set webhook automatically.",
+      telegramTokenLabel: "Bot token",
+      telegramTokenPlaceholder: "For example: 123456789:AA...",
+      telegramTokenRequired: "Telegram bot token is required.",
+      loadFailed: "Failed to load integrations.",
+      updateFailed: "Failed to update integration state.",
       unauthorized: "Session expired. Please sign in again.",
       errorTitle: "Error",
       successTitle: "Success",
