@@ -46,3 +46,21 @@ server {
 ### 3) SSL
 
 Configure HTTPS certificate for `bot.texhub.pro` (Let's Encrypt or your provider).
+
+### 4) Troubleshooting blank page
+
+If `bot.texhub.pro` shows a blank page, check page source:
+
+- Wrong (source files are deployed):
+  - `<script type="module" src="/src/main.tsx"></script>`
+- Correct (built files are deployed):
+  - `<script type="module" crossorigin src="/assets/index-*.js"></script>`
+
+Fix:
+
+1. Run `npm ci && npm run build`.
+2. Deploy only `dist/` content to web root.
+3. Ensure Nginx uses SPA fallback:
+   - `try_files $uri $uri/ /index.html;`
+4. Ensure API path works:
+   - `https://bot.texhub.pro/api` should not return `404`.
