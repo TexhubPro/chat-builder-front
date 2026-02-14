@@ -157,6 +157,94 @@ export type Messages = {
     profileUpdated: string;
     updateFailed: string;
   };
+  businessSettings: {
+    title: string;
+    subtitle: string;
+    profileTitle: string;
+    accountTypeLabel: string;
+    accountTypeWithAppointments: string;
+    accountTypeWithoutAppointments: string;
+    nameLabel: string;
+    nameValidation: string;
+    shortDescriptionLabel: string;
+    industryLabel: string;
+    primaryGoalLabel: string;
+    contactEmailLabel: string;
+    contactPhoneLabel: string;
+    websiteLabel: string;
+    addressLabel: string;
+    timezoneLabel: string;
+    currencyLabel: string;
+    timezonePlaceholder: string;
+    workingHoursLabel: string;
+    scheduleTitle: string;
+    scheduleSubtitle: string;
+    invalidScheduleRange: string;
+    dayOffLabel: string;
+    startTimeLabel: string;
+    endTimeLabel: string;
+    mondayLabel: string;
+    tuesdayLabel: string;
+    wednesdayLabel: string;
+    thursdayLabel: string;
+    fridayLabel: string;
+    saturdayLabel: string;
+    sundayLabel: string;
+    bookingTitle: string;
+    bookingSubtitle: string;
+    bookingDisabledTitle: string;
+    bookingDisabledDescription: string;
+    slotLabel: string;
+    bufferLabel: string;
+    maxDaysAheadLabel: string;
+    minutesUnit: string;
+    autoConfirmLabel: string;
+    requiredFieldsTitle: string;
+    requiredFieldsSubtitle: string;
+    orderRequiredFieldsLabel: string;
+    appointmentRequiredFieldsLabel: string;
+    requiredFieldClientName: string;
+    requiredFieldPhone: string;
+    requiredFieldService: string;
+    requiredFieldAddress: string;
+    requiredFieldAmount: string;
+    requiredFieldNote: string;
+    requiredFieldAppointmentDate: string;
+    requiredFieldAppointmentTime: string;
+    requiredFieldAppointmentDuration: string;
+    aiLanguagesTitle: string;
+    aiLanguagesSubtitle: string;
+    aiLanguagesLabel: string;
+    aiLanguageRequiredValidation: string;
+    aiLanguageRu: string;
+    aiLanguageEn: string;
+    aiLanguageTg: string;
+    aiLanguageUz: string;
+    aiLanguageTr: string;
+    aiLanguageFa: string;
+    deliveryTitle: string;
+    deliverySubtitle: string;
+    deliveryEnabledLabel: string;
+    deliveryRequireAddressLabel: string;
+    deliveryRequireDateTimeLabel: string;
+    deliveryEtaLabel: string;
+    deliveryFeeLabel: string;
+    deliveryFreeFromLabel: string;
+    deliveryAvailableFromLabel: string;
+    deliveryAvailableToLabel: string;
+    deliveryNotesLabel: string;
+    invalidDeliveryRange: string;
+    invalidDeliveryFee: string;
+    invalidDeliveryFreeFromAmount: string;
+    saveButton: string;
+    loading: string;
+    loadFailed: string;
+    saveFailed: string;
+    saveSuccess: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
   billing: {
     title: string;
     subtitle: string;
@@ -240,6 +328,68 @@ export type Messages = {
     errorTitle: string;
     successTitle: string;
   };
+  catalog: {
+    title: string;
+    subtitle: string;
+    assistantsTitle: string;
+    assistantsSubtitle: string;
+    backToAssistants: string;
+    noAssistants: string;
+    selectAssistant: string;
+    selectedAssistantPrefix: string;
+    addService: string;
+    addProduct: string;
+    servicesTab: string;
+    productsTab: string;
+    emptyServices: string;
+    emptyProducts: string;
+    statusActive: string;
+    statusInactive: string;
+    stockLabel: string;
+    unlimitedStock: string;
+    newServiceTitle: string;
+    editServiceTitle: string;
+    newProductTitle: string;
+    editProductTitle: string;
+    nameLabel: string;
+    skuLabel: string;
+    priceLabel: string;
+    currencyLabel: string;
+    sortOrderLabel: string;
+    descriptionLabel: string;
+    termsLabel: string;
+    photoUrlsLabel: string;
+    specialistsTitle: string;
+    addSpecialist: string;
+    noSpecialists: string;
+    specialistNameLabel: string;
+    specialistPriceLabel: string;
+    productLinkLabel: string;
+    openProductLink: string;
+    activeLabel: string;
+    unlimitedStockLabel: string;
+    saveButton: string;
+    validationName: string;
+    validationPrice: string;
+    validationSortOrder: string;
+    validationStock: string;
+    validationSpecialistName: string;
+    validationSpecialistPrice: string;
+    validationProductLink: string;
+    loadAssistantsFailed: string;
+    loadCatalogFailed: string;
+    saveFailed: string;
+    deleteFailed: string;
+    serviceCreated: string;
+    serviceUpdated: string;
+    serviceDeleted: string;
+    productCreated: string;
+    productUpdated: string;
+    productDeleted: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
   clientChats: {
     title: string;
     subtitle: string;
@@ -273,6 +423,8 @@ export type Messages = {
     sendFailed: string;
     assistantReplyFailed: string;
     chatInfoButton: string;
+    resetChatButton: string;
+    resetChatFailed: string;
     chatInfoTitle: string;
     chatInfoDescription: string;
     chatInfoClient: string;
@@ -292,12 +444,19 @@ export type Messages = {
     orderModalAddressPlaceholder: string;
     orderModalAmountLabel: string;
     orderModalAmountPlaceholder: string;
+    orderModalBookAppointmentSwitch: string;
+    orderModalAppointmentDateLabel: string;
+    orderModalAppointmentTimeLabel: string;
+    orderModalAppointmentDurationLabel: string;
+    orderModalAppointmentDurationPlaceholder: string;
     orderModalNoteLabel: string;
     orderModalNotePlaceholder: string;
     orderModalCancelButton: string;
     orderModalSubmitButton: string;
     orderModalRequiredFields: string;
+    orderModalAppointmentRequiredFields: string;
     orderModalInvalidAmount: string;
+    orderModalInvalidDuration: string;
     chatInfoHistoryTitle: string;
     chatInfoNoHistory: string;
     chatInfoHistoryJumpHint: string;
@@ -309,6 +468,125 @@ export type Messages = {
     unauthorized: string;
     errorTitle: string;
     successTitle: string;
+  };
+  clientRequests: {
+    title: string;
+    subtitle: string;
+    refreshButton: string;
+    loading: string;
+    empty: string;
+    columnNew: string;
+    columnInProgress: string;
+    columnAppointments: string;
+    columnCompleted: string;
+    openChatButton: string;
+    editButton: string;
+    deleteButton: string;
+    moveToProgressButton: string;
+    moveToAppointmentsButton: string;
+    moveToCompletedButton: string;
+    moveToConfirmedButton: string;
+    moveToCourierButton: string;
+    moveToDeliveredButton: string;
+    markCanceledButton: string;
+    archiveButton: string;
+    reopenButton: string;
+    appointmentLabel: string;
+    noPhone: string;
+    noAddress: string;
+    amountLabel: string;
+    serviceLabel: string;
+    noteLabel: string;
+    clientLabel: string;
+    chatChannelLabel: string;
+    statusNew: string;
+    statusInProgress: string;
+    statusAppointments: string;
+    statusCompleted: string;
+    statusConfirmed: string;
+    statusCanceled: string;
+    statusHandedToCourier: string;
+    statusDelivered: string;
+    editModalTitle: string;
+    editModalSave: string;
+    editModalCancel: string;
+    editStatusLabel: string;
+    editClientNameLabel: string;
+    editPhoneLabel: string;
+    editServiceLabel: string;
+    editAddressLabel: string;
+    editAmountLabel: string;
+    editNoteLabel: string;
+    editBookingSwitch: string;
+    editAppointmentDateLabel: string;
+    editAppointmentTimeLabel: string;
+    editAppointmentDurationLabel: string;
+    editAppointmentDurationPlaceholder: string;
+    requiredFields: string;
+    invalidAmount: string;
+    invalidDuration: string;
+    appointmentRequired: string;
+    updateSuccess: string;
+    updateFailed: string;
+    deleteSuccess: string;
+    deleteFailed: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
+  clientBase: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    refreshButton: string;
+    statusAll: string;
+    statusActive: string;
+    statusArchived: string;
+    statusBlocked: string;
+    loading: string;
+    empty: string;
+    viewHistoryButton: string;
+    statsOrders: string;
+    statsAppointments: string;
+    statsTasks: string;
+    statsQuestions: string;
+    totalSpent: string;
+    lastContact: string;
+    lastRequest: string;
+    lastQuestion: string;
+    phoneLabel: string;
+    emailLabel: string;
+    notesLabel: string;
+    statusLabel: string;
+    modalTitle: string;
+    modalSubtitle: string;
+    modalLoading: string;
+    timelineTab: string;
+    ordersTab: string;
+    appointmentsTab: string;
+    tasksTab: string;
+    questionsTab: string;
+    noTimeline: string;
+    noOrders: string;
+    noAppointments: string;
+    noTasks: string;
+    noQuestions: string;
+    historyTypeOrder: string;
+    historyTypeAppointment: string;
+    historyTypeTask: string;
+    historyTypeQuestion: string;
+    orderServiceLabel: string;
+    orderAmountLabel: string;
+    orderStatusLabel: string;
+    appointmentDateLabel: string;
+    appointmentStatusLabel: string;
+    taskStatusLabel: string;
+    taskPriorityLabel: string;
+    questionStatusLabel: string;
+    loadFailed: string;
+    detailsFailed: string;
+    unauthorized: string;
+    errorTitle: string;
   };
   integrations: {
     title: string;
@@ -606,6 +884,103 @@ export const MESSAGES: Record<Locale, Messages> = {
       profileUpdated: "Профиль успешно обновлён.",
       updateFailed: "Не удалось обновить профиль. Попробуйте снова.",
     },
+    businessSettings: {
+      title: "Настройка бизнеса",
+      subtitle: "Управляйте профилем компании и логикой работы с записями.",
+      profileTitle: "Профиль компании",
+      accountTypeLabel: "Тип аккаунта",
+      accountTypeWithAppointments: "С записью клиентов",
+      accountTypeWithoutAppointments: "Без записи клиентов",
+      nameLabel: "Название компании",
+      nameValidation: "Название компании должно быть не короче 2 символов.",
+      shortDescriptionLabel: "Краткое описание",
+      industryLabel: "Отрасль",
+      primaryGoalLabel: "Основная цель",
+      contactEmailLabel: "Контактный email",
+      contactPhoneLabel: "Контактный телефон",
+      websiteLabel: "Сайт",
+      addressLabel: "Адрес",
+      timezoneLabel: "Часовой пояс",
+      currencyLabel: "Валюта",
+      timezonePlaceholder: "Например: Asia/Dushanbe",
+      workingHoursLabel: "Часы работы",
+      scheduleTitle: "Расписание по дням недели",
+      scheduleSubtitle:
+        "Для каждого дня выберите рабочее время или отметьте его как выходной.",
+      invalidScheduleRange:
+        "Проверьте расписание: для рабочего дня время окончания должно быть позже времени начала.",
+      dayOffLabel: "Выходной",
+      startTimeLabel: "Начало",
+      endTimeLabel: "Окончание",
+      mondayLabel: "Понедельник",
+      tuesdayLabel: "Вторник",
+      wednesdayLabel: "Среда",
+      thursdayLabel: "Четверг",
+      fridayLabel: "Пятница",
+      saturdayLabel: "Суббота",
+      sundayLabel: "Воскресенье",
+      bookingTitle: "Настройки записи",
+      bookingSubtitle:
+        "Укажите правила, по которым клиенты будут записываться.",
+      bookingDisabledTitle: "Запись отключена",
+      bookingDisabledDescription:
+        "Для этого типа аккаунта блок записи не используется.",
+      slotLabel: "Длительность слота",
+      bufferLabel: "Пауза между слотами",
+      maxDaysAheadLabel: "Запись на дни вперед",
+      minutesUnit: "мин",
+      autoConfirmLabel: "Авто-подтверждение записи",
+      requiredFieldsTitle: "Обязательные поля для ассистента",
+      requiredFieldsSubtitle:
+        "Выберите, какие поля ассистент обязан запросить перед созданием заказа или записи.",
+      orderRequiredFieldsLabel: "Для заказа",
+      appointmentRequiredFieldsLabel: "Для записи",
+      requiredFieldClientName: "Имя клиента",
+      requiredFieldPhone: "Телефон",
+      requiredFieldService: "Услуга",
+      requiredFieldAddress: "Адрес",
+      requiredFieldAmount: "Сумма",
+      requiredFieldNote: "Заметка",
+      requiredFieldAppointmentDate: "Дата записи",
+      requiredFieldAppointmentTime: "Время записи",
+      requiredFieldAppointmentDuration: "Длительность записи",
+      aiLanguagesTitle: "Языки ответов ИИ",
+      aiLanguagesSubtitle:
+        "Ассистент будет отвечать только на выбранных языках. Можно выбрать несколько.",
+      aiLanguagesLabel: "Разрешенные языки",
+      aiLanguageRequiredValidation: "Выберите минимум один язык для ответов ИИ.",
+      aiLanguageRu: "Русский",
+      aiLanguageEn: "Английский",
+      aiLanguageTg: "Таджикский",
+      aiLanguageUz: "Узбекский",
+      aiLanguageTr: "Турецкий",
+      aiLanguageFa: "Персидский",
+      deliveryTitle: "Настройки доставки",
+      deliverySubtitle:
+        "Включите доставку и укажите правила, которые ассистент должен учитывать в диалоге.",
+      deliveryEnabledLabel: "Доставка доступна для клиентов",
+      deliveryRequireAddressLabel: "Адрес обязателен",
+      deliveryRequireDateTimeLabel: "Время доставки обязательно",
+      deliveryEtaLabel: "ETA по умолчанию (минуты)",
+      deliveryFeeLabel: "Стоимость доставки",
+      deliveryFreeFromLabel: "Бесплатно от суммы (опционально)",
+      deliveryAvailableFromLabel: "Доставка с",
+      deliveryAvailableToLabel: "Доставка до",
+      deliveryNotesLabel: "Комментарий для ассистента (опционально)",
+      invalidDeliveryRange:
+        "Проверьте интервал доставки: время окончания должно быть позже времени начала.",
+      invalidDeliveryFee: "Стоимость доставки должна быть числом не меньше 0.",
+      invalidDeliveryFreeFromAmount:
+        "Порог бесплатной доставки должен быть числом не меньше 0.",
+      saveButton: "Сохранить настройки",
+      loading: "Загружаем настройки компании...",
+      loadFailed: "Не удалось загрузить настройки компании.",
+      saveFailed: "Не удалось сохранить настройки компании.",
+      saveSuccess: "Настройки компании сохранены.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
     billing: {
       title: "Подписка и платежи",
       subtitle: "Управляйте тарифом, лимитами и счетами компании.",
@@ -691,6 +1066,68 @@ export const MESSAGES: Record<Locale, Messages> = {
       errorTitle: "Ошибка",
       successTitle: "Успешно",
     },
+    catalog: {
+      title: "Продукты и услуги",
+      subtitle: "Управляйте каталогом услуг и товаров для каждого ассистента.",
+      assistantsTitle: "Ассистенты",
+      assistantsSubtitle: "Выберите ассистента для настройки каталога.",
+      backToAssistants: "Назад к ассистентам",
+      noAssistants: "Ассистенты пока не созданы.",
+      selectAssistant: "Выберите ассистента слева, чтобы открыть каталог.",
+      selectedAssistantPrefix: "Ассистент",
+      addService: "Добавить услугу",
+      addProduct: "Добавить продукт",
+      servicesTab: "Услуги",
+      productsTab: "Продукты",
+      emptyServices: "Услуги пока не добавлены.",
+      emptyProducts: "Продукты пока не добавлены.",
+      statusActive: "Активно",
+      statusInactive: "Выключено",
+      stockLabel: "Остаток",
+      unlimitedStock: "Безлимитный остаток",
+      newServiceTitle: "Новая услуга",
+      editServiceTitle: "Редактировать услугу",
+      newProductTitle: "Новый продукт",
+      editProductTitle: "Редактировать продукт",
+      nameLabel: "Название",
+      skuLabel: "SKU (опционально)",
+      priceLabel: "Цена",
+      currencyLabel: "Валюта",
+      sortOrderLabel: "Порядок сортировки",
+      descriptionLabel: "Описание",
+      termsLabel: "Условия (опционально)",
+      photoUrlsLabel: "Ссылки на фото (каждая с новой строки)",
+      specialistsTitle: "Специалисты",
+      addSpecialist: "Добавить специалиста",
+      noSpecialists: "Специалисты пока не добавлены.",
+      specialistNameLabel: "Имя специалиста",
+      specialistPriceLabel: "Цена специалиста",
+      productLinkLabel: "Ссылка на продукт",
+      openProductLink: "Открыть ссылку продукта",
+      activeLabel: "Активно",
+      unlimitedStockLabel: "Безлимитный остаток",
+      saveButton: "Сохранить",
+      validationName: "Название должно быть не короче 2 символов.",
+      validationPrice: "Цена должна быть числом не меньше 0.",
+      validationSortOrder: "Порядок сортировки должен быть числом не меньше 0.",
+      validationStock: "Остаток должен быть числом не меньше 0.",
+      validationSpecialistName: "Имя специалиста должно быть не короче 2 символов.",
+      validationSpecialistPrice: "Цена специалиста должна быть числом не меньше 0.",
+      validationProductLink: "Ссылка продукта должна быть корректным URL.",
+      loadAssistantsFailed: "Не удалось загрузить ассистентов.",
+      loadCatalogFailed: "Не удалось загрузить каталог.",
+      saveFailed: "Не удалось сохранить данные каталога.",
+      deleteFailed: "Не удалось удалить элемент каталога.",
+      serviceCreated: "Услуга добавлена.",
+      serviceUpdated: "Услуга обновлена.",
+      serviceDeleted: "Услуга удалена.",
+      productCreated: "Продукт добавлен.",
+      productUpdated: "Продукт обновлен.",
+      productDeleted: "Продукт удален.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
     clientChats: {
       title: "Чаты клиентов",
       subtitle: "Список диалогов по всем подключенным каналам.",
@@ -703,7 +1140,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       searchPlaceholder: "Поиск по имени, сообщению или ID чата",
       loadingChats: "Загружаем чаты...",
       loadingMessages: "Загружаем сообщения...",
-      emptyChats: "Чаты не найдены. Проверьте фильтры или дождитесь новых сообщений.",
+      emptyChats:
+        "Чаты не найдены. Проверьте фильтры или дождитесь новых сообщений.",
       emptyMessages: "Сообщений пока нет.",
       noPreview: "Нет предпросмотра",
       backToList: "Назад к списку",
@@ -725,6 +1163,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       sendFailed: "Не удалось отправить сообщение.",
       assistantReplyFailed: "Не удалось получить ответ ассистента.",
       chatInfoButton: "Информация о чате",
+      resetChatButton: "Сбросить чат",
+      resetChatFailed: "Не удалось сбросить чат. Попробуйте снова.",
       chatInfoTitle: "Информация о чате",
       chatInfoDescription: "Детали клиента и история по этому диалогу.",
       chatInfoClient: "Клиент",
@@ -744,12 +1184,21 @@ export const MESSAGES: Record<Locale, Messages> = {
       orderModalAddressPlaceholder: "Введите адрес",
       orderModalAmountLabel: "Сумма (опционально)",
       orderModalAmountPlaceholder: "Например: 120.50",
+      orderModalBookAppointmentSwitch: "Записать клиента",
+      orderModalAppointmentDateLabel: "День записи",
+      orderModalAppointmentTimeLabel: "Время записи",
+      orderModalAppointmentDurationLabel: "Длительность",
+      orderModalAppointmentDurationPlaceholder: "Например: 60",
       orderModalNoteLabel: "Заметка (опционально)",
       orderModalNotePlaceholder: "Комментарий к заказу",
       orderModalCancelButton: "Отмена",
       orderModalSubmitButton: "Создать заказ",
       orderModalRequiredFields: "Заполните номер телефона, услугу и адрес.",
+      orderModalAppointmentRequiredFields:
+        "Для записи заполните день, время и длительность.",
       orderModalInvalidAmount: "Сумма должна быть числом не меньше 0.",
+      orderModalInvalidDuration:
+        "Длительность должна быть числом от 15 до 720 минут.",
       chatInfoHistoryTitle: "История по чату",
       chatInfoNoHistory: "Связанных записей пока нет.",
       chatInfoHistoryJumpHint: "Нажмите, чтобы перейти к сообщению",
@@ -762,13 +1211,133 @@ export const MESSAGES: Record<Locale, Messages> = {
       errorTitle: "Ошибка",
       successTitle: "Успешно",
     },
+    clientRequests: {
+      title: "Заявки клиентов",
+      subtitle: "Канбан-доска для обработки клиентских заявок.",
+      refreshButton: "Обновить",
+      loading: "Загружаем заявки...",
+      empty: "Заявок пока нет.",
+      columnNew: "Новые",
+      columnInProgress: "В обработке",
+      columnAppointments: "Записи",
+      columnCompleted: "Завершено",
+      openChatButton: "Открыть чат",
+      editButton: "Изменить",
+      deleteButton: "Удалить",
+      moveToProgressButton: "В обработку",
+      moveToAppointmentsButton: "В записи",
+      moveToCompletedButton: "Завершить",
+      moveToConfirmedButton: "Подтвердить",
+      moveToCourierButton: "Передать курьеру",
+      moveToDeliveredButton: "Отметить доставленной",
+      markCanceledButton: "Отменить",
+      archiveButton: "Архивировать",
+      reopenButton: "Вернуть в обработку",
+      appointmentLabel: "Запись",
+      noPhone: "Телефон не указан",
+      noAddress: "Адрес не указан",
+      amountLabel: "Сумма",
+      serviceLabel: "Услуга",
+      noteLabel: "Заметка",
+      clientLabel: "Клиент",
+      chatChannelLabel: "Канал",
+      statusNew: "Новая",
+      statusInProgress: "В обработке",
+      statusAppointments: "Запись",
+      statusCompleted: "Завершена",
+      statusConfirmed: "Подтверждено",
+      statusCanceled: "Отменено",
+      statusHandedToCourier: "Передан курьеру",
+      statusDelivered: "Доставлено",
+      editModalTitle: "Редактировать заявку",
+      editModalSave: "Сохранить",
+      editModalCancel: "Отмена",
+      editStatusLabel: "Статус",
+      editClientNameLabel: "Имя клиента",
+      editPhoneLabel: "Телефон",
+      editServiceLabel: "Услуга",
+      editAddressLabel: "Адрес",
+      editAmountLabel: "Сумма",
+      editNoteLabel: "Заметка",
+      editBookingSwitch: "Записать клиента",
+      editAppointmentDateLabel: "День записи",
+      editAppointmentTimeLabel: "Время записи",
+      editAppointmentDurationLabel: "Длительность (мин)",
+      editAppointmentDurationPlaceholder: "Например: 60",
+      requiredFields: "Заполните имя клиента, телефон и услугу.",
+      invalidAmount: "Сумма должна быть числом не меньше 0.",
+      invalidDuration: "Длительность должна быть числом от 15 до 720 минут.",
+      appointmentRequired: "Для записи заполните день, время и длительность.",
+      updateSuccess: "Заявка обновлена.",
+      updateFailed: "Не удалось обновить заявку.",
+      deleteSuccess: "Заявка удалена.",
+      deleteFailed: "Не удалось удалить заявку.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
+    clientBase: {
+      title: "База клиентов",
+      subtitle: "Клиенты компании, контакты и полная история взаимодействий.",
+      searchPlaceholder: "Поиск по имени, телефону или email",
+      refreshButton: "Обновить",
+      statusAll: "Все",
+      statusActive: "Активные",
+      statusArchived: "Архив",
+      statusBlocked: "Заблокированные",
+      loading: "Загружаем базу клиентов...",
+      empty: "Клиенты пока не найдены.",
+      viewHistoryButton: "История клиента",
+      statsOrders: "Заказы",
+      statsAppointments: "Записи",
+      statsTasks: "Заявки",
+      statsQuestions: "Вопросы",
+      totalSpent: "Сумма заказов",
+      lastContact: "Последний контакт",
+      lastRequest: "Последняя заявка",
+      lastQuestion: "Последний вопрос",
+      phoneLabel: "Телефон",
+      emailLabel: "Email",
+      notesLabel: "Заметка",
+      statusLabel: "Статус",
+      modalTitle: "История клиента",
+      modalSubtitle: "Заказы, записи, заявки и вопросы по выбранному клиенту.",
+      modalLoading: "Загружаем историю клиента...",
+      timelineTab: "Общая история",
+      ordersTab: "Заказы",
+      appointmentsTab: "Записи",
+      tasksTab: "Заявки",
+      questionsTab: "Вопросы",
+      noTimeline: "История пока пустая.",
+      noOrders: "Заказов пока нет.",
+      noAppointments: "Записей пока нет.",
+      noTasks: "Заявок пока нет.",
+      noQuestions: "Вопросов пока нет.",
+      historyTypeOrder: "Заказ",
+      historyTypeAppointment: "Запись",
+      historyTypeTask: "Заявка",
+      historyTypeQuestion: "Вопрос",
+      orderServiceLabel: "Услуга",
+      orderAmountLabel: "Сумма",
+      orderStatusLabel: "Статус заказа",
+      appointmentDateLabel: "Дата и время",
+      appointmentStatusLabel: "Статус записи",
+      taskStatusLabel: "Статус заявки",
+      taskPriorityLabel: "Приоритет",
+      questionStatusLabel: "Статус вопроса",
+      loadFailed: "Не удалось загрузить базу клиентов.",
+      detailsFailed: "Не удалось загрузить историю клиента.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+    },
     integrations: {
       title: "Интеграции",
       subtitle: "Подключайте каналы к ассистентам и управляйте их активностью.",
       assistantsTitle: "Ассистенты",
       assistantsSubtitle: "Выберите ассистента для настройки интеграций.",
       channelsTitle: "Каналы интеграции",
-      channelsSubtitle: "Включайте или отключайте каналы для выбранного ассистента.",
+      channelsSubtitle:
+        "Включайте или отключайте каналы для выбранного ассистента.",
       selectAssistantTitle: "Выберите ассистента",
       selectAssistantDescription:
         "Выберите ассистента слева, чтобы открыть настройки Instagram, Telegram, веб-виджета и API.",
@@ -786,7 +1355,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       channelTelegram: "Telegram",
       channelWidget: "Веб-виджет",
       channelApi: "API",
-      channelInstagramDescription: "Принимайте и отправляйте сообщения из Instagram.",
+      channelInstagramDescription:
+        "Принимайте и отправляйте сообщения из Instagram.",
       channelTelegramDescription: "Работайте с клиентами через Telegram Bot.",
       channelWidgetDescription: "Подключите чат-виджет для сайта компании.",
       channelApiDescription: "Интеграция через API для внешних систем.",
@@ -809,7 +1379,8 @@ export const MESSAGES: Record<Locale, Messages> = {
     },
     assistantTraining: {
       title: "Обучение ассистента",
-      subtitle: "Настройте инструкции, ограничения, ответы и инструменты ассистента.",
+      subtitle:
+        "Настройте инструкции, ограничения, ответы и инструменты ассистента.",
       trainingTitle: "Настройки и обучение",
       listTitle: "Ассистенты",
       limitLabel: "Лимит ассистентов",
@@ -1060,6 +1631,102 @@ export const MESSAGES: Record<Locale, Messages> = {
       profileUpdated: "Profile updated successfully.",
       updateFailed: "Failed to update profile. Please try again.",
     },
+    businessSettings: {
+      title: "Business Settings",
+      subtitle: "Manage company profile and booking workflow configuration.",
+      profileTitle: "Company profile",
+      accountTypeLabel: "Account type",
+      accountTypeWithAppointments: "With appointments",
+      accountTypeWithoutAppointments: "Without appointments",
+      nameLabel: "Company name",
+      nameValidation: "Company name must be at least 2 characters long.",
+      shortDescriptionLabel: "Short description",
+      industryLabel: "Industry",
+      primaryGoalLabel: "Primary goal",
+      contactEmailLabel: "Contact email",
+      contactPhoneLabel: "Contact phone",
+      websiteLabel: "Website",
+      addressLabel: "Address",
+      timezoneLabel: "Timezone",
+      currencyLabel: "Currency",
+      timezonePlaceholder: "For example: Asia/Dushanbe",
+      workingHoursLabel: "Working hours",
+      scheduleTitle: "Weekly schedule",
+      scheduleSubtitle:
+        "For each day, choose working hours or mark it as a day off.",
+      invalidScheduleRange:
+        "Check schedule: for a working day, end time must be later than start time.",
+      dayOffLabel: "Day off",
+      startTimeLabel: "Start",
+      endTimeLabel: "End",
+      mondayLabel: "Monday",
+      tuesdayLabel: "Tuesday",
+      wednesdayLabel: "Wednesday",
+      thursdayLabel: "Thursday",
+      fridayLabel: "Friday",
+      saturdayLabel: "Saturday",
+      sundayLabel: "Sunday",
+      bookingTitle: "Booking settings",
+      bookingSubtitle: "Configure how customers can book appointments.",
+      bookingDisabledTitle: "Booking is disabled",
+      bookingDisabledDescription:
+        "Appointment options are not used for this account type.",
+      slotLabel: "Slot duration",
+      bufferLabel: "Buffer between slots",
+      maxDaysAheadLabel: "Booking days ahead",
+      minutesUnit: "min",
+      autoConfirmLabel: "Auto-confirm bookings",
+      requiredFieldsTitle: "Assistant required fields",
+      requiredFieldsSubtitle:
+        "Choose which fields the assistant must collect before creating an order or appointment.",
+      orderRequiredFieldsLabel: "For orders",
+      appointmentRequiredFieldsLabel: "For appointments",
+      requiredFieldClientName: "Client name",
+      requiredFieldPhone: "Phone",
+      requiredFieldService: "Service",
+      requiredFieldAddress: "Address",
+      requiredFieldAmount: "Amount",
+      requiredFieldNote: "Note",
+      requiredFieldAppointmentDate: "Appointment date",
+      requiredFieldAppointmentTime: "Appointment time",
+      requiredFieldAppointmentDuration: "Appointment duration",
+      aiLanguagesTitle: "AI response languages",
+      aiLanguagesSubtitle:
+        "The assistant will answer only in selected languages. Multiple languages are supported.",
+      aiLanguagesLabel: "Allowed languages",
+      aiLanguageRequiredValidation: "Select at least one language for AI responses.",
+      aiLanguageRu: "Russian",
+      aiLanguageEn: "English",
+      aiLanguageTg: "Tajik",
+      aiLanguageUz: "Uzbek",
+      aiLanguageTr: "Turkish",
+      aiLanguageFa: "Persian",
+      deliveryTitle: "Delivery settings",
+      deliverySubtitle:
+        "Enable delivery and configure rules the assistant should follow in chat.",
+      deliveryEnabledLabel: "Delivery is available for customers",
+      deliveryRequireAddressLabel: "Address is required",
+      deliveryRequireDateTimeLabel: "Delivery date/time is required",
+      deliveryEtaLabel: "Default ETA (minutes)",
+      deliveryFeeLabel: "Delivery fee",
+      deliveryFreeFromLabel: "Free from amount (optional)",
+      deliveryAvailableFromLabel: "Delivery from",
+      deliveryAvailableToLabel: "Delivery until",
+      deliveryNotesLabel: "Assistant note (optional)",
+      invalidDeliveryRange:
+        "Check delivery window: end time must be later than start time.",
+      invalidDeliveryFee: "Delivery fee must be a number greater than or equal to 0.",
+      invalidDeliveryFreeFromAmount:
+        "Free-delivery threshold must be a number greater than or equal to 0.",
+      saveButton: "Save settings",
+      loading: "Loading company settings...",
+      loadFailed: "Failed to load company settings.",
+      saveFailed: "Failed to save company settings.",
+      saveSuccess: "Company settings saved.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
+    },
     billing: {
       title: "Subscription and Billing",
       subtitle: "Manage company plan, limits, and invoices.",
@@ -1146,6 +1813,68 @@ export const MESSAGES: Record<Locale, Messages> = {
       errorTitle: "Error",
       successTitle: "Success",
     },
+    catalog: {
+      title: "Products and Services",
+      subtitle: "Manage products and services for each assistant.",
+      assistantsTitle: "Assistants",
+      assistantsSubtitle: "Select an assistant to manage catalog items.",
+      backToAssistants: "Back to assistants",
+      noAssistants: "No assistants created yet.",
+      selectAssistant: "Select an assistant from the left to open catalog settings.",
+      selectedAssistantPrefix: "Assistant",
+      addService: "Add service",
+      addProduct: "Add product",
+      servicesTab: "Services",
+      productsTab: "Products",
+      emptyServices: "No services yet.",
+      emptyProducts: "No products yet.",
+      statusActive: "Active",
+      statusInactive: "Inactive",
+      stockLabel: "Stock",
+      unlimitedStock: "Unlimited stock",
+      newServiceTitle: "New service",
+      editServiceTitle: "Edit service",
+      newProductTitle: "New product",
+      editProductTitle: "Edit product",
+      nameLabel: "Name",
+      skuLabel: "SKU (optional)",
+      priceLabel: "Price",
+      currencyLabel: "Currency",
+      sortOrderLabel: "Sort order",
+      descriptionLabel: "Description",
+      termsLabel: "Terms (optional)",
+      photoUrlsLabel: "Photo URLs (one per line)",
+      specialistsTitle: "Specialists",
+      addSpecialist: "Add specialist",
+      noSpecialists: "No specialists added yet.",
+      specialistNameLabel: "Specialist name",
+      specialistPriceLabel: "Specialist price",
+      productLinkLabel: "Product link",
+      openProductLink: "Open product link",
+      activeLabel: "Active",
+      unlimitedStockLabel: "Unlimited stock",
+      saveButton: "Save",
+      validationName: "Name must be at least 2 characters.",
+      validationPrice: "Price must be a number greater than or equal to 0.",
+      validationSortOrder: "Sort order must be a number greater than or equal to 0.",
+      validationStock: "Stock must be a number greater than or equal to 0.",
+      validationSpecialistName: "Specialist name must be at least 2 characters.",
+      validationSpecialistPrice: "Specialist price must be a number greater than or equal to 0.",
+      validationProductLink: "Product link must be a valid URL.",
+      loadAssistantsFailed: "Failed to load assistants.",
+      loadCatalogFailed: "Failed to load catalog.",
+      saveFailed: "Failed to save catalog item.",
+      deleteFailed: "Failed to delete catalog item.",
+      serviceCreated: "Service created.",
+      serviceUpdated: "Service updated.",
+      serviceDeleted: "Service deleted.",
+      productCreated: "Product created.",
+      productUpdated: "Product updated.",
+      productDeleted: "Product deleted.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
+    },
     clientChats: {
       title: "Client Chats",
       subtitle: "Unified inbox for all connected channels.",
@@ -1180,6 +1909,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       sendFailed: "Failed to send message.",
       assistantReplyFailed: "Failed to get assistant response.",
       chatInfoButton: "Chat info",
+      resetChatButton: "Reset chat",
+      resetChatFailed: "Failed to reset chat. Please try again.",
       chatInfoTitle: "Chat information",
       chatInfoDescription: "Client details and history for this dialog.",
       chatInfoClient: "Client",
@@ -1199,12 +1930,22 @@ export const MESSAGES: Record<Locale, Messages> = {
       orderModalAddressPlaceholder: "Enter address",
       orderModalAmountLabel: "Amount (optional)",
       orderModalAmountPlaceholder: "For example: 120.50",
+      orderModalBookAppointmentSwitch: "Book customer appointment",
+      orderModalAppointmentDateLabel: "Appointment date",
+      orderModalAppointmentTimeLabel: "Appointment time",
+      orderModalAppointmentDurationLabel: "Duration (minutes)",
+      orderModalAppointmentDurationPlaceholder: "For example: 60",
       orderModalNoteLabel: "Note (optional)",
       orderModalNotePlaceholder: "Order comment",
       orderModalCancelButton: "Cancel",
       orderModalSubmitButton: "Create order",
       orderModalRequiredFields: "Fill in phone, service and address.",
-      orderModalInvalidAmount: "Amount must be a number greater than or equal to 0.",
+      orderModalAppointmentRequiredFields:
+        "Fill in appointment date, time and duration.",
+      orderModalInvalidAmount:
+        "Amount must be a number greater than or equal to 0.",
+      orderModalInvalidDuration:
+        "Duration must be a number between 15 and 720 minutes.",
       chatInfoHistoryTitle: "Chat history",
       chatInfoNoHistory: "No linked records yet.",
       chatInfoHistoryJumpHint: "Click to jump to message",
@@ -1217,13 +1958,133 @@ export const MESSAGES: Record<Locale, Messages> = {
       errorTitle: "Error",
       successTitle: "Success",
     },
+    clientRequests: {
+      title: "Client requests",
+      subtitle: "Kanban board for processing customer requests.",
+      refreshButton: "Refresh",
+      loading: "Loading requests...",
+      empty: "No requests yet.",
+      columnNew: "New",
+      columnInProgress: "In progress",
+      columnAppointments: "Appointments",
+      columnCompleted: "Completed",
+      openChatButton: "Open chat",
+      editButton: "Edit",
+      deleteButton: "Delete",
+      moveToProgressButton: "Move to progress",
+      moveToAppointmentsButton: "Move to appointments",
+      moveToCompletedButton: "Complete",
+      moveToConfirmedButton: "Confirm",
+      moveToCourierButton: "Hand to courier",
+      moveToDeliveredButton: "Mark delivered",
+      markCanceledButton: "Cancel",
+      archiveButton: "Archive",
+      reopenButton: "Reopen",
+      appointmentLabel: "Appointment",
+      noPhone: "No phone",
+      noAddress: "No address",
+      amountLabel: "Amount",
+      serviceLabel: "Service",
+      noteLabel: "Note",
+      clientLabel: "Client",
+      chatChannelLabel: "Channel",
+      statusNew: "New",
+      statusInProgress: "In progress",
+      statusAppointments: "Appointment",
+      statusCompleted: "Completed",
+      statusConfirmed: "Confirmed",
+      statusCanceled: "Canceled",
+      statusHandedToCourier: "Handed to courier",
+      statusDelivered: "Delivered",
+      editModalTitle: "Edit request",
+      editModalSave: "Save",
+      editModalCancel: "Cancel",
+      editStatusLabel: "Status",
+      editClientNameLabel: "Client name",
+      editPhoneLabel: "Phone",
+      editServiceLabel: "Service",
+      editAddressLabel: "Address",
+      editAmountLabel: "Amount",
+      editNoteLabel: "Note",
+      editBookingSwitch: "Book customer appointment",
+      editAppointmentDateLabel: "Appointment date",
+      editAppointmentTimeLabel: "Appointment time",
+      editAppointmentDurationLabel: "Duration (minutes)",
+      editAppointmentDurationPlaceholder: "For example: 60",
+      requiredFields: "Fill in client name, phone and service.",
+      invalidAmount: "Amount must be a number greater than or equal to 0.",
+      invalidDuration: "Duration must be a number between 15 and 720 minutes.",
+      appointmentRequired: "Fill in appointment date, time and duration.",
+      updateSuccess: "Request updated.",
+      updateFailed: "Failed to update request.",
+      deleteSuccess: "Request deleted.",
+      deleteFailed: "Failed to delete request.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
+    },
+    clientBase: {
+      title: "Client base",
+      subtitle: "Company customers, contacts, and full interaction history.",
+      searchPlaceholder: "Search by name, phone, or email",
+      refreshButton: "Refresh",
+      statusAll: "All",
+      statusActive: "Active",
+      statusArchived: "Archived",
+      statusBlocked: "Blocked",
+      loading: "Loading client base...",
+      empty: "No clients found yet.",
+      viewHistoryButton: "Client history",
+      statsOrders: "Orders",
+      statsAppointments: "Appointments",
+      statsTasks: "Tasks",
+      statsQuestions: "Questions",
+      totalSpent: "Total orders",
+      lastContact: "Last contact",
+      lastRequest: "Last request",
+      lastQuestion: "Last question",
+      phoneLabel: "Phone",
+      emailLabel: "Email",
+      notesLabel: "Note",
+      statusLabel: "Status",
+      modalTitle: "Client history",
+      modalSubtitle: "Orders, appointments, tasks, and questions for this client.",
+      modalLoading: "Loading client history...",
+      timelineTab: "Timeline",
+      ordersTab: "Orders",
+      appointmentsTab: "Appointments",
+      tasksTab: "Tasks",
+      questionsTab: "Questions",
+      noTimeline: "No timeline records yet.",
+      noOrders: "No orders yet.",
+      noAppointments: "No appointments yet.",
+      noTasks: "No tasks yet.",
+      noQuestions: "No questions yet.",
+      historyTypeOrder: "Order",
+      historyTypeAppointment: "Appointment",
+      historyTypeTask: "Task",
+      historyTypeQuestion: "Question",
+      orderServiceLabel: "Service",
+      orderAmountLabel: "Amount",
+      orderStatusLabel: "Order status",
+      appointmentDateLabel: "Date and time",
+      appointmentStatusLabel: "Appointment status",
+      taskStatusLabel: "Task status",
+      taskPriorityLabel: "Priority",
+      questionStatusLabel: "Question status",
+      loadFailed: "Failed to load client base.",
+      detailsFailed: "Failed to load client history.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+    },
     integrations: {
       title: "Integrations",
       subtitle: "Connect channels to assistants and control channel activity.",
       assistantsTitle: "Assistants",
       assistantsSubtitle: "Select an assistant to configure integrations.",
       channelsTitle: "Integration channels",
-      channelsSubtitle: "Enable or disable channels for the selected assistant.",
+      channelsSubtitle:
+        "Enable or disable channels for the selected assistant.",
       selectAssistantTitle: "Select an assistant",
       selectAssistantDescription:
         "Choose an assistant from the left side to configure Instagram, Telegram, web widget, and API channels.",
@@ -1241,7 +2102,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       channelTelegram: "Telegram",
       channelWidget: "Web widget",
       channelApi: "API",
-      channelInstagramDescription: "Receive and send customer messages from Instagram.",
+      channelInstagramDescription:
+        "Receive and send customer messages from Instagram.",
       channelTelegramDescription: "Communicate with clients via Telegram bot.",
       channelWidgetDescription: "Connect a web chat widget for your website.",
       channelApiDescription: "API integration for external systems.",
@@ -1264,7 +2126,8 @@ export const MESSAGES: Record<Locale, Messages> = {
     },
     assistantTraining: {
       title: "Assistant Training",
-      subtitle: "Configure instructions, limits, responses, and assistant tools.",
+      subtitle:
+        "Configure instructions, limits, responses, and assistant tools.",
       trainingTitle: "Training and settings",
       listTitle: "Assistants",
       limitLabel: "Assistant limit",

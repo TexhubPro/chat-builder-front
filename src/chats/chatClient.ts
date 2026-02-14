@@ -333,6 +333,15 @@ export async function chatSetAiEnabledRequest(
   });
 }
 
+export async function chatResetAssistantContextRequest(
+  token: string,
+  chatId: number,
+): Promise<ChatMutationResponse> {
+  return request<ChatMutationResponse>(`/chats/${chatId}/reset`, token, {
+    method: "POST",
+  });
+}
+
 export async function chatCreateTaskRequest(
   token: string,
   chatId: number,
@@ -358,6 +367,10 @@ export async function chatCreateOrderRequest(
     amount?: number;
     note?: string;
     chat_message_id?: number;
+    book_appointment?: boolean;
+    appointment_date?: string;
+    appointment_time?: string;
+    appointment_duration_minutes?: number;
   },
 ): Promise<ChatOrderCreateResponse> {
   return request<ChatOrderCreateResponse>(`/chats/${chatId}/orders`, token, {

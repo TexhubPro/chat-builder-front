@@ -32,6 +32,7 @@ import {
   chatDetailsRequest,
   chatInsightsRequest,
   chatMarkReadRequest,
+  chatResetAssistantContextRequest,
   chatSetAiEnabledRequest,
   chatsListRequest,
   chatSendMessageRequest,
@@ -41,6 +42,7 @@ import {
   type ChatItem,
   type ChatMessageItem,
 } from "../chats/chatClient";
+import { companySettingsRequest } from "../company/companySettingsClient";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { useI18n } from "../i18n/useI18n";
 import { usePageSeo } from "../seo/usePageSeo";
@@ -74,6 +76,10 @@ type ChatOrderFormState = {
   address: string;
   amount: string;
   note: string;
+  bookAppointment: boolean;
+  appointmentDate: string;
+  appointmentTime: string;
+  appointmentDurationMinutes: string;
 };
 
 const INITIAL_ORDER_FORM: ChatOrderFormState = {
@@ -82,6 +88,10 @@ const INITIAL_ORDER_FORM: ChatOrderFormState = {
   address: "",
   amount: "",
   note: "",
+  bookAppointment: false,
+  appointmentDate: "",
+  appointmentTime: "",
+  appointmentDurationMinutes: "",
 };
 
 function resolveMessageTypeFromFileMime(mimeType: string): ChatMessageItem["message_type"] {
@@ -243,8 +253,12 @@ export default function ClientChatsPage() {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isUpdatingChatAi, setIsUpdatingChatAi] = useState(false);
+  const [isResettingAssistantChat, setIsResettingAssistantChat] =
+    useState(false);
   const [assistantRequestCount, setAssistantRequestCount] = useState(0);
   const [isMobileConversationOpen, setIsMobileConversationOpen] =
+    useState(false);
+  const [companySupportsAppointments, setCompanySupportsAppointments] =
     useState(false);
 
   const [channelTab, setChannelTab] = useState<ChatTab>("all");
@@ -437,6 +451,37 @@ export default function ClientChatsPage() {
   useEffect(() => {
     void loadChats(false);
   }, [loadChats]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const token = getAuthToken();
+
+    if (!token) {
+      return;
+    }
+
+    void companySettingsRequest(token)
+      .then((response) => {
+        if (cancelled) {
+          return;
+        }
+
+        setCompanySupportsAppointments(
+          response.company.settings.account_type === "with_appointments",
+        );
+      })
+      .catch(() => {
+        if (cancelled) {
+          return;
+        }
+
+        setCompanySupportsAppointments(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedChatId === null) {
@@ -1090,6 +1135,57 @@ export default function ClientChatsPage() {
     ],
   );
 
+  const handleResetAssistantChat = useCallback(async () => {
+    if (
+      !selectedChatId
+      || !selectedChat
+      || selectedChat.channel !== "assistant"
+      || isResettingAssistantChat
+    ) {
+      return;
+    }
+
+    const token = getAuthToken();
+
+    if (!token) {
+      setGlobalError(messages.clientChats.unauthorized);
+      return;
+    }
+
+    setGlobalError(null);
+    setIsResettingAssistantChat(true);
+
+    try {
+      const response = await chatResetAssistantContextRequest(token, selectedChatId);
+      setChatMessages([]);
+      setAssistantRequestCount(0);
+      setFocusedMessageId(null);
+      setIsInsightsOpen(false);
+      setChatInsights(null);
+      messageElementRefs.current = {};
+      upsertChat(response.chat);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
+        setGlobalError(messages.clientChats.unauthorized);
+      } else {
+        setGlobalError(
+          error instanceof ApiError
+            ? error.message
+            : messages.clientChats.resetChatFailed,
+        );
+      }
+    } finally {
+      setIsResettingAssistantChat(false);
+    }
+  }, [
+    isResettingAssistantChat,
+    messages.clientChats.resetChatFailed,
+    messages.clientChats.unauthorized,
+    selectedChat,
+    selectedChatId,
+    upsertChat,
+  ]);
+
   const handleOpenOrderModal = useCallback(() => {
     const phone =
       chatInsights?.contacts.find((contact) => contact.key === "phone")?.value
@@ -1102,6 +1198,10 @@ export default function ClientChatsPage() {
       ...INITIAL_ORDER_FORM,
       phone,
       address,
+      bookAppointment: false,
+      appointmentDate: "",
+      appointmentTime: "",
+      appointmentDurationMinutes: "",
     });
     setGlobalError(null);
     setIsOrderModalOpen(true);
@@ -1124,6 +1224,10 @@ export default function ClientChatsPage() {
     const address = orderForm.address.trim();
     const amountRaw = orderForm.amount.trim();
     const note = orderForm.note.trim();
+    const bookAppointment = companySupportsAppointments && orderForm.bookAppointment;
+    const appointmentDate = orderForm.appointmentDate.trim();
+    const appointmentTime = orderForm.appointmentTime.trim();
+    const appointmentDurationRaw = orderForm.appointmentDurationMinutes.trim();
 
     if (phone === "" || serviceName === "" || address === "") {
       setGlobalError(messages.clientChats.orderModalRequiredFields);
@@ -1140,6 +1244,31 @@ export default function ClientChatsPage() {
       amountValue = parsedAmount;
     }
 
+    let appointmentDurationMinutes: number | undefined;
+
+    if (bookAppointment) {
+      if (
+        appointmentDate === ""
+        || appointmentTime === ""
+        || appointmentDurationRaw === ""
+      ) {
+        setGlobalError(messages.clientChats.orderModalAppointmentRequiredFields);
+        return;
+      }
+
+      const parsedDuration = Number(appointmentDurationRaw);
+      if (
+        !Number.isFinite(parsedDuration)
+        || parsedDuration < 15
+        || parsedDuration > 720
+      ) {
+        setGlobalError(messages.clientChats.orderModalInvalidDuration);
+        return;
+      }
+
+      appointmentDurationMinutes = Math.round(parsedDuration);
+    }
+
     setGlobalError(null);
     setIsCreatingOrder(true);
 
@@ -1151,6 +1280,12 @@ export default function ClientChatsPage() {
         amount: amountValue,
         note: note === "" ? undefined : note,
         chat_message_id: latestPersistedMessageId,
+        book_appointment: bookAppointment ? true : undefined,
+        appointment_date: bookAppointment ? appointmentDate : undefined,
+        appointment_time: bookAppointment ? appointmentTime : undefined,
+        appointment_duration_minutes: bookAppointment
+          ? appointmentDurationMinutes
+          : undefined,
       });
 
       setOrderForm(INITIAL_ORDER_FORM);
@@ -1178,13 +1313,20 @@ export default function ClientChatsPage() {
     }
   }, [
     isCreatingOrder,
+    companySupportsAppointments,
     latestPersistedMessageId,
+    messages.clientChats.orderModalAppointmentRequiredFields,
+    messages.clientChats.orderModalInvalidDuration,
     messages.clientChats.orderModalInvalidAmount,
     messages.clientChats.orderModalRequiredFields,
     messages.clientChats.sendFailed,
     messages.clientChats.unauthorized,
     orderForm.address,
     orderForm.amount,
+    orderForm.appointmentDate,
+    orderForm.appointmentDurationMinutes,
+    orderForm.appointmentTime,
+    orderForm.bookAppointment,
     orderForm.note,
     orderForm.phone,
     orderForm.serviceName,
@@ -1444,6 +1586,27 @@ export default function ClientChatsPage() {
                       </div>
 
                       <div className="flex items-center gap-2">
+                        {isAssistantConversation ? (
+                          <Button
+                            size="sm"
+                            color="danger"
+                            variant="flat"
+                            onPress={() => {
+                              void handleResetAssistantChat();
+                            }}
+                            isLoading={isResettingAssistantChat}
+                            startContent={
+                              <Icon
+                                icon="solar:restart-bold-duotone"
+                                width={16}
+                              />
+                            }
+                          >
+                            <span className="hidden sm:inline">
+                              {messages.clientChats.resetChatButton}
+                            </span>
+                          </Button>
+                        ) : null}
                         <Button
                           isIconOnly
                           size="sm"
@@ -1935,6 +2098,78 @@ export default function ClientChatsPage() {
               variant="bordered"
               inputMode="decimal"
             />
+
+            {companySupportsAppointments ? (
+              <div className="space-y-3 rounded-large border border-default-200 px-3 py-3">
+                <Switch
+                  size="sm"
+                  isSelected={orderForm.bookAppointment}
+                  onValueChange={(value) => {
+                    setOrderForm((previous) => ({
+                      ...previous,
+                      bookAppointment: value,
+                      appointmentDate: value ? previous.appointmentDate : "",
+                      appointmentTime: value ? previous.appointmentTime : "",
+                      appointmentDurationMinutes: value
+                        ? previous.appointmentDurationMinutes
+                        : "",
+                    }));
+                  }}
+                >
+                  {messages.clientChats.orderModalBookAppointmentSwitch}
+                </Switch>
+
+                {orderForm.bookAppointment ? (
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <Input
+                      type="date"
+                      label={messages.clientChats.orderModalAppointmentDateLabel}
+                      value={orderForm.appointmentDate}
+                      onValueChange={(value) => {
+                        setOrderForm((previous) => ({
+                          ...previous,
+                          appointmentDate: value,
+                        }));
+                      }}
+                      variant="bordered"
+                    />
+
+                    <Input
+                      type="time"
+                      label={messages.clientChats.orderModalAppointmentTimeLabel}
+                      value={orderForm.appointmentTime}
+                      onValueChange={(value) => {
+                        setOrderForm((previous) => ({
+                          ...previous,
+                          appointmentTime: value,
+                        }));
+                      }}
+                      variant="bordered"
+                    />
+
+                    <Input
+                      type="number"
+                      inputMode="numeric"
+                      min={15}
+                      max={720}
+                      step={5}
+                      label={messages.clientChats.orderModalAppointmentDurationLabel}
+                      placeholder={
+                        messages.clientChats.orderModalAppointmentDurationPlaceholder
+                      }
+                      value={orderForm.appointmentDurationMinutes}
+                      onValueChange={(value) => {
+                        setOrderForm((previous) => ({
+                          ...previous,
+                          appointmentDurationMinutes: value,
+                        }));
+                      }}
+                      variant="bordered"
+                    />
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
 
             <Textarea
               label={messages.clientChats.orderModalNoteLabel}

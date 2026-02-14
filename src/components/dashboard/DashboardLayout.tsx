@@ -1,5 +1,7 @@
 import { useDisclosure } from "@heroui/react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { getAuthToken } from "../../auth/authStorage";
+import { companySettingsRequest } from "../../company/companySettingsClient";
 import type { AuthUser } from "../../auth/authClient";
 import { BRANDING } from "../../config/branding";
 import { useI18n } from "../../i18n/useI18n";
@@ -28,8 +30,46 @@ export default function DashboardLayout({
   const { locale } = useI18n();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [selectedKey, setSelectedKey] = useState(defaultSelectedKey);
+  const [showAppointmentItems, setShowAppointmentItems] = useState(true);
 
-  const sections = useMemo(() => getSidebarSections(locale), [locale]);
+  useEffect(() => {
+    let cancelled = false;
+    const token = getAuthToken();
+
+    if (!token) {
+      return;
+    }
+
+    void companySettingsRequest(token)
+      .then((response) => {
+        if (cancelled) {
+          return;
+        }
+
+        setShowAppointmentItems(
+          response.company.settings.account_type === "with_appointments",
+        );
+      })
+      .catch(() => {
+        if (cancelled) {
+          return;
+        }
+
+        setShowAppointmentItems(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const sections = useMemo(
+    () =>
+      getSidebarSections(locale, {
+        showAppointmentItems,
+      }),
+    [locale, showAppointmentItems],
+  );
 
   const desktopSidebarContent = (
     <div className="flex h-full w-full flex-col bg-white">

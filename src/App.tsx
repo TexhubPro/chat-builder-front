@@ -5,12 +5,16 @@ import { GuestRoute, ModerationRoute, ProtectedRoute } from './auth/RouteGuards'
 const EmailVerificationPage = lazy(() => import('./pages/EmailVerificationPage'))
 const AssistantTrainingPage = lazy(() => import('./pages/AssistantTrainingPage'))
 const BillingPage = lazy(() => import('./pages/BillingPage'))
+const BusinessSettingsPage = lazy(() => import('./pages/BusinessSettingsPage'))
+const ClientBasePage = lazy(() => import('./pages/ClientBasePage'))
+const ClientRequestsPage = lazy(() => import('./pages/ClientRequestsPage'))
 const ClientChatsPage = lazy(() => import('./pages/ClientChatsPage'))
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
 const HomePage = lazy(() => import('./pages/HomePage'))
 const IntegrationsPage = lazy(() => import('./pages/IntegrationsPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const ModerationPage = lazy(() => import('./pages/ModerationPage'))
+const ProductsServicesPage = lazy(() => import('./pages/ProductsServicesPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 
@@ -27,10 +31,14 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/client-requests" element={<ClientRequestsPage />} />
+          <Route path="/client-base" element={<ClientBasePage />} />
           <Route path="/client-chats" element={<ClientChatsPage />} />
           <Route path="/assistant/training" element={<AssistantTrainingPage />} />
           <Route path="/integrations" element={<IntegrationsPage />} />
+          <Route path="/products-services" element={<ProductsServicesPage />} />
           <Route path="/billing" element={<BillingPage />} />
+          <Route path="/business-settings" element={<BusinessSettingsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
 

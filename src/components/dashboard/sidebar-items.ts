@@ -13,6 +13,10 @@ export type SidebarSection = {
   items: SidebarItem[];
 };
 
+type SidebarOptions = {
+  showAppointmentItems?: boolean;
+};
+
 const RU_SECTIONS: SidebarSection[] = [
   {
     key: "main",
@@ -95,6 +99,12 @@ const RU_SECTIONS: SidebarSection[] = [
         href: "/billing",
         icon: "solar:card-outline",
         title: "Подписка и платежи",
+      },
+      {
+        key: "products-services",
+        href: "/products-services",
+        icon: "solar:box-minimalistic-linear",
+        title: "Продукты и услуги",
       },
       {
         key: "template-store",
@@ -220,6 +230,12 @@ const EN_SECTIONS: SidebarSection[] = [
         title: "Subscription and billing",
       },
       {
+        key: "products-services",
+        href: "/products-services",
+        icon: "solar:box-minimalistic-linear",
+        title: "Products and services",
+      },
+      {
         key: "template-store",
         href: "/template-store",
         icon: "solar:bag-4-linear",
@@ -259,6 +275,23 @@ const EN_SECTIONS: SidebarSection[] = [
   },
 ];
 
-export function getSidebarSections(locale: Locale): SidebarSection[] {
-  return locale === "en" ? EN_SECTIONS : RU_SECTIONS;
+export function getSidebarSections(
+  locale: Locale,
+  options: SidebarOptions = {},
+): SidebarSection[] {
+  const showAppointmentItems = options.showAppointmentItems ?? true;
+  const source = locale === "en" ? EN_SECTIONS : RU_SECTIONS;
+
+  const hiddenKeys = new Set<string>();
+
+  if (!showAppointmentItems) {
+    hiddenKeys.add("calendar");
+  }
+
+  return source
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => !hiddenKeys.has(item.key)),
+    }))
+    .filter((section) => section.items.length > 0);
 }
