@@ -83,12 +83,12 @@ const RU_SECTIONS: SidebarSection[] = [
         icon: "solar:book-2-linear",
         title: "Обучение ассистента",
       },
-      {
-        key: "builder",
-        href: "/builder",
-        icon: "solar:widget-2-outline",
-        title: "Конструктор",
-      },
+      // {
+      //   key: "builder",
+      //   href: "/builder",
+      //   icon: "solar:widget-2-outline",
+      //   title: "Конструктор",
+      // },
     ],
   },
   {
@@ -107,18 +107,18 @@ const RU_SECTIONS: SidebarSection[] = [
         icon: "solar:box-minimalistic-linear",
         title: "Продукты и услуги",
       },
-      {
-        key: "template-store",
-        href: "/template-store",
-        icon: "solar:bag-4-linear",
-        title: "Маркетплейс шаблонов",
-      },
-      {
-        key: "integrations-marketplace",
-        href: "/integrations-marketplace",
-        icon: "solar:star-rainbow-linear",
-        title: "Маркетплейс интеграций",
-      },
+      // {
+      //   key: "template-store",
+      //   href: "/template-store",
+      //   icon: "solar:bag-4-linear",
+      //   title: "Маркетплейс шаблонов",
+      // },
+      // {
+      //   key: "integrations-marketplace",
+      //   href: "/integrations-marketplace",
+      //   icon: "solar:star-rainbow-linear",
+      //   title: "Маркетплейс интеграций",
+      // },
       {
         key: "business-settings",
         href: "/business-settings",
@@ -218,12 +218,12 @@ const EN_SECTIONS: SidebarSection[] = [
         icon: "solar:book-2-linear",
         title: "Assistant training",
       },
-      {
-        key: "builder",
-        href: "/builder",
-        icon: "solar:widget-2-outline",
-        title: "Builder",
-      },
+      // {
+      //   key: "builder",
+      //   href: "/builder",
+      //   icon: "solar:widget-2-outline",
+      //   title: "Builder",
+      // },
     ],
   },
   {
@@ -242,18 +242,18 @@ const EN_SECTIONS: SidebarSection[] = [
         icon: "solar:box-minimalistic-linear",
         title: "Products and services",
       },
-      {
-        key: "template-store",
-        href: "/template-store",
-        icon: "solar:bag-4-linear",
-        title: "Template marketplace",
-      },
-      {
-        key: "integrations-marketplace",
-        href: "/integrations-marketplace",
-        icon: "solar:star-rainbow-linear",
-        title: "Integrations marketplace",
-      },
+      // {
+      //   key: "template-store",
+      //   href: "/template-store",
+      //   icon: "solar:bag-4-linear",
+      //   title: "Template marketplace",
+      // },
+      // {
+      //   key: "integrations-marketplace",
+      //   href: "/integrations-marketplace",
+      //   icon: "solar:star-rainbow-linear",
+      //   title: "Integrations marketplace",
+      // },
       {
         key: "business-settings",
         href: "/business-settings",
