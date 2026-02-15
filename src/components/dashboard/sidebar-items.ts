@@ -15,6 +15,7 @@ export type SidebarSection = {
 
 type SidebarOptions = {
   showAppointmentItems?: boolean;
+  allowedPageKeys?: string[] | null;
 };
 
 const RU_SECTIONS: SidebarSection[] = [
@@ -123,6 +124,12 @@ const RU_SECTIONS: SidebarSection[] = [
         href: "/business-settings",
         icon: "solar:settings-linear",
         title: "Настройка бизнеса",
+      },
+      {
+        key: "employees",
+        href: "/employees",
+        icon: "solar:users-group-rounded-linear",
+        title: "Сотрудники",
       },
     ],
   },
@@ -253,6 +260,12 @@ const EN_SECTIONS: SidebarSection[] = [
         icon: "solar:settings-linear",
         title: "Business settings",
       },
+      {
+        key: "employees",
+        href: "/employees",
+        icon: "solar:users-group-rounded-linear",
+        title: "Employees",
+      },
     ],
   },
   {
@@ -280,12 +293,25 @@ export function getSidebarSections(
   options: SidebarOptions = {},
 ): SidebarSection[] {
   const showAppointmentItems = options.showAppointmentItems ?? true;
+  const allowedPageKeys = options.allowedPageKeys ?? null;
   const source = locale === "en" ? EN_SECTIONS : RU_SECTIONS;
 
   const hiddenKeys = new Set<string>();
 
   if (!showAppointmentItems) {
     hiddenKeys.add("calendar");
+  }
+
+  if (allowedPageKeys !== null) {
+    const allowedSet = new Set(allowedPageKeys);
+
+    for (const section of source) {
+      for (const item of section.items) {
+        if (!allowedSet.has(item.key)) {
+          hiddenKeys.add(item.key);
+        }
+      }
+    }
   }
 
   return source

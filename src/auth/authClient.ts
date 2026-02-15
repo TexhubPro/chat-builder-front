@@ -7,6 +7,8 @@ export type AuthUser = {
   phone: string | null
   avatar: string | null
   role: string
+  company_id?: number | null
+  page_access?: string[] | null
   status: boolean
 }
 

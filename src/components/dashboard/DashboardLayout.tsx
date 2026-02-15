@@ -1,6 +1,7 @@
 import { useDisclosure } from "@heroui/react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { getAuthToken } from "../../auth/authStorage";
+import { isEmployeeUser, normalizePageAccess } from "../../auth/pageAccess";
 import { companySettingsRequest } from "../../company/companySettingsClient";
 import type { AuthUser } from "../../auth/authClient";
 import { BRANDING } from "../../config/branding";
@@ -67,8 +68,9 @@ export default function DashboardLayout({
     () =>
       getSidebarSections(locale, {
         showAppointmentItems,
+        allowedPageKeys: isEmployeeUser(user) ? normalizePageAccess(user?.page_access) : null,
       }),
-    [locale, showAppointmentItems],
+    [locale, showAppointmentItems, user],
   );
 
   const desktopSidebarContent = (

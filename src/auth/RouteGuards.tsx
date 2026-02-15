@@ -2,6 +2,7 @@ import { Spinner } from '@heroui/react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from './AuthProvider'
 import { useI18n } from '../i18n/useI18n'
+import { firstAccessiblePath, hasPageAccess, type PageAccessKey } from './pageAccess'
 
 function AuthScreenLoader() {
   const { messages } = useI18n()
@@ -66,4 +67,26 @@ export function ModerationRoute() {
   }
 
   return <Outlet />
+}
+
+type PageAccessRouteProps = {
+  pageKey: PageAccessKey
+}
+
+export function PageAccessRoute({ pageKey }: PageAccessRouteProps) {
+  const { status, user } = useAuth()
+
+  if (status === 'loading') {
+    return <AuthScreenLoader />
+  }
+
+  if (status !== 'authenticated') {
+    return <Navigate to="/login" replace />
+  }
+
+  if (hasPageAccess(user, pageKey)) {
+    return <Outlet />
+  }
+
+  return <Navigate to={firstAccessiblePath(user)} replace />
 }

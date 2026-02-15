@@ -245,6 +245,53 @@ export type Messages = {
     errorTitle: string;
     successTitle: string;
   };
+  employees: {
+    title: string;
+    subtitle: string;
+    addButton: string;
+    refreshButton: string;
+    loading: string;
+    empty: string;
+    createModalTitle: string;
+    editModalTitle: string;
+    nameLabel: string;
+    emailLabel: string;
+    phoneLabel: string;
+    statusLabel: string;
+    activeStatus: string;
+    inactiveStatus: string;
+    pageAccessLabel: string;
+    temporaryPasswordHint: string;
+    saveButton: string;
+    cancelButton: string;
+    editButton: string;
+    deleteButton: string;
+    validationName: string;
+    validationEmail: string;
+    validationPhone: string;
+    validationPageAccess: string;
+    pageDashboard: string;
+    pageClientRequests: string;
+    pageClientQuestions: string;
+    pageClientChats: string;
+    pageClientBase: string;
+    pageCalendar: string;
+    pageAssistantTraining: string;
+    pageIntegrations: string;
+    pageProductsServices: string;
+    pageBilling: string;
+    pageBusinessSettings: string;
+    pageEmployees: string;
+    createSuccess: string;
+    updateSuccess: string;
+    deleteSuccess: string;
+    loadFailed: string;
+    saveFailed: string;
+    deleteFailed: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
   billing: {
     title: string;
     subtitle: string;
@@ -529,6 +576,103 @@ export type Messages = {
     updateSuccess: string;
     updateFailed: string;
     deleteSuccess: string;
+    deleteFailed: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
+  clientQuestions: {
+    title: string;
+    subtitle: string;
+    refreshButton: string;
+    loading: string;
+    empty: string;
+    columnNew: string;
+    columnInProgress: string;
+    columnCompleted: string;
+    openChatButton: string;
+    editButton: string;
+    deleteButton: string;
+    moveToProgressButton: string;
+    moveToCompletedButton: string;
+    reopenButton: string;
+    clientLabel: string;
+    phoneLabel: string;
+    assistantLabel: string;
+    noClient: string;
+    noPhone: string;
+    noChat: string;
+    statusOpen: string;
+    statusInProgress: string;
+    statusAnswered: string;
+    statusClosed: string;
+    updatedAtLabel: string;
+    editModalTitle: string;
+    editDescriptionLabel: string;
+    editStatusLabel: string;
+    editSave: string;
+    editCancel: string;
+    requiredFields: string;
+    updateSuccess: string;
+    updateFailed: string;
+    deleteSuccess: string;
+    deleteFailed: string;
+    unauthorized: string;
+    errorTitle: string;
+    successTitle: string;
+  };
+  calendar: {
+    title: string;
+    subtitle: string;
+    monthTitle: string;
+    prevMonthButton: string;
+    nextMonthButton: string;
+    assistantFilterLabel: string;
+    allAssistants: string;
+    quickCreateTitle: string;
+    dayOffMessage: string;
+    noSlots: string;
+    timezoneLabel: string;
+    refreshButton: string;
+    addEventButton: string;
+    backToMonthButton: string;
+    emptyForDay: string;
+    editButton: string;
+    deleteButton: string;
+    createModalTitle: string;
+    editModalTitle: string;
+    titleLabel: string;
+    descriptionLabel: string;
+    statusLabel: string;
+    dateLabel: string;
+    timeLabel: string;
+    durationLabel: string;
+    clientNameLabel: string;
+    clientPhoneLabel: string;
+    clientEmailLabel: string;
+    assistantLabel: string;
+    serviceLabel: string;
+    noAssistant: string;
+    noService: string;
+    locationLabel: string;
+    meetingLinkLabel: string;
+    requiredFields: string;
+    invalidMeetingLink: string;
+    cancelButton: string;
+    createButton: string;
+    saveButton: string;
+    createdSuccess: string;
+    updatedSuccess: string;
+    deletedSuccess: string;
+    appointmentsDisabledTitle: string;
+    appointmentsDisabledDescription: string;
+    statusScheduled: string;
+    statusConfirmed: string;
+    statusCompleted: string;
+    statusCanceled: string;
+    statusNoShow: string;
+    loadFailed: string;
+    saveFailed: string;
     deleteFailed: string;
     unauthorized: string;
     errorTitle: string;
@@ -981,6 +1125,55 @@ export const MESSAGES: Record<Locale, Messages> = {
       errorTitle: "Ошибка",
       successTitle: "Успешно",
     },
+    employees: {
+      title: "Сотрудники",
+      subtitle: "Добавляйте сотрудников и управляйте их доступом к страницам.",
+      addButton: "Добавить сотрудника",
+      refreshButton: "Обновить",
+      loading: "Загружаем сотрудников...",
+      empty: "Сотрудники пока не добавлены.",
+      createModalTitle: "Новый сотрудник",
+      editModalTitle: "Редактировать сотрудника",
+      nameLabel: "Имя",
+      emailLabel: "Email",
+      phoneLabel: "Телефон",
+      statusLabel: "Статус",
+      activeStatus: "Активен",
+      inactiveStatus: "Отключен",
+      pageAccessLabel: "Доступ к страницам",
+      temporaryPasswordHint:
+        "После создания на email сотрудника отправится временный пароль.",
+      saveButton: "Сохранить",
+      cancelButton: "Отмена",
+      editButton: "Изменить",
+      deleteButton: "Удалить",
+      validationName: "Имя должно быть не короче 2 символов.",
+      validationEmail: "Введите корректный email.",
+      validationPhone:
+        "Телефон должен быть в международном формате, например +12345678900.",
+      validationPageAccess: "Выберите хотя бы одну страницу доступа.",
+      pageDashboard: "Панель управления",
+      pageClientRequests: "Заявки клиентов",
+      pageClientQuestions: "Вопросы клиентов",
+      pageClientChats: "Чаты клиентов",
+      pageClientBase: "База клиентов",
+      pageCalendar: "Календарь",
+      pageAssistantTraining: "Обучение ассистента",
+      pageIntegrations: "Интеграции",
+      pageProductsServices: "Продукты и услуги",
+      pageBilling: "Подписка и платежи",
+      pageBusinessSettings: "Настройка бизнеса",
+      pageEmployees: "Сотрудники",
+      createSuccess: "Сотрудник создан. Временный пароль отправлен на email.",
+      updateSuccess: "Данные сотрудника обновлены.",
+      deleteSuccess: "Сотрудник удален.",
+      loadFailed: "Не удалось загрузить сотрудников.",
+      saveFailed: "Не удалось сохранить сотрудника.",
+      deleteFailed: "Не удалось удалить сотрудника.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
     billing: {
       title: "Подписка и платежи",
       subtitle: "Управляйте тарифом, лимитами и счетами компании.",
@@ -1272,6 +1465,104 @@ export const MESSAGES: Record<Locale, Messages> = {
       updateFailed: "Не удалось обновить заявку.",
       deleteSuccess: "Заявка удалена.",
       deleteFailed: "Не удалось удалить заявку.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
+    clientQuestions: {
+      title: "Вопросы клиентов",
+      subtitle:
+        "Канбан-доска вопросов, которые ИИ не смог закрыть автоматически.",
+      refreshButton: "Обновить",
+      loading: "Загружаем вопросы...",
+      empty: "Вопросов пока нет.",
+      columnNew: "Новые",
+      columnInProgress: "В обработке",
+      columnCompleted: "Завершено",
+      openChatButton: "Открыть чат",
+      editButton: "Изменить",
+      deleteButton: "Удалить",
+      moveToProgressButton: "В обработку",
+      moveToCompletedButton: "Завершить",
+      reopenButton: "Вернуть в обработку",
+      clientLabel: "Клиент",
+      phoneLabel: "Телефон",
+      assistantLabel: "Ассистент",
+      noClient: "Клиент не найден",
+      noPhone: "Телефон не указан",
+      noChat: "Чат не привязан",
+      statusOpen: "Новый",
+      statusInProgress: "В обработке",
+      statusAnswered: "Завершен",
+      statusClosed: "Закрыт",
+      updatedAtLabel: "Обновлено",
+      editModalTitle: "Редактировать вопрос",
+      editDescriptionLabel: "Описание вопроса",
+      editStatusLabel: "Статус",
+      editSave: "Сохранить",
+      editCancel: "Отмена",
+      requiredFields: "Описание вопроса не может быть пустым.",
+      updateSuccess: "Вопрос обновлен.",
+      updateFailed: "Не удалось обновить вопрос.",
+      deleteSuccess: "Вопрос архивирован.",
+      deleteFailed: "Не удалось архивировать вопрос.",
+      unauthorized: "Сессия истекла. Войдите снова.",
+      errorTitle: "Ошибка",
+      successTitle: "Успешно",
+    },
+    calendar: {
+      title: "Календарь",
+      subtitle: "Все записи компании в одном месте. Ручные записи синхронизируются с ИИ и блокируют двойное бронирование.",
+      monthTitle: "Месяц",
+      prevMonthButton: "Предыдущий месяц",
+      nextMonthButton: "Следующий месяц",
+      assistantFilterLabel: "Фильтр по ассистенту",
+      allAssistants: "Все ассистенты",
+      quickCreateTitle: "Быстрое добавление",
+      dayOffMessage: "Этот день отмечен как выходной.",
+      noSlots: "Свободные слоты для быстрого добавления не найдены.",
+      timezoneLabel: "Часовой пояс",
+      refreshButton: "Обновить",
+      addEventButton: "Добавить запись",
+      backToMonthButton: "Назад",
+      emptyForDay: "На выбранный день записей пока нет.",
+      editButton: "Изменить",
+      deleteButton: "Удалить",
+      createModalTitle: "Новая запись",
+      editModalTitle: "Изменить запись",
+      titleLabel: "Название",
+      descriptionLabel: "Описание",
+      statusLabel: "Статус",
+      dateLabel: "Дата",
+      timeLabel: "Время",
+      durationLabel: "Длительность",
+      clientNameLabel: "Имя клиента",
+      clientPhoneLabel: "Телефон клиента",
+      clientEmailLabel: "Email клиента",
+      assistantLabel: "Ассистент",
+      serviceLabel: "Услуга",
+      noAssistant: "Без ассистента",
+      noService: "Без услуги",
+      locationLabel: "Адрес / место",
+      meetingLinkLabel: "Ссылка встречи",
+      requiredFields: "Заполните название, имя клиента, телефон, дату, время и длительность.",
+      invalidMeetingLink: "Ссылка встречи должна быть корректным URL.",
+      cancelButton: "Отмена",
+      createButton: "Создать",
+      saveButton: "Сохранить",
+      createdSuccess: "Запись создана.",
+      updatedSuccess: "Запись обновлена.",
+      deletedSuccess: "Запись удалена.",
+      appointmentsDisabledTitle: "Записи отключены",
+      appointmentsDisabledDescription: "В настройках бизнеса сейчас выбран режим без записи. Включите запись, чтобы добавлять слоты.",
+      statusScheduled: "Запланировано",
+      statusConfirmed: "Подтверждено",
+      statusCompleted: "Завершено",
+      statusCanceled: "Отменено",
+      statusNoShow: "Не пришёл",
+      loadFailed: "Не удалось загрузить календарь.",
+      saveFailed: "Не удалось сохранить запись.",
+      deleteFailed: "Не удалось удалить запись.",
       unauthorized: "Сессия истекла. Войдите снова.",
       errorTitle: "Ошибка",
       successTitle: "Успешно",
@@ -1727,6 +2018,55 @@ export const MESSAGES: Record<Locale, Messages> = {
       errorTitle: "Error",
       successTitle: "Success",
     },
+    employees: {
+      title: "Employees",
+      subtitle: "Add employees and control which pages they can access.",
+      addButton: "Add employee",
+      refreshButton: "Refresh",
+      loading: "Loading employees...",
+      empty: "No employees added yet.",
+      createModalTitle: "New employee",
+      editModalTitle: "Edit employee",
+      nameLabel: "Name",
+      emailLabel: "Email",
+      phoneLabel: "Phone",
+      statusLabel: "Status",
+      activeStatus: "Active",
+      inactiveStatus: "Disabled",
+      pageAccessLabel: "Page access",
+      temporaryPasswordHint:
+        "After creation, a temporary password will be sent to employee email.",
+      saveButton: "Save",
+      cancelButton: "Cancel",
+      editButton: "Edit",
+      deleteButton: "Delete",
+      validationName: "Name must be at least 2 characters long.",
+      validationEmail: "Enter a valid email address.",
+      validationPhone:
+        "Phone must be in international format, for example +12345678900.",
+      validationPageAccess: "Select at least one page access.",
+      pageDashboard: "Dashboard",
+      pageClientRequests: "Client requests",
+      pageClientQuestions: "Client questions",
+      pageClientChats: "Client chats",
+      pageClientBase: "Client base",
+      pageCalendar: "Calendar",
+      pageAssistantTraining: "Assistant training",
+      pageIntegrations: "Integrations",
+      pageProductsServices: "Products and services",
+      pageBilling: "Subscription and billing",
+      pageBusinessSettings: "Business settings",
+      pageEmployees: "Employees",
+      createSuccess: "Employee created. Temporary password sent by email.",
+      updateSuccess: "Employee updated successfully.",
+      deleteSuccess: "Employee deleted successfully.",
+      loadFailed: "Failed to load employees.",
+      saveFailed: "Failed to save employee.",
+      deleteFailed: "Failed to delete employee.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
+    },
     billing: {
       title: "Subscription and Billing",
       subtitle: "Manage company plan, limits, and invoices.",
@@ -2019,6 +2359,104 @@ export const MESSAGES: Record<Locale, Messages> = {
       updateFailed: "Failed to update request.",
       deleteSuccess: "Request deleted.",
       deleteFailed: "Failed to delete request.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
+    },
+    clientQuestions: {
+      title: "Client questions",
+      subtitle:
+        "Kanban board of questions that AI could not resolve automatically.",
+      refreshButton: "Refresh",
+      loading: "Loading questions...",
+      empty: "No questions yet.",
+      columnNew: "New",
+      columnInProgress: "In progress",
+      columnCompleted: "Completed",
+      openChatButton: "Open chat",
+      editButton: "Edit",
+      deleteButton: "Delete",
+      moveToProgressButton: "Move to progress",
+      moveToCompletedButton: "Complete",
+      reopenButton: "Reopen",
+      clientLabel: "Client",
+      phoneLabel: "Phone",
+      assistantLabel: "Assistant",
+      noClient: "Client not found",
+      noPhone: "No phone",
+      noChat: "No linked chat",
+      statusOpen: "New",
+      statusInProgress: "In progress",
+      statusAnswered: "Completed",
+      statusClosed: "Closed",
+      updatedAtLabel: "Updated",
+      editModalTitle: "Edit question",
+      editDescriptionLabel: "Question description",
+      editStatusLabel: "Status",
+      editSave: "Save",
+      editCancel: "Cancel",
+      requiredFields: "Question description cannot be empty.",
+      updateSuccess: "Question updated.",
+      updateFailed: "Failed to update question.",
+      deleteSuccess: "Question archived.",
+      deleteFailed: "Failed to archive question.",
+      unauthorized: "Session expired. Please sign in again.",
+      errorTitle: "Error",
+      successTitle: "Success",
+    },
+    calendar: {
+      title: "Calendar",
+      subtitle: "All company bookings in one place. Manual bookings are synced with AI and prevent double-booking.",
+      monthTitle: "Month",
+      prevMonthButton: "Previous month",
+      nextMonthButton: "Next month",
+      assistantFilterLabel: "Assistant filter",
+      allAssistants: "All assistants",
+      quickCreateTitle: "Quick add",
+      dayOffMessage: "This day is marked as a day off.",
+      noSlots: "No available slots for quick add.",
+      timezoneLabel: "Time zone",
+      refreshButton: "Refresh",
+      addEventButton: "Add booking",
+      backToMonthButton: "Back",
+      emptyForDay: "No bookings for the selected day yet.",
+      editButton: "Edit",
+      deleteButton: "Delete",
+      createModalTitle: "New booking",
+      editModalTitle: "Edit booking",
+      titleLabel: "Title",
+      descriptionLabel: "Description",
+      statusLabel: "Status",
+      dateLabel: "Date",
+      timeLabel: "Time",
+      durationLabel: "Duration",
+      clientNameLabel: "Client name",
+      clientPhoneLabel: "Client phone",
+      clientEmailLabel: "Client email",
+      assistantLabel: "Assistant",
+      serviceLabel: "Service",
+      noAssistant: "No assistant",
+      noService: "No service",
+      locationLabel: "Address / location",
+      meetingLinkLabel: "Meeting link",
+      requiredFields: "Fill in title, client name, phone, date, time, and duration.",
+      invalidMeetingLink: "Meeting link must be a valid URL.",
+      cancelButton: "Cancel",
+      createButton: "Create",
+      saveButton: "Save",
+      createdSuccess: "Booking created.",
+      updatedSuccess: "Booking updated.",
+      deletedSuccess: "Booking deleted.",
+      appointmentsDisabledTitle: "Appointments are disabled",
+      appointmentsDisabledDescription: "Business settings currently use mode without appointments. Enable appointments to add slots.",
+      statusScheduled: "Scheduled",
+      statusConfirmed: "Confirmed",
+      statusCompleted: "Completed",
+      statusCanceled: "Canceled",
+      statusNoShow: "No show",
+      loadFailed: "Failed to load calendar.",
+      saveFailed: "Failed to save booking.",
+      deleteFailed: "Failed to delete booking.",
       unauthorized: "Session expired. Please sign in again.",
       errorTitle: "Error",
       successTitle: "Success",
