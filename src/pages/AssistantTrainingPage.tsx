@@ -203,8 +203,9 @@ export default function AssistantTrainingPage() {
     setConversationTone(assistant.conversation_tone ?? "polite");
     setEnableFileSearch(Boolean(assistant.enable_file_search));
     setEnableFileAnalysis(Boolean(assistant.enable_file_analysis));
-    setEnableVoice(Boolean(assistant.enable_voice));
-    setEnableWebSearch(Boolean(assistant.enable_web_search));
+    // Voice mode and web search are not available yet.
+    setEnableVoice(false);
+    setEnableWebSearch(false);
     setTriggers(rowsFromTriggers(assistant.settings?.triggers));
   };
 
@@ -305,8 +306,8 @@ export default function AssistantTrainingPage() {
           conversation_tone: conversationTone,
           enable_file_search: enableFileSearch,
           enable_file_analysis: enableFileAnalysis,
-          enable_voice: enableVoice,
-          enable_web_search: enableWebSearch,
+          enable_voice: false,
+          enable_web_search: false,
           settings: {
             triggers: normalizeTriggers(triggers),
           },
@@ -734,15 +735,27 @@ export default function AssistantTrainingPage() {
                           </Switch>
                           <Switch
                             isSelected={enableVoice}
+                            isDisabled
                             onValueChange={setEnableVoice}
                           >
-                            {messages.assistantTraining.voiceLabel}
+                            <span className="flex items-center gap-2">
+                              <span>{messages.assistantTraining.voiceLabel}</span>
+                              <Chip size="sm" variant="flat" color="warning">
+                                {messages.assistantTraining.comingSoonLabel}
+                              </Chip>
+                            </span>
                           </Switch>
                           <Switch
                             isSelected={enableWebSearch}
+                            isDisabled
                             onValueChange={setEnableWebSearch}
                           >
-                            {messages.assistantTraining.webSearchLabel}
+                            <span className="flex items-center gap-2">
+                              <span>{messages.assistantTraining.webSearchLabel}</span>
+                              <Chip size="sm" variant="flat" color="warning">
+                                {messages.assistantTraining.comingSoonLabel}
+                              </Chip>
+                            </span>
                           </Switch>
                         </div>
                       </CardBody>

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const DEFAULT_OG_IMAGE = "/seo-image.svg";
+const DEFAULT_OG_IMAGE = "/ceo-image.jpg";
 
 type UsePageSeoInput = {
   title: string;

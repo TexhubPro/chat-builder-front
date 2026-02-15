@@ -79,7 +79,7 @@ export default function DashboardLayout({
         <img
           src={BRANDING.logoUrl}
           alt={BRANDING.logoAlt}
-          className="h-9 w-9 rounded-md object-contain"
+          className="h-10 w-auto max-w-[150px] object-contain"
         />
       </div>
       <Sidebar

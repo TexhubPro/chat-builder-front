@@ -575,19 +575,6 @@ export default function ClientRequestsPage() {
       defaultSelectedKey="client-requests"
     >
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-default-500">{messages.clientRequests.subtitle}</p>
-          <Button
-            variant="flat"
-            size="sm"
-            onPress={() => {
-              void loadRequests();
-            }}
-          >
-            {messages.clientRequests.refreshButton}
-          </Button>
-        </div>
-
         {globalError ? (
           <Alert
             color="danger"

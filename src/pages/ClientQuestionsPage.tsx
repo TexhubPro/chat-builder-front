@@ -74,13 +74,14 @@ export default function ClientQuestionsPage() {
   const { locale, messages } = useI18n();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [questions, setQuestions] = useState<ClientQuestionItem[]>([]);
-  const [editingQuestion, setEditingQuestion] = useState<ClientQuestionItem | null>(null);
-  const [deletingQuestion, setDeletingQuestion] = useState<ClientQuestionItem | null>(null);
+  const [editingQuestion, setEditingQuestion] =
+    useState<ClientQuestionItem | null>(null);
+  const [deletingQuestion, setDeletingQuestion] =
+    useState<ClientQuestionItem | null>(null);
   const [editForm, setEditForm] = useState<EditFormState | null>(null);
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [globalSuccess, setGlobalSuccess] = useState<string | null>(null);
@@ -101,42 +102,43 @@ export default function ClientQuestionsPage() {
     }
   };
 
-  const loadQuestions = useCallback(async (silent = false) => {
-    const token = getAuthToken();
+  const loadQuestions = useCallback(
+    async () => {
+      const token = getAuthToken();
 
-    if (!token) {
-      setGlobalError(messages.clientQuestions.unauthorized);
-      setIsLoading(false);
-      return;
-    }
+      if (!token) {
+        setGlobalError(messages.clientQuestions.unauthorized);
+        setIsLoading(false);
+        return;
+      }
 
-    if (silent) {
-      setIsRefreshing(true);
-    } else {
       setIsLoading(true);
-    }
 
-    try {
-      const response = await clientQuestionsListRequest(token);
-      setQuestions(response.questions);
-    } catch (error) {
-      setGlobalError(
-        error instanceof ApiError
-          ? error.message
-          : messages.clientQuestions.updateFailed,
-      );
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  }, [messages.clientQuestions.unauthorized, messages.clientQuestions.updateFailed]);
+      try {
+        const response = await clientQuestionsListRequest(token);
+        setQuestions(response.questions);
+      } catch (error) {
+        setGlobalError(
+          error instanceof ApiError
+            ? error.message
+            : messages.clientQuestions.updateFailed,
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [
+      messages.clientQuestions.unauthorized,
+      messages.clientQuestions.updateFailed,
+    ],
+  );
 
   useEffect(() => {
-    void loadQuestions(false);
+    void loadQuestions();
   }, [loadQuestions]);
 
   const columns = useMemo(
-    () => ([
+    () => [
       {
         key: "new" as ClientQuestionBoard,
         label: messages.clientQuestions.columnNew,
@@ -149,7 +151,7 @@ export default function ClientQuestionsPage() {
         key: "completed" as ClientQuestionBoard,
         label: messages.clientQuestions.columnCompleted,
       },
-    ]),
+    ],
     [
       messages.clientQuestions.columnCompleted,
       messages.clientQuestions.columnInProgress,
@@ -187,7 +189,9 @@ export default function ClientQuestionsPage() {
     }
   };
 
-  const statusColor = (status: ClientQuestionStatus): "default" | "primary" | "success" => {
+  const statusColor = (
+    status: ClientQuestionStatus,
+  ): "default" | "primary" | "success" => {
     switch (status) {
       case "in_progress":
         return "primary";
@@ -234,14 +238,20 @@ export default function ClientQuestionsPage() {
     setGlobalError(null);
 
     try {
-      const response = await clientQuestionUpdateRequest(token, editingQuestion.id, {
-        description,
-        status: editForm.status,
-      });
+      const response = await clientQuestionUpdateRequest(
+        token,
+        editingQuestion.id,
+        {
+          description,
+          status: editForm.status,
+        },
+      );
 
-      setQuestions((previous) => previous.map((item) => (
-        item.id === response.question.id ? response.question : item
-      )));
+      setQuestions((previous) =>
+        previous.map((item) =>
+          item.id === response.question.id ? response.question : item,
+        ),
+      );
 
       setGlobalSuccess(messages.clientQuestions.updateSuccess);
       closeEditModal();
@@ -256,7 +266,10 @@ export default function ClientQuestionsPage() {
     }
   };
 
-  const moveQuestionToBoard = async (question: ClientQuestionItem, board: ClientQuestionBoard) => {
+  const moveQuestionToBoard = async (
+    question: ClientQuestionItem,
+    board: ClientQuestionBoard,
+  ) => {
     const token = getAuthToken();
 
     if (!token) {
@@ -272,9 +285,11 @@ export default function ClientQuestionsPage() {
         status: statusFromBoard(board),
       });
 
-      setQuestions((previous) => previous.map((item) => (
-        item.id === response.question.id ? response.question : item
-      )));
+      setQuestions((previous) =>
+        previous.map((item) =>
+          item.id === response.question.id ? response.question : item,
+        ),
+      );
       setGlobalSuccess(messages.clientQuestions.updateSuccess);
     } catch (error) {
       setGlobalError(
@@ -303,7 +318,9 @@ export default function ClientQuestionsPage() {
     try {
       await clientQuestionDeleteRequest(token, deletingQuestion.id);
 
-      setQuestions((previous) => previous.filter((item) => item.id !== deletingQuestion.id));
+      setQuestions((previous) =>
+        previous.filter((item) => item.id !== deletingQuestion.id),
+      );
       setDeletingQuestion(null);
       setGlobalSuccess(messages.clientQuestions.deleteSuccess);
     } catch (error) {
@@ -326,45 +343,21 @@ export default function ClientQuestionsPage() {
       defaultSelectedKey="client-questions"
     >
       <div className="space-y-4">
-        <Card className="border border-default-200 shadow-none">
-          <CardBody className="space-y-4 p-4 sm:p-5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div className="space-y-1">
-                <h2 className="text-lg font-semibold text-foreground">
-                  {messages.clientQuestions.title}
-                </h2>
-                <p className="text-sm text-default-500">
-                  {messages.clientQuestions.subtitle}
-                </p>
-              </div>
-              <Button
-                variant="bordered"
-                onPress={() => {
-                  void loadQuestions(true);
-                }}
-                isLoading={isRefreshing}
-              >
-                {messages.clientQuestions.refreshButton}
-              </Button>
-            </div>
+        {globalError ? (
+          <Alert
+            color="danger"
+            title={messages.clientQuestions.errorTitle}
+            description={globalError}
+          />
+        ) : null}
 
-            {globalError ? (
-              <Alert
-                color="danger"
-                title={messages.clientQuestions.errorTitle}
-                description={globalError}
-              />
-            ) : null}
-
-            {globalSuccess ? (
-              <Alert
-                color="success"
-                title={messages.clientQuestions.successTitle}
-                description={globalSuccess}
-              />
-            ) : null}
-          </CardBody>
-        </Card>
+        {globalSuccess ? (
+          <Alert
+            color="success"
+            title={messages.clientQuestions.successTitle}
+            description={globalSuccess}
+          />
+        ) : null}
 
         {isLoading ? (
           <Card className="border border-default-200 shadow-none">
@@ -381,19 +374,26 @@ export default function ClientQuestionsPage() {
         ) : (
           <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
             {columns.map((column) => (
-              <Card key={column.key} className="border border-default-200 shadow-none">
+              <Card
+                key={column.key}
+                className="border border-default-200 shadow-none"
+              >
                 <CardBody className="space-y-3 p-3">
-                  <h3 className="text-sm font-semibold text-foreground">{column.label}</h3>
+                  <h3 className="text-sm font-semibold text-foreground">
+                    {column.label}
+                  </h3>
                   <div className="space-y-3">
                     {(grouped.get(column.key) ?? []).map((item) => {
-                      const nextBoard = item.board === "new"
-                        ? "in_progress"
-                        : item.board === "in_progress"
+                      const nextBoard =
+                        item.board === "new"
+                          ? "in_progress"
+                          : item.board === "in_progress"
                           ? "completed"
                           : "in_progress";
-                      const nextButtonLabel = item.board === "new"
-                        ? messages.clientQuestions.moveToProgressButton
-                        : item.board === "in_progress"
+                      const nextButtonLabel =
+                        item.board === "new"
+                          ? messages.clientQuestions.moveToProgressButton
+                          : item.board === "in_progress"
                           ? messages.clientQuestions.moveToCompletedButton
                           : messages.clientQuestions.reopenButton;
 
@@ -406,7 +406,8 @@ export default function ClientQuestionsPage() {
                             <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0">
                                 <p className="truncate text-sm font-semibold text-foreground">
-                                  {item.client?.name ?? messages.clientQuestions.noClient}
+                                  {item.client?.name ??
+                                    messages.clientQuestions.noClient}
                                 </p>
                                 <p className="truncate text-xs text-default-500">
                                   {item.assistant?.name ?? "-"}
@@ -430,11 +431,15 @@ export default function ClientQuestionsPage() {
                                 <Icon icon="solar:phone-linear" width={14} />
                                 <span>
                                   {messages.clientQuestions.phoneLabel}:{" "}
-                                  {item.client?.phone || messages.clientQuestions.noPhone}
+                                  {item.client?.phone ||
+                                    messages.clientQuestions.noPhone}
                                 </span>
                               </p>
                               <p className="flex items-center gap-1.5">
-                                <Icon icon="solar:clock-circle-linear" width={14} />
+                                <Icon
+                                  icon="solar:clock-circle-linear"
+                                  width={14}
+                                />
                                 <span>
                                   {messages.clientQuestions.updatedAtLabel}:{" "}
                                   {formatDateTime(item.updated_at, locale)}
@@ -476,15 +481,24 @@ export default function ClientQuestionsPage() {
                                 color="danger"
                                 isIconOnly
                                 onPress={() => setDeletingQuestion(item)}
-                                aria-label={messages.clientQuestions.deleteButton}
+                                aria-label={
+                                  messages.clientQuestions.deleteButton
+                                }
                               >
-                                <Icon icon="solar:trash-bin-trash-linear" width={17} />
+                                <Icon
+                                  icon="solar:trash-bin-trash-linear"
+                                  width={17}
+                                />
                               </Button>
                             </div>
 
                             <Button
                               size="sm"
-                              color={item.board === "in_progress" ? "success" : "primary"}
+                              color={
+                                item.board === "in_progress"
+                                  ? "success"
+                                  : "primary"
+                              }
                               className="w-full"
                               onPress={() => {
                                 void moveQuestionToBoard(item, nextBoard);
@@ -504,7 +518,10 @@ export default function ClientQuestionsPage() {
         )}
       </div>
 
-      <Modal isOpen={Boolean(editingQuestion && editForm)} onOpenChange={closeEditModal}>
+      <Modal
+        isOpen={Boolean(editingQuestion && editForm)}
+        onOpenChange={closeEditModal}
+      >
         <ModalContent>
           <ModalHeader>{messages.clientQuestions.editModalTitle}</ModalHeader>
           <ModalBody className="space-y-3">
@@ -514,14 +531,14 @@ export default function ClientQuestionsPage() {
                   label={messages.clientQuestions.editDescriptionLabel}
                   value={editForm.description}
                   onValueChange={(value) => {
-                    setEditForm((previous) => (
+                    setEditForm((previous) =>
                       previous
                         ? {
                             ...previous,
                             description: value,
                           }
-                        : previous
-                    ));
+                        : previous,
+                    );
                   }}
                   minRows={5}
                 />
@@ -534,14 +551,14 @@ export default function ClientQuestionsPage() {
                       return;
                     }
 
-                    setEditForm((previous) => (
+                    setEditForm((previous) =>
                       previous
                         ? {
                             ...previous,
                             status: selected as ClientQuestionStatus,
                           }
-                        : previous
-                    ));
+                        : previous,
+                    );
                   }}
                 >
                   <SelectItem key="open">
@@ -577,16 +594,17 @@ export default function ClientQuestionsPage() {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={Boolean(deletingQuestion)} onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          setDeletingQuestion(null);
-        }
-      }}>
+      <Modal
+        isOpen={Boolean(deletingQuestion)}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setDeletingQuestion(null);
+          }
+        }}
+      >
         <ModalContent>
           <ModalHeader>{messages.clientQuestions.deleteButton}</ModalHeader>
-          <ModalBody>
-            {deletingQuestion?.description}
-          </ModalBody>
+          <ModalBody>{deletingQuestion?.description}</ModalBody>
           <ModalFooter>
             <Button variant="light" onPress={() => setDeletingQuestion(null)}>
               {messages.clientQuestions.editCancel}

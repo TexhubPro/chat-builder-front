@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import {
   Alert,
+  Avatar,
   Button,
   Card,
   CardBody,
@@ -101,6 +102,21 @@ function parsePhotoUrls(value: string): string[] {
     .split("\n")
     .map((row) => row.trim())
     .filter(Boolean);
+}
+
+function initialsFromName(value: string | null | undefined): string {
+  const safe = (value ?? "").trim();
+
+  if (safe === "") {
+    return "?";
+  }
+
+  const chunks = safe.split(/\s+/u).filter(Boolean);
+  const first = chunks[0]?.[0] ?? "";
+  const second = chunks[1]?.[0] ?? "";
+  const initials = `${first}${second}`.trim().toUpperCase();
+
+  return initials === "" ? safe.slice(0, 1).toUpperCase() : initials;
 }
 
 function toServiceForm(item: CatalogServiceItem | null): ServiceFormState {
@@ -560,7 +576,7 @@ export default function ProductsServicesPage() {
               isMobileDetailsOpen ? "hidden lg:flex" : "flex"
             }`}
           >
-            <CardBody className="gap-3">
+            <CardBody className="space-y-4 p-4 sm:p-5">
               <div>
                 <p className="text-base font-semibold">{messages.catalog.assistantsTitle}</p>
                 <p className="text-sm text-default-500">{messages.catalog.assistantsSubtitle}</p>
@@ -574,23 +590,52 @@ export default function ProductsServicesPage() {
                 <p className="text-sm text-default-500">{messages.catalog.noAssistants}</p>
               ) : (
                 <div className="space-y-2">
-                  {assistants.map((assistant) => (
-                    <button
-                      key={assistant.id}
-                      type="button"
-                      onClick={() => {
-                        handleAssistantSelect(assistant.id);
-                      }}
-                      className={`w-full rounded-large border px-3 py-2 text-left transition ${
-                        selectedAssistantId === assistant.id
-                          ? "border-primary bg-primary-50"
-                          : "border-default-200 bg-white hover:bg-default-100"
-                      }`}
-                    >
-                      <p className="truncate text-sm font-semibold text-foreground">{assistant.name}</p>
-                      <p className="text-xs text-default-500">ID: {assistant.id}</p>
-                    </button>
-                  ))}
+                  {assistants.map((assistant) => {
+                    const isSelected = assistant.id === selectedAssistantId;
+
+                    return (
+                      <button
+                        key={assistant.id}
+                        type="button"
+                        onClick={() => {
+                          handleAssistantSelect(assistant.id);
+                        }}
+                        className={`w-full rounded-large border px-3 py-3 text-left transition ${
+                          isSelected
+                            ? "border-primary-300 bg-primary-50"
+                            : "border-default-200 bg-white hover:border-default-300 hover:bg-default-50"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <Avatar
+                            name={assistant.name}
+                            showFallback
+                            fallback={
+                              <span className="text-xs font-semibold text-default-700">
+                                {initialsFromName(assistant.name)}
+                              </span>
+                            }
+                            className="h-10 w-10 shrink-0"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-semibold text-foreground">
+                              {assistant.name}
+                            </p>
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              color={assistant.is_active ? "success" : "default"}
+                              className="mt-1"
+                            >
+                              {assistant.is_active
+                                ? messages.integrations.assistantRunning
+                                : messages.integrations.assistantStopped}
+                            </Chip>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </CardBody>
@@ -662,8 +707,29 @@ export default function ProductsServicesPage() {
                       <Spinner size="sm" />
                     </div>
                   ) : (
-                    <Tabs radius="full" size="sm" variant="bordered">
-                      <Tab key="services" title={`${messages.catalog.servicesTab} (${services.length})`}>
+                    <div className="max-w-full">
+                      <Tabs
+                        size="sm"
+                        radius="sm"
+                        variant="light"
+                        classNames={{
+                          base: "w-full",
+                          tabList:
+                            "w-full max-w-full overflow-x-auto rounded-full bg-default-100 p-1 flex-nowrap min-w-max gap-1",
+                          tab: "px-4 rounded-full border-none data-[selected=true]:bg-white data-[selected=true]:border-default-300 data-[selected=true]:shadow-none",
+                          tabContent:
+                            "whitespace-nowrap text-default-600 group-data-[selected=true]:text-foreground",
+                          cursor: "hidden",
+                        }}
+                      >
+                        <Tab
+                          key="services"
+                          title={
+                            <span className="whitespace-nowrap">
+                              {`${messages.catalog.servicesTab} (${services.length})`}
+                            </span>
+                          }
+                        >
                         {services.length === 0 ? (
                           <p className="py-4 text-sm text-default-500">{messages.catalog.emptyServices}</p>
                         ) : (
@@ -736,9 +802,16 @@ export default function ProductsServicesPage() {
                             ))}
                           </div>
                         )}
-                      </Tab>
+                        </Tab>
 
-                      <Tab key="products" title={`${messages.catalog.productsTab} (${products.length})`}>
+                        <Tab
+                          key="products"
+                          title={
+                            <span className="whitespace-nowrap">
+                              {`${messages.catalog.productsTab} (${products.length})`}
+                            </span>
+                          }
+                        >
                         {products.length === 0 ? (
                           <p className="py-4 text-sm text-default-500">{messages.catalog.emptyProducts}</p>
                         ) : (
@@ -817,8 +890,9 @@ export default function ProductsServicesPage() {
                             ))}
                           </div>
                         )}
-                      </Tab>
-                    </Tabs>
+                        </Tab>
+                      </Tabs>
+                    </div>
                   )}
                 </div>
               )}

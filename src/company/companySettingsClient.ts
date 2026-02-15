@@ -60,7 +60,7 @@ export type CompanyBusinessSettings = {
     >;
   };
   ai: {
-    response_languages: Array<"ru" | "en" | "tg" | "uz" | "tr" | "fa">;
+    response_languages: Array<"ru" | "en" | "tg" | "uz" | "tr" | "fa" | "kk" | "ar">;
   };
 };
 

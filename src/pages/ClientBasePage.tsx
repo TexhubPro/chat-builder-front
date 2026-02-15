@@ -16,7 +16,7 @@ import {
   Tab,
   Tabs,
 } from "@heroui/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../auth/authClient";
 import { useAuth } from "../auth/AuthProvider";
 import { getAuthToken } from "../auth/authStorage";
@@ -137,12 +137,6 @@ export default function ClientBasePage() {
   const [status, setStatus] = useState<ClientBaseStatusFilter>("all");
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [clients, setClients] = useState<ReturnType<typeof useMemoClients>>([]);
-  const [counts, setCounts] = useState({
-    all: 0,
-    active: 0,
-    archived: 0,
-    blocked: 0,
-  });
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [selectedClient, setSelectedClient] =
     useState<ClientBaseDetails | null>(null);
@@ -190,7 +184,6 @@ export default function ClientBasePage() {
       });
 
       setClients(useMemoClients(response.clients));
-      setCounts(response.counts);
     } catch (error) {
       setGlobalError(
         error instanceof ApiError
@@ -278,15 +271,6 @@ export default function ClientBasePage() {
     [messages.clientBase.detailsFailed, messages.clientBase.unauthorized],
   );
 
-  const statusCounts = useMemo(
-    () => ({
-      all: counts.all,
-      active: counts.active,
-      archived: counts.archived,
-    }),
-    [counts],
-  );
-
   const statusLabel = useCallback(
     (value: ClientBaseStatus): string => {
       switch (value) {
@@ -337,21 +321,6 @@ export default function ClientBasePage() {
       defaultSelectedKey="client-base"
     >
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-default-500">
-            {messages.clientBase.subtitle}
-          </p>
-          <Button
-            size="sm"
-            variant="flat"
-            onPress={() => {
-              void loadClients();
-            }}
-          >
-            {messages.clientBase.refreshButton}
-          </Button>
-        </div>
-
         {globalError ? (
           <Alert
             color="danger"
@@ -370,32 +339,50 @@ export default function ClientBasePage() {
               startContent={<Icon icon="solar:magnifer-linear" width={16} />}
             />
 
-            <Tabs
-              selectedKey={status}
-              onSelectionChange={(key) => {
-                setStatus(String(key) as ClientBaseStatusFilter);
-              }}
-              size="sm"
-              radius="full"
-              color="primary"
-              variant="solid"
-              classNames={{
-                tabList: "bg-default-100",
-              }}
-            >
-              <Tab
-                key="all"
-                title={`${messages.clientBase.statusAll} (${statusCounts.all})`}
-              />
-              <Tab
-                key="active"
-                title={`${messages.clientBase.statusActive} (${statusCounts.active})`}
-              />
-              <Tab
-                key="archived"
-                title={`${messages.clientBase.statusArchived} (${statusCounts.archived})`}
-              />
-            </Tabs>
+            <div className="max-w-full  rounded-full bg-default-100 p-1">
+              <Tabs
+                selectedKey={status}
+                onSelectionChange={(key) => {
+                  setStatus(String(key) as ClientBaseStatusFilter);
+                }}
+                size="sm"
+                radius="sm"
+                variant="light"
+                classNames={{
+                  base: "min-w-max",
+                  tabList: "bg-transparent p-0 flex-nowrap min-w-max gap-1",
+                  tab: " px-4 rounded-full border-none data-[selected=true]:bg-white data-[selected=true]:border-default-300 data-[selected=true]:shadow-none",
+                  tabContent:
+                    "text-default-600 group-data-[selected=true]:text-foreground",
+                  cursor: "hidden",
+                }}
+              >
+                <Tab
+                  key="all"
+                  title={
+                    <span className="whitespace-nowrap">
+                      {messages.clientBase.statusAll}
+                    </span>
+                  }
+                />
+                <Tab
+                  key="active"
+                  title={
+                    <span className="whitespace-nowrap">
+                      {messages.clientBase.statusActive}
+                    </span>
+                  }
+                />
+                <Tab
+                  key="archived"
+                  title={
+                    <span className="whitespace-nowrap">
+                      {messages.clientBase.statusArchived}
+                    </span>
+                  }
+                />
+              </Tabs>
+            </div>
           </CardBody>
         </Card>
 
@@ -579,7 +566,20 @@ export default function ClientBasePage() {
                   </CardBody>
                 </Card>
 
-                <Tabs size="sm" radius="full" variant="bordered">
+                <Tabs
+                  size="sm"
+                  radius="sm"
+                  variant="light"
+                  classNames={{
+                    base: "w-full",
+                    tabList:
+                      "w-full max-w-full overflow-x-auto rounded-full bg-default-100 p-1 flex-nowrap min-w-max gap-1",
+                    tab: "px-4 rounded-full border-none data-[selected=true]:bg-white data-[selected=true]:border-default-300 data-[selected=true]:shadow-none",
+                    tabContent:
+                      "whitespace-nowrap text-default-600 group-data-[selected=true]:text-foreground",
+                    cursor: "hidden",
+                  }}
+                >
                   <Tab key="timeline" title={messages.clientBase.timelineTab}>
                     {history.timeline.length === 0 ? (
                       <p className="py-5 text-sm text-default-500">

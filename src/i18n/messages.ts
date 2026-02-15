@@ -222,6 +222,8 @@ export type Messages = {
     aiLanguageUz: string;
     aiLanguageTr: string;
     aiLanguageFa: string;
+    aiLanguageKk: string;
+    aiLanguageAr: string;
     deliveryTitle: string;
     deliverySubtitle: string;
     deliveryEnabledLabel: string;
@@ -637,6 +639,7 @@ export type Messages = {
     addEventButton: string;
     backToMonthButton: string;
     emptyForDay: string;
+    viewDetailsButton: string;
     editButton: string;
     deleteButton: string;
     createModalTitle: string;
@@ -761,6 +764,7 @@ export type Messages = {
     channelApiDescription: string;
     accountLabel: string;
     noConnection: string;
+    comingSoon: string;
     connectButton: string;
     disconnectButton: string;
     toggleLabel: string;
@@ -806,6 +810,7 @@ export type Messages = {
     fileAnalysisLabel: string;
     voiceLabel: string;
     webSearchLabel: string;
+    comingSoonLabel: string;
     triggersTitle: string;
     addTriggerButton: string;
     noTriggers: string;
@@ -1092,13 +1097,16 @@ export const MESSAGES: Record<Locale, Messages> = {
       aiLanguagesSubtitle:
         "Ассистент будет отвечать только на выбранных языках. Можно выбрать несколько.",
       aiLanguagesLabel: "Разрешенные языки",
-      aiLanguageRequiredValidation: "Выберите минимум один язык для ответов ИИ.",
+      aiLanguageRequiredValidation:
+        "Выберите минимум один язык для ответов ИИ.",
       aiLanguageRu: "Русский",
       aiLanguageEn: "Английский",
       aiLanguageTg: "Таджикский",
       aiLanguageUz: "Узбекский",
       aiLanguageTr: "Турецкий",
       aiLanguageFa: "Персидский",
+      aiLanguageKk: "Казахский",
+      aiLanguageAr: "Арабский",
       deliveryTitle: "Настройки доставки",
       deliverySubtitle:
         "Включите доставку и укажите правила, которые ассистент должен учитывать в диалоге.",
@@ -1304,8 +1312,10 @@ export const MESSAGES: Record<Locale, Messages> = {
       validationPrice: "Цена должна быть числом не меньше 0.",
       validationSortOrder: "Порядок сортировки должен быть числом не меньше 0.",
       validationStock: "Остаток должен быть числом не меньше 0.",
-      validationSpecialistName: "Имя специалиста должно быть не короче 2 символов.",
-      validationSpecialistPrice: "Цена специалиста должна быть числом не меньше 0.",
+      validationSpecialistName:
+        "Имя специалиста должно быть не короче 2 символов.",
+      validationSpecialistPrice:
+        "Цена специалиста должна быть числом не меньше 0.",
       validationProductLink: "Ссылка продукта должна быть корректным URL.",
       loadAssistantsFailed: "Не удалось загрузить ассистентов.",
       loadCatalogFailed: "Не удалось загрузить каталог.",
@@ -1512,7 +1522,8 @@ export const MESSAGES: Record<Locale, Messages> = {
     },
     calendar: {
       title: "Календарь",
-      subtitle: "Все записи компании в одном месте. Ручные записи синхронизируются с ИИ и блокируют двойное бронирование.",
+      subtitle:
+        "Все записи компании в одном месте. Ручные записи синхронизируются с ИИ и блокируют двойное бронирование.",
       monthTitle: "Месяц",
       prevMonthButton: "Предыдущий месяц",
       nextMonthButton: "Следующий месяц",
@@ -1526,6 +1537,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       addEventButton: "Добавить запись",
       backToMonthButton: "Назад",
       emptyForDay: "На выбранный день записей пока нет.",
+      viewDetailsButton: "Посмотреть",
       editButton: "Изменить",
       deleteButton: "Удалить",
       createModalTitle: "Новая запись",
@@ -1545,7 +1557,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       noService: "Без услуги",
       locationLabel: "Адрес / место",
       meetingLinkLabel: "Ссылка встречи",
-      requiredFields: "Заполните название, имя клиента, телефон, дату, время и длительность.",
+      requiredFields:
+        "Заполните название, имя клиента, телефон, дату, время и длительность.",
       invalidMeetingLink: "Ссылка встречи должна быть корректным URL.",
       cancelButton: "Отмена",
       createButton: "Создать",
@@ -1554,7 +1567,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       updatedSuccess: "Запись обновлена.",
       deletedSuccess: "Запись удалена.",
       appointmentsDisabledTitle: "Записи отключены",
-      appointmentsDisabledDescription: "В настройках бизнеса сейчас выбран режим без записи. Включите запись, чтобы добавлять слоты.",
+      appointmentsDisabledDescription:
+        "В настройках бизнеса сейчас выбран режим без записи. Включите запись, чтобы добавлять слоты.",
       statusScheduled: "Запланировано",
       statusConfirmed: "Подтверждено",
       statusCompleted: "Завершено",
@@ -1653,6 +1667,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       channelApiDescription: "Интеграция через API для внешних систем.",
       accountLabel: "Аккаунт",
       noConnection: "Канал пока не подключен.",
+      comingSoon: "Скоро",
       connectButton: "Подключить",
       disconnectButton: "Отключить",
       toggleLabel: "Статус канала",
@@ -1701,6 +1716,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       fileAnalysisLabel: "Анализ файлов",
       voiceLabel: "Голосовой режим",
       webSearchLabel: "Веб-поиск",
+      comingSoonLabel: "Скоро",
       triggersTitle: "Триггеры: вопрос -> ответ",
       addTriggerButton: "Добавить триггер",
       noTriggers: "Триггеры пока не добавлены.",
@@ -1985,13 +2001,16 @@ export const MESSAGES: Record<Locale, Messages> = {
       aiLanguagesSubtitle:
         "The assistant will answer only in selected languages. Multiple languages are supported.",
       aiLanguagesLabel: "Allowed languages",
-      aiLanguageRequiredValidation: "Select at least one language for AI responses.",
+      aiLanguageRequiredValidation:
+        "Select at least one language for AI responses.",
       aiLanguageRu: "Russian",
       aiLanguageEn: "English",
       aiLanguageTg: "Tajik",
       aiLanguageUz: "Uzbek",
       aiLanguageTr: "Turkish",
       aiLanguageFa: "Persian",
+      aiLanguageKk: "Kazakh",
+      aiLanguageAr: "Arabic",
       deliveryTitle: "Delivery settings",
       deliverySubtitle:
         "Enable delivery and configure rules the assistant should follow in chat.",
@@ -2006,7 +2025,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       deliveryNotesLabel: "Assistant note (optional)",
       invalidDeliveryRange:
         "Check delivery window: end time must be later than start time.",
-      invalidDeliveryFee: "Delivery fee must be a number greater than or equal to 0.",
+      invalidDeliveryFee:
+        "Delivery fee must be a number greater than or equal to 0.",
       invalidDeliveryFreeFromAmount:
         "Free-delivery threshold must be a number greater than or equal to 0.",
       saveButton: "Save settings",
@@ -2160,7 +2180,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       assistantsSubtitle: "Select an assistant to manage catalog items.",
       backToAssistants: "Back to assistants",
       noAssistants: "No assistants created yet.",
-      selectAssistant: "Select an assistant from the left to open catalog settings.",
+      selectAssistant:
+        "Select an assistant from the left to open catalog settings.",
       selectedAssistantPrefix: "Assistant",
       addService: "Add service",
       addProduct: "Add product",
@@ -2196,10 +2217,13 @@ export const MESSAGES: Record<Locale, Messages> = {
       saveButton: "Save",
       validationName: "Name must be at least 2 characters.",
       validationPrice: "Price must be a number greater than or equal to 0.",
-      validationSortOrder: "Sort order must be a number greater than or equal to 0.",
+      validationSortOrder:
+        "Sort order must be a number greater than or equal to 0.",
       validationStock: "Stock must be a number greater than or equal to 0.",
-      validationSpecialistName: "Specialist name must be at least 2 characters.",
-      validationSpecialistPrice: "Specialist price must be a number greater than or equal to 0.",
+      validationSpecialistName:
+        "Specialist name must be at least 2 characters.",
+      validationSpecialistPrice:
+        "Specialist price must be a number greater than or equal to 0.",
       validationProductLink: "Product link must be a valid URL.",
       loadAssistantsFailed: "Failed to load assistants.",
       loadCatalogFailed: "Failed to load catalog.",
@@ -2406,7 +2430,8 @@ export const MESSAGES: Record<Locale, Messages> = {
     },
     calendar: {
       title: "Calendar",
-      subtitle: "All company bookings in one place. Manual bookings are synced with AI and prevent double-booking.",
+      subtitle:
+        "All company bookings in one place. Manual bookings are synced with AI and prevent double-booking.",
       monthTitle: "Month",
       prevMonthButton: "Previous month",
       nextMonthButton: "Next month",
@@ -2420,6 +2445,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       addEventButton: "Add booking",
       backToMonthButton: "Back",
       emptyForDay: "No bookings for the selected day yet.",
+      viewDetailsButton: "View details",
       editButton: "Edit",
       deleteButton: "Delete",
       createModalTitle: "New booking",
@@ -2439,7 +2465,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       noService: "No service",
       locationLabel: "Address / location",
       meetingLinkLabel: "Meeting link",
-      requiredFields: "Fill in title, client name, phone, date, time, and duration.",
+      requiredFields:
+        "Fill in title, client name, phone, date, time, and duration.",
       invalidMeetingLink: "Meeting link must be a valid URL.",
       cancelButton: "Cancel",
       createButton: "Create",
@@ -2448,7 +2475,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       updatedSuccess: "Booking updated.",
       deletedSuccess: "Booking deleted.",
       appointmentsDisabledTitle: "Appointments are disabled",
-      appointmentsDisabledDescription: "Business settings currently use mode without appointments. Enable appointments to add slots.",
+      appointmentsDisabledDescription:
+        "Business settings currently use mode without appointments. Enable appointments to add slots.",
       statusScheduled: "Scheduled",
       statusConfirmed: "Confirmed",
       statusCompleted: "Completed",
@@ -2486,7 +2514,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       notesLabel: "Note",
       statusLabel: "Status",
       modalTitle: "Client history",
-      modalSubtitle: "Orders, appointments, tasks, and questions for this client.",
+      modalSubtitle:
+        "Orders, appointments, tasks, and questions for this client.",
       modalLoading: "Loading client history...",
       timelineTab: "Timeline",
       ordersTab: "Orders",
@@ -2547,6 +2576,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       channelApiDescription: "API integration for external systems.",
       accountLabel: "Account",
       noConnection: "Channel is not connected yet.",
+      comingSoon: "Coming soon",
       connectButton: "Connect",
       disconnectButton: "Disconnect",
       toggleLabel: "Channel status",
@@ -2595,6 +2625,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       fileAnalysisLabel: "File analysis",
       voiceLabel: "Voice mode",
       webSearchLabel: "Web search",
+      comingSoonLabel: "Coming soon",
       triggersTitle: "Triggers: prompt -> response",
       addTriggerButton: "Add trigger",
       noTriggers: "No triggers added yet.",

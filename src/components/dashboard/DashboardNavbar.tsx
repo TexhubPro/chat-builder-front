@@ -67,7 +67,7 @@ export default function DashboardNavbar({
         <img
           src={BRANDING.logoUrl}
           alt={BRANDING.logoAlt}
-          className="h-9 w-9 rounded-md object-contain"
+          className="h-8 w-auto max-w-[120px] object-contain"
         />
       </NavbarBrand>
 

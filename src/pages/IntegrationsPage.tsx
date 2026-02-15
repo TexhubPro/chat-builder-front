@@ -113,7 +113,7 @@ export default function IntegrationsPage() {
       instagram: {
         title: messages.integrations.channelInstagram,
         description: messages.integrations.channelInstagramDescription,
-        icon: "solar:instagram-linear",
+        icon: "fa6-brands:instagram",
         iconClass: "bg-pink-100 text-pink-600",
       },
       telegram: {
@@ -706,6 +706,7 @@ export default function IntegrationsPage() {
                     <div className="grid gap-3 p-4 sm:grid-cols-2 sm:p-5">
                       {channels.map((channelItem) => {
                         const channelKey = channelItem.channel as ChannelKey;
+                        const isComingSoonChannel = channelKey === "api";
                         const meta = channelMeta[channelKey];
                         const loadingKey = `${selectedAssistant.id}:${channelItem.channel}`;
                         const isUpdating = Boolean(updatingChannelKeys[loadingKey]);
@@ -747,6 +748,7 @@ export default function IntegrationsPage() {
                                   }
                                   isDisabled={
                                     isUpdating
+                                    || isComingSoonChannel
                                     || !limits?.has_active_subscription
                                     || !channelItem.is_connected
                                   }
@@ -763,11 +765,19 @@ export default function IntegrationsPage() {
                                 <Chip
                                   size="sm"
                                   variant="flat"
-                                  color={channelItem.is_active ? "success" : "default"}
+                                  color={
+                                    isComingSoonChannel
+                                      ? "warning"
+                                      : (channelItem.is_active ? "success" : "default")
+                                  }
                                 >
-                                  {channelItem.is_active
-                                    ? messages.integrations.statusEnabled
-                                    : messages.integrations.statusDisabled}
+                                  {isComingSoonChannel
+                                    ? messages.integrations.comingSoon
+                                    : (
+                                      channelItem.is_active
+                                        ? messages.integrations.statusEnabled
+                                        : messages.integrations.statusDisabled
+                                    )}
                                 </Chip>
 
                                 <p className="text-xs text-default-500">
@@ -778,7 +788,16 @@ export default function IntegrationsPage() {
                                 </p>
                               </div>
 
-                              {channelItem.is_connected ? (
+                              {isComingSoonChannel ? (
+                                <Button
+                                  color="default"
+                                  variant="flat"
+                                  className="w-full"
+                                  isDisabled
+                                >
+                                  {messages.integrations.comingSoon}
+                                </Button>
+                              ) : channelItem.is_connected ? (
                                 <Button
                                   color="danger"
                                   variant="solid"

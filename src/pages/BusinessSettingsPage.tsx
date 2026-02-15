@@ -9,6 +9,8 @@ import {
   Select,
   SelectItem,
   Spinner,
+  Tab,
+  Tabs,
   Switch,
   Textarea,
 } from "@heroui/react";
@@ -69,7 +71,9 @@ type FormState = {
     | "amount"
     | "note"
   >;
-  aiResponseLanguages: Array<"ru" | "en" | "tg" | "uz" | "tr" | "fa">;
+  aiResponseLanguages: Array<
+    "ru" | "en" | "tg" | "uz" | "tr" | "fa" | "kk" | "ar"
+  >;
 };
 
 type FieldErrors = Partial<Record<keyof FormState, string>>;
@@ -77,6 +81,14 @@ type FieldErrors = Partial<Record<keyof FormState, string>>;
 type ApiValidationError = {
   errors?: Record<string, string[]>;
 };
+
+type BusinessSettingsTabKey =
+  | "profile"
+  | "delivery"
+  | "required"
+  | "aiLanguages"
+  | "schedule"
+  | "booking";
 
 const SLOT_OPTIONS = [15, 30, 45, 60, 90, 120];
 const BUFFER_OPTIONS = [0, 5, 10, 15, 20, 30];
@@ -165,20 +177,25 @@ const APPOINTMENT_REQUIRED_OPTIONS: Array<{
   { key: "address", labelKey: "requiredFieldAddress" },
   { key: "appointment_date", labelKey: "requiredFieldAppointmentDate" },
   { key: "appointment_time", labelKey: "requiredFieldAppointmentTime" },
-  { key: "appointment_duration_minutes", labelKey: "requiredFieldAppointmentDuration" },
+  {
+    key: "appointment_duration_minutes",
+    labelKey: "requiredFieldAppointmentDuration",
+  },
   { key: "amount", labelKey: "requiredFieldAmount" },
   { key: "note", labelKey: "requiredFieldNote" },
 ];
 
 const AI_RESPONSE_LANGUAGE_OPTIONS: Array<{
-  key: "ru" | "en" | "tg" | "uz" | "tr" | "fa";
+  key: "ru" | "en" | "tg" | "uz" | "tr" | "fa" | "kk" | "ar";
   labelKey:
     | "aiLanguageRu"
     | "aiLanguageEn"
     | "aiLanguageTg"
     | "aiLanguageUz"
     | "aiLanguageTr"
-    | "aiLanguageFa";
+    | "aiLanguageFa"
+    | "aiLanguageKk"
+    | "aiLanguageAr";
 }> = [
   { key: "ru", labelKey: "aiLanguageRu" },
   { key: "en", labelKey: "aiLanguageEn" },
@@ -186,6 +203,8 @@ const AI_RESPONSE_LANGUAGE_OPTIONS: Array<{
   { key: "uz", labelKey: "aiLanguageUz" },
   { key: "tr", labelKey: "aiLanguageTr" },
   { key: "fa", labelKey: "aiLanguageFa" },
+  { key: "kk", labelKey: "aiLanguageKk" },
+  { key: "ar", labelKey: "aiLanguageAr" },
 ];
 
 function defaultSchedule(): Record<BusinessWeekDay, BusinessDaySchedule> {
@@ -223,7 +242,9 @@ function normalizeSchedule(
 
     normalized[day] = {
       is_day_off: isDayOff,
-      start_time: isDayOff ? null : dayValue.start_time ?? defaults[day].start_time,
+      start_time: isDayOff
+        ? null
+        : dayValue.start_time ?? defaults[day].start_time,
       end_time: isDayOff ? null : dayValue.end_time ?? defaults[day].end_time,
     };
   }
@@ -281,7 +302,8 @@ function mapCompanyToForm(company: CompanyBusinessProfile): FormState {
     appointmentAutoConfirm: company.settings.appointment.auto_confirm,
     deliveryEnabled: company.settings.delivery.enabled,
     deliveryRequireAddress: company.settings.delivery.require_delivery_address,
-    deliveryRequireDateTime: company.settings.delivery.require_delivery_datetime,
+    deliveryRequireDateTime:
+      company.settings.delivery.require_delivery_datetime,
     deliveryDefaultEtaMinutes: company.settings.delivery.default_eta_minutes,
     deliveryFee: String(company.settings.delivery.fee ?? 0),
     deliveryFreeFromAmount:
@@ -296,7 +318,8 @@ function mapCompanyToForm(company: CompanyBusinessProfile): FormState {
       "service_name",
       "address",
     ],
-    appointmentRequiredFields: company.settings.crm.appointment_required_fields ?? [
+    appointmentRequiredFields: company.settings.crm
+      .appointment_required_fields ?? [
       "phone",
       "service_name",
       "address",
@@ -309,7 +332,9 @@ function mapCompanyToForm(company: CompanyBusinessProfile): FormState {
 }
 
 function extractFieldErrors(error: ApiError): FieldErrors {
-  const data = isObject(error.data) ? (error.data as ApiValidationError) : undefined;
+  const data = isObject(error.data)
+    ? (error.data as ApiValidationError)
+    : undefined;
   const validationErrors = data?.errors;
 
   if (!validationErrors) {
@@ -351,6 +376,7 @@ export default function BusinessSettingsPage() {
   const [globalSuccess, setGlobalSuccess] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [form, setForm] = useState<FormState | null>(null);
+  const [activeTab, setActiveTab] = useState<BusinessSettingsTabKey>("profile");
 
   usePageSeo({
     title: `${messages.businessSettings.title} | ${messages.app.name}`,
@@ -376,7 +402,9 @@ export default function BusinessSettingsPage() {
         setForm(mapCompanyToForm(response.company));
       } catch (error) {
         const message =
-          error instanceof ApiError ? error.message : messages.businessSettings.loadFailed;
+          error instanceof ApiError
+            ? error.message
+            : messages.businessSettings.loadFailed;
         setGlobalError(message);
       } finally {
         setIsLoading(false);
@@ -384,7 +412,10 @@ export default function BusinessSettingsPage() {
     };
 
     void load();
-  }, [messages.businessSettings.loadFailed, messages.businessSettings.unauthorized]);
+  }, [
+    messages.businessSettings.loadFailed,
+    messages.businessSettings.unauthorized,
+  ]);
 
   const isAppointmentAccount = form?.accountType === "with_appointments";
 
@@ -398,7 +429,9 @@ export default function BusinessSettingsPage() {
     return Array.from(values).sort((a, b) => a.localeCompare(b));
   }, [form?.businessTimezone]);
 
-  const validateSchedule = (schedule: Record<BusinessWeekDay, BusinessDaySchedule>): boolean => {
+  const validateSchedule = (
+    schedule: Record<BusinessWeekDay, BusinessDaySchedule>,
+  ): boolean => {
     for (const day of WEEK_DAYS) {
       const row = schedule[day];
 
@@ -446,7 +479,10 @@ export default function BusinessSettingsPage() {
       return;
     }
 
-    if (form.deliveryEnabled && form.deliveryAvailableTo <= form.deliveryAvailableFrom) {
+    if (
+      form.deliveryEnabled &&
+      form.deliveryAvailableTo <= form.deliveryAvailableFrom
+    ) {
       setGlobalError(messages.businessSettings.invalidDeliveryRange);
       return;
     }
@@ -469,12 +505,12 @@ export default function BusinessSettingsPage() {
       }
 
       const deliveryFreeFromRaw = form.deliveryFreeFromAmount.trim();
-      const deliveryFreeFromNumber = deliveryFreeFromRaw === ""
-        ? null
-        : Number(deliveryFreeFromRaw);
+      const deliveryFreeFromNumber =
+        deliveryFreeFromRaw === "" ? null : Number(deliveryFreeFromRaw);
       if (
-        deliveryFreeFromRaw !== ""
-        && (!Number.isFinite(deliveryFreeFromNumber) || (deliveryFreeFromNumber ?? 0) < 0)
+        deliveryFreeFromRaw !== "" &&
+        (!Number.isFinite(deliveryFreeFromNumber) ||
+          (deliveryFreeFromNumber ?? 0) < 0)
       ) {
         setGlobalError(messages.businessSettings.invalidDeliveryFreeFromAmount);
         setIsSubmitting(false);
@@ -581,18 +617,51 @@ export default function BusinessSettingsPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Card className="border border-default-200 shadow-none">
+            <Tabs
+              selectedKey={activeTab}
+              onSelectionChange={(key) =>
+                setActiveTab(String(key) as BusinessSettingsTabKey)
+              }
+              size="sm"
+              radius="sm"
+              variant="light"
+              classNames={{
+                base: "w-full",
+                tabList:
+                  "w-full max-w-full overflow-x-auto rounded-full border border-default-200 bg-white p-1 flex-nowrap gap-1",
+                tab: "flex-none shrink-0 w-auto px-4 rounded-full border-none data-[selected=true]:bg-primary data-[selected=true]:text-white data-[selected=true]:shadow-none",
+                tabContent:
+                  "text-default-600 group-data-[selected=true]:text-white",
+                cursor: "hidden",
+                panel: "w-full px-0 pt-4",
+              }}
+            >
+              <Tab
+                key="profile"
+                title={
+                  <span className="whitespace-nowrap">
+                    {messages.businessSettings.profileTitle}
+                  </span>
+                }
+              >
+                <Card className="border border-default-200 shadow-none">
               <CardBody className="space-y-5 p-4 sm:p-5">
                 <div>
-                  <h2 className="text-base font-semibold">{messages.businessSettings.profileTitle}</h2>
-                  <p className="text-sm text-default-500">{messages.businessSettings.subtitle}</p>
+                  <h2 className="text-base font-semibold">
+                    {messages.businessSettings.profileTitle}
+                  </h2>
+                  <p className="text-sm text-default-500">
+                    {messages.businessSettings.subtitle}
+                  </p>
                 </div>
 
                 <Select
                   label={messages.businessSettings.accountTypeLabel}
                   selectedKeys={[form.accountType]}
                   onSelectionChange={(keys) => {
-                    const value = String(Array.from(keys)[0] ?? "without_appointments");
+                    const value = String(
+                      Array.from(keys)[0] ?? "without_appointments",
+                    );
                     setForm((prev) =>
                       prev
                         ? {
@@ -619,7 +688,9 @@ export default function BusinessSettingsPage() {
                     label={messages.businessSettings.nameLabel}
                     value={form.name}
                     onValueChange={(value) =>
-                      setForm((prev) => (prev ? { ...prev, name: value } : prev))
+                      setForm((prev) =>
+                        prev ? { ...prev, name: value } : prev,
+                      )
                     }
                     isRequired
                     isInvalid={Boolean(fieldErrors.name)}
@@ -629,7 +700,9 @@ export default function BusinessSettingsPage() {
                     label={messages.businessSettings.industryLabel}
                     value={form.industry}
                     onValueChange={(value) =>
-                      setForm((prev) => (prev ? { ...prev, industry: value } : prev))
+                      setForm((prev) =>
+                        prev ? { ...prev, industry: value } : prev,
+                      )
                     }
                     isInvalid={Boolean(fieldErrors.industry)}
                     errorMessage={fieldErrors.industry}
@@ -640,7 +713,9 @@ export default function BusinessSettingsPage() {
                   label={messages.businessSettings.shortDescriptionLabel}
                   value={form.shortDescription}
                   onValueChange={(value) =>
-                    setForm((prev) => (prev ? { ...prev, shortDescription: value } : prev))
+                    setForm((prev) =>
+                      prev ? { ...prev, shortDescription: value } : prev,
+                    )
                   }
                   minRows={3}
                   isInvalid={Boolean(fieldErrors.shortDescription)}
@@ -651,7 +726,9 @@ export default function BusinessSettingsPage() {
                   label={messages.businessSettings.primaryGoalLabel}
                   value={form.primaryGoal}
                   onValueChange={(value) =>
-                    setForm((prev) => (prev ? { ...prev, primaryGoal: value } : prev))
+                    setForm((prev) =>
+                      prev ? { ...prev, primaryGoal: value } : prev,
+                    )
                   }
                   minRows={3}
                   isInvalid={Boolean(fieldErrors.primaryGoal)}
@@ -666,7 +743,9 @@ export default function BusinessSettingsPage() {
                     type="email"
                     value={form.contactEmail}
                     onValueChange={(value) =>
-                      setForm((prev) => (prev ? { ...prev, contactEmail: value } : prev))
+                      setForm((prev) =>
+                        prev ? { ...prev, contactEmail: value } : prev,
+                      )
                     }
                     isInvalid={Boolean(fieldErrors.contactEmail)}
                     errorMessage={fieldErrors.contactEmail}
@@ -675,7 +754,9 @@ export default function BusinessSettingsPage() {
                     label={messages.businessSettings.contactPhoneLabel}
                     value={form.contactPhone}
                     onValueChange={(value) =>
-                      setForm((prev) => (prev ? { ...prev, contactPhone: value } : prev))
+                      setForm((prev) =>
+                        prev ? { ...prev, contactPhone: value } : prev,
+                      )
                     }
                     isInvalid={Boolean(fieldErrors.contactPhone)}
                     errorMessage={fieldErrors.contactPhone}
@@ -687,7 +768,9 @@ export default function BusinessSettingsPage() {
                   type="url"
                   value={form.website}
                   onValueChange={(value) =>
-                    setForm((prev) => (prev ? { ...prev, website: value } : prev))
+                    setForm((prev) =>
+                      prev ? { ...prev, website: value } : prev,
+                    )
                   }
                   isInvalid={Boolean(fieldErrors.website)}
                   errorMessage={fieldErrors.website}
@@ -698,7 +781,9 @@ export default function BusinessSettingsPage() {
                     label={messages.businessSettings.addressLabel}
                     value={form.businessAddress}
                     onValueChange={(value) =>
-                      setForm((prev) => (prev ? { ...prev, businessAddress: value } : prev))
+                      setForm((prev) =>
+                        prev ? { ...prev, businessAddress: value } : prev,
+                      )
                     }
                   />
                   <Select
@@ -706,7 +791,9 @@ export default function BusinessSettingsPage() {
                     selectedKeys={[form.businessTimezone]}
                     onSelectionChange={(keys) => {
                       const value = String(Array.from(keys)[0] ?? "UTC");
-                      setForm((prev) => (prev ? { ...prev, businessTimezone: value } : prev));
+                      setForm((prev) =>
+                        prev ? { ...prev, businessTimezone: value } : prev,
+                      );
                     }}
                     isInvalid={Boolean(fieldErrors.businessTimezone)}
                     errorMessage={fieldErrors.businessTimezone}
@@ -720,20 +807,33 @@ export default function BusinessSettingsPage() {
                     selectedKeys={[form.businessCurrency]}
                     onSelectionChange={(keys) => {
                       const value = String(Array.from(keys)[0] ?? "TJS");
-                      setForm((prev) => (prev ? { ...prev, businessCurrency: value } : prev));
+                      setForm((prev) =>
+                        prev ? { ...prev, businessCurrency: value } : prev,
+                      );
                     }}
                     isInvalid={Boolean(fieldErrors.businessCurrency)}
                     errorMessage={fieldErrors.businessCurrency}
                   >
                     {BUSINESS_CURRENCY_OPTIONS.map((currency) => (
-                      <SelectItem key={currency.key}>{currency.label}</SelectItem>
+                      <SelectItem key={currency.key}>
+                        {currency.label}
+                      </SelectItem>
                     ))}
                   </Select>
                 </div>
               </CardBody>
             </Card>
+              </Tab>
 
-            <Card className="border border-default-200 shadow-none">
+              <Tab
+                key="delivery"
+                title={
+                  <span className="whitespace-nowrap">
+                    {messages.businessSettings.deliveryTitle}
+                  </span>
+                }
+              >
+                <Card className="border border-default-200 shadow-none">
               <CardBody className="space-y-4 p-4 sm:p-5">
                 <div>
                   <h2 className="text-base font-semibold">
@@ -864,7 +964,9 @@ export default function BusinessSettingsPage() {
                       <Input
                         type="time"
                         size="sm"
-                        label={messages.businessSettings.deliveryAvailableFromLabel}
+                        label={
+                          messages.businessSettings.deliveryAvailableFromLabel
+                        }
                         value={form.deliveryAvailableFrom}
                         onValueChange={(value) =>
                           setForm((prev) =>
@@ -880,7 +982,9 @@ export default function BusinessSettingsPage() {
                       <Input
                         type="time"
                         size="sm"
-                        label={messages.businessSettings.deliveryAvailableToLabel}
+                        label={
+                          messages.businessSettings.deliveryAvailableToLabel
+                        }
                         value={form.deliveryAvailableTo}
                         onValueChange={(value) =>
                           setForm((prev) =>
@@ -914,8 +1018,17 @@ export default function BusinessSettingsPage() {
                 ) : null}
               </CardBody>
             </Card>
+              </Tab>
 
-            <Card className="border border-default-200 shadow-none">
+              <Tab
+                key="required"
+                title={
+                  <span className="whitespace-nowrap">
+                    {messages.businessSettings.requiredFieldsTitle}
+                  </span>
+                }
+              >
+                <Card className="border border-default-200 shadow-none">
               <CardBody className="space-y-4 p-4 sm:p-5">
                 <div>
                   <h2 className="text-base font-semibold">
@@ -936,7 +1049,9 @@ export default function BusinessSettingsPage() {
                         <Checkbox
                           key={option.key}
                           size="sm"
-                          isSelected={form.orderRequiredFields.includes(option.key)}
+                          isSelected={form.orderRequiredFields.includes(
+                            option.key,
+                          )}
                           onValueChange={(checked) =>
                             setForm((prev) => {
                               if (!prev) {
@@ -945,7 +1060,9 @@ export default function BusinessSettingsPage() {
 
                               const next = checked
                                 ? [...prev.orderRequiredFields, option.key]
-                                : prev.orderRequiredFields.filter((item) => item !== option.key);
+                                : prev.orderRequiredFields.filter(
+                                    (item) => item !== option.key,
+                                  );
 
                               return {
                                 ...prev,
@@ -954,11 +1071,7 @@ export default function BusinessSettingsPage() {
                             })
                           }
                         >
-                          {
-                            messages.businessSettings[
-                              option.labelKey
-                            ]
-                          }
+                          {messages.businessSettings[option.labelKey]}
                         </Checkbox>
                       ))}
                     </div>
@@ -973,7 +1086,9 @@ export default function BusinessSettingsPage() {
                         <Checkbox
                           key={option.key}
                           size="sm"
-                          isSelected={form.appointmentRequiredFields.includes(option.key)}
+                          isSelected={form.appointmentRequiredFields.includes(
+                            option.key,
+                          )}
                           onValueChange={(checked) =>
                             setForm((prev) => {
                               if (!prev) {
@@ -981,21 +1096,24 @@ export default function BusinessSettingsPage() {
                               }
 
                               const next = checked
-                                ? [...prev.appointmentRequiredFields, option.key]
-                                : prev.appointmentRequiredFields.filter((item) => item !== option.key);
+                                ? [
+                                    ...prev.appointmentRequiredFields,
+                                    option.key,
+                                  ]
+                                : prev.appointmentRequiredFields.filter(
+                                    (item) => item !== option.key,
+                                  );
 
                               return {
                                 ...prev,
-                                appointmentRequiredFields: Array.from(new Set(next)),
+                                appointmentRequiredFields: Array.from(
+                                  new Set(next),
+                                ),
                               };
                             })
                           }
                         >
-                          {
-                            messages.businessSettings[
-                              option.labelKey
-                            ]
-                          }
+                          {messages.businessSettings[option.labelKey]}
                         </Checkbox>
                       ))}
                       <Checkbox
@@ -1004,7 +1122,9 @@ export default function BusinessSettingsPage() {
                         isDisabled={!isAppointmentAccount}
                         onValueChange={(checked) =>
                           setForm((prev) =>
-                            prev ? { ...prev, appointmentAutoConfirm: checked } : prev,
+                            prev
+                              ? { ...prev, appointmentAutoConfirm: checked }
+                              : prev,
                           )
                         }
                       >
@@ -1015,8 +1135,17 @@ export default function BusinessSettingsPage() {
                 </div>
               </CardBody>
             </Card>
+              </Tab>
 
-            <Card className="border border-default-200 shadow-none">
+              <Tab
+                key="aiLanguages"
+                title={
+                  <span className="whitespace-nowrap">
+                    {messages.businessSettings.aiLanguagesTitle}
+                  </span>
+                }
+              >
+                <Card className="border border-default-200 shadow-none">
               <CardBody className="space-y-4 p-4 sm:p-5">
                 <div>
                   <h2 className="text-base font-semibold">
@@ -1031,12 +1160,14 @@ export default function BusinessSettingsPage() {
                   <h3 className="mb-2 text-sm font-semibold">
                     {messages.businessSettings.aiLanguagesLabel}
                   </h3>
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
                     {AI_RESPONSE_LANGUAGE_OPTIONS.map((option) => (
                       <Checkbox
                         key={option.key}
                         size="sm"
-                        isSelected={form.aiResponseLanguages.includes(option.key)}
+                        isSelected={form.aiResponseLanguages.includes(
+                          option.key,
+                        )}
                         onValueChange={(checked) =>
                           setForm((prev) => {
                             if (!prev) {
@@ -1045,7 +1176,9 @@ export default function BusinessSettingsPage() {
 
                             const next = checked
                               ? [...prev.aiResponseLanguages, option.key]
-                              : prev.aiResponseLanguages.filter((item) => item !== option.key);
+                              : prev.aiResponseLanguages.filter(
+                                  (item) => item !== option.key,
+                                );
 
                             return {
                               ...prev,
@@ -1061,11 +1194,22 @@ export default function BusinessSettingsPage() {
                 </div>
               </CardBody>
             </Card>
+              </Tab>
 
-            <Card className="border border-default-200 shadow-none">
+              <Tab
+                key="schedule"
+                title={
+                  <span className="whitespace-nowrap">
+                    {messages.businessSettings.scheduleTitle}
+                  </span>
+                }
+              >
+                <Card className="border border-default-200 shadow-none">
               <CardBody className="space-y-4 p-4 sm:p-5">
                 <div>
-                  <h2 className="text-base font-semibold">{messages.businessSettings.scheduleTitle}</h2>
+                  <h2 className="text-base font-semibold">
+                    {messages.businessSettings.scheduleTitle}
+                  </h2>
                   <p className="text-sm text-default-500">
                     {messages.businessSettings.scheduleSubtitle}
                   </p>
@@ -1077,7 +1221,10 @@ export default function BusinessSettingsPage() {
                     const isDayOff = schedule.is_day_off;
 
                     return (
-                      <div key={day} className="rounded-medium border border-default-200 px-3 py-2">
+                      <div
+                        key={day}
+                        className="rounded-medium border border-default-200 px-3 py-2"
+                      >
                         <div className="grid grid-cols-1 gap-2 sm:grid-cols-[170px_minmax(0,1fr)_auto] sm:items-center">
                           <p className="text-sm font-semibold leading-none">
                             {dayLabel(day, messages)}
@@ -1092,7 +1239,9 @@ export default function BusinessSettingsPage() {
                               <Input
                                 type="time"
                                 size="sm"
-                                aria-label={`${dayLabel(day, messages)} ${messages.businessSettings.startTimeLabel}`}
+                                aria-label={`${dayLabel(day, messages)} ${
+                                  messages.businessSettings.startTimeLabel
+                                }`}
                                 value={schedule.start_time ?? "09:00"}
                                 onValueChange={(value) =>
                                   setForm((prev) =>
@@ -1111,11 +1260,15 @@ export default function BusinessSettingsPage() {
                                   )
                                 }
                               />
-                              <span className="text-xs text-default-500">-</span>
+                              <span className="text-xs text-default-500">
+                                -
+                              </span>
                               <Input
                                 type="time"
                                 size="sm"
-                                aria-label={`${dayLabel(day, messages)} ${messages.businessSettings.endTimeLabel}`}
+                                aria-label={`${dayLabel(day, messages)} ${
+                                  messages.businessSettings.endTimeLabel
+                                }`}
                                 value={schedule.end_time ?? "18:00"}
                                 onValueChange={(value) =>
                                   setForm((prev) =>
@@ -1151,10 +1304,12 @@ export default function BusinessSettingsPage() {
                                           is_day_off: checked,
                                           start_time: checked
                                             ? null
-                                            : prev.businessSchedule[day].start_time ?? "09:00",
+                                            : prev.businessSchedule[day]
+                                                .start_time ?? "09:00",
                                           end_time: checked
                                             ? null
-                                            : prev.businessSchedule[day].end_time ?? "18:00",
+                                            : prev.businessSchedule[day]
+                                                .end_time ?? "18:00",
                                         },
                                       },
                                     }
@@ -1171,11 +1326,22 @@ export default function BusinessSettingsPage() {
                 </div>
               </CardBody>
             </Card>
+              </Tab>
 
-            <Card className="border border-default-200 shadow-none">
+              <Tab
+                key="booking"
+                title={
+                  <span className="whitespace-nowrap">
+                    {messages.businessSettings.bookingTitle}
+                  </span>
+                }
+              >
+                <Card className="border border-default-200 shadow-none">
               <CardBody className="space-y-5 p-4 sm:p-5">
                 <div>
-                  <h2 className="text-base font-semibold">{messages.businessSettings.bookingTitle}</h2>
+                  <h2 className="text-base font-semibold">
+                    {messages.businessSettings.bookingTitle}
+                  </h2>
                   <p className="text-sm text-default-500">
                     {messages.businessSettings.bookingSubtitle}
                   </p>
@@ -1186,7 +1352,9 @@ export default function BusinessSettingsPage() {
                     color="default"
                     variant="flat"
                     title={messages.businessSettings.bookingDisabledTitle}
-                    description={messages.businessSettings.bookingDisabledDescription}
+                    description={
+                      messages.businessSettings.bookingDisabledDescription
+                    }
                   />
                 ) : (
                   <>
@@ -1200,7 +1368,11 @@ export default function BusinessSettingsPage() {
                             prev
                               ? {
                                   ...prev,
-                                  appointmentSlotMinutes: SLOT_OPTIONS.includes(raw) ? raw : 30,
+                                  appointmentSlotMinutes: SLOT_OPTIONS.includes(
+                                    raw,
+                                  )
+                                    ? raw
+                                    : 30,
                                 }
                               : prev,
                           );
@@ -1222,9 +1394,8 @@ export default function BusinessSettingsPage() {
                             prev
                               ? {
                                   ...prev,
-                                  appointmentBufferMinutes: BUFFER_OPTIONS.includes(raw)
-                                    ? raw
-                                    : 0,
+                                  appointmentBufferMinutes:
+                                    BUFFER_OPTIONS.includes(raw) ? raw : 0,
                                 }
                               : prev,
                           );
@@ -1248,7 +1419,9 @@ export default function BusinessSettingsPage() {
                               ? {
                                   ...prev,
                                   appointmentMaxDaysAhead:
-                                    Number.isFinite(numeric) && numeric > 0 ? numeric : 1,
+                                    Number.isFinite(numeric) && numeric > 0
+                                      ? numeric
+                                      : 1,
                                 }
                               : prev,
                           );
@@ -1263,6 +1436,8 @@ export default function BusinessSettingsPage() {
                 )}
               </CardBody>
             </Card>
+              </Tab>
+            </Tabs>
 
             <div className="flex justify-end">
               <Button

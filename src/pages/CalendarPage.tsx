@@ -386,6 +386,7 @@ export default function CalendarPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeletingEventId, setIsDeletingEventId] = useState<number | null>(null);
   const [isMobileDetailsOpen, setIsMobileDetailsOpen] = useState(false);
+  const [isEventDetailsOpen, setIsEventDetailsOpen] = useState(false);
 
   const [events, setEvents] = useState<CalendarEventItem[]>([]);
   const [assistants, setAssistants] = useState<CalendarAssistant[]>([]);
@@ -409,6 +410,7 @@ export default function CalendarPage() {
   const [assistantFilterId, setAssistantFilterId] = useState<string>("all");
 
   const [editingEvent, setEditingEvent] = useState<CalendarEventItem | null>(null);
+  const [viewingEvent, setViewingEvent] = useState<CalendarEventItem | null>(null);
   const [formState, setFormState] = useState<EventFormState>(
     emptyForm({
       date: todayDateInput(),
@@ -643,6 +645,11 @@ export default function CalendarPage() {
 
     eventModal.onOpen();
   }, [calendarTimezone, eventModal, selectedDate, slotMinutes]);
+
+  const openDetailsModal = useCallback((event: CalendarEventItem) => {
+    setViewingEvent(event);
+    setIsEventDetailsOpen(true);
+  }, []);
 
   const closeModal = useCallback(() => {
     if (isSaving) {
@@ -888,8 +895,6 @@ export default function CalendarPage() {
       defaultSelectedKey="calendar"
     >
       <div className="space-y-4">
-        <p className="text-sm text-default-500">{messages.calendar.subtitle}</p>
-
         {globalError ? (
           <Alert
             color="danger"
@@ -1113,79 +1118,118 @@ export default function CalendarPage() {
                 </div>
               ) : (
                 <ScrollShadow className="max-h-[560px]">
-                  <div className="space-y-3 pr-1">
+                  <div className="grid gap-2.5 pr-1 xl:grid-cols-2">
                     {selectedDateEvents.map((event) => (
-                      <Card key={event.id} shadow="none" className="border border-default-200">
-                        <CardBody className="gap-3 p-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-semibold text-foreground">{event.title}</p>
-                              <p className="text-xs text-default-500">
-                                {displayDateTime(event.starts_at, event.timezone || calendarTimezone, locale)}
-                                {event.ends_at
-                                  ? ` - ${timeKeyFromIsoInTimezone(event.ends_at, event.timezone || calendarTimezone)}`
-                                  : ""}
-                              </p>
+                      <Card
+                        key={event.id}
+                        shadow="none"
+                        className="border border-default-200 bg-white"
+                      >
+                        <CardBody className="p-3">
+                          <div className="space-y-2.5">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0 space-y-0.5">
+                                <p className="truncate text-sm font-semibold leading-5 text-foreground">
+                                  {event.title}
+                                </p>
+                                <p className="text-xs text-default-500">
+                                  {displayDateTime(
+                                    event.starts_at,
+                                    event.timezone || calendarTimezone,
+                                    locale,
+                                  )}
+                                  {event.ends_at
+                                    ? ` - ${timeKeyFromIsoInTimezone(
+                                        event.ends_at,
+                                        event.timezone || calendarTimezone,
+                                      )}`
+                                    : ""}
+                                </p>
+                              </div>
+
+                              <Chip
+                                size="sm"
+                                variant="flat"
+                                color={statusColor(event.status)}
+                                className="shrink-0"
+                              >
+                                {statusLabel(event.status)}
+                              </Chip>
                             </div>
 
-                            <Chip
-                              size="sm"
-                              variant="flat"
-                              color={statusColor(event.status)}
-                            >
-                              {statusLabel(event.status)}
-                            </Chip>
-                          </div>
+                            {event.client ? (
+                              <div className="flex items-center gap-2 rounded-medium bg-default-50 px-2.5 py-2">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-default-200 text-xs font-semibold text-default-700">
+                                  {initialsFromName(event.client.name)}
+                                </div>
+                                <div className="min-w-0 leading-tight">
+                                  <p className="truncate text-sm font-medium text-foreground">
+                                    {event.client.name}
+                                  </p>
+                                  <p className="truncate text-xs text-default-500">
+                                    {event.client.phone}
+                                  </p>
+                                </div>
+                              </div>
+                            ) : null}
 
-                          {event.client ? (
-                            <div className="flex items-center gap-2">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-default-200 text-xs font-semibold text-default-700">
-                                {initialsFromName(event.client.name)}
-                              </div>
-                              <div className="min-w-0">
-                                <p className="truncate text-xs font-medium text-foreground">{event.client.name}</p>
-                                <p className="truncate text-[11px] text-default-500">{event.client.phone}</p>
-                              </div>
+                            <div className="flex flex-wrap items-center gap-1.5 text-xs text-default-600">
+                              {event.assistant ? (
+                                <Chip size="sm" variant="flat">
+                                  {event.assistant.name}
+                                </Chip>
+                              ) : null}
+                              {event.service ? (
+                                <Chip size="sm" variant="flat">
+                                  {event.service.name}
+                                </Chip>
+                              ) : null}
+                              {event.location ? (
+                                <Chip size="sm" variant="flat">
+                                  {event.location}
+                                </Chip>
+                              ) : null}
                             </div>
-                          ) : null}
 
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-default-600">
-                            {event.assistant ? (
-                              <Chip size="sm" variant="flat">{event.assistant.name}</Chip>
-                            ) : null}
-                            {event.service ? (
-                              <Chip size="sm" variant="flat">{event.service.name}</Chip>
-                            ) : null}
-                            {event.location ? (
-                              <Chip size="sm" variant="flat">{event.location}</Chip>
-                            ) : null}
-                          </div>
-
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              isIconOnly
-                              size="sm"
-                              variant="light"
-                              onPress={() => {
-                                openEditModal(event);
-                              }}
-                              aria-label={messages.calendar.editButton}
-                            >
-                              <Icon icon="solar:pen-new-square-linear" width={18} />
-                            </Button>
-                            <Button
-                              isIconOnly
-                              size="sm"
-                              color="danger"
-                              variant="light"
-                              isLoading={isDeletingEventId === event.id}
-                              onPress={() => {
-                                void deleteEvent(event);
-                              }}
-                              aria-label={messages.calendar.deleteButton}
-                            >
-                              <Icon icon="solar:trash-bin-trash-linear" width={18} />
-                            </Button>
+                            <div className="grid w-full grid-cols-3 gap-2 pt-1">
+                              <Button
+                                size="sm"
+                                color="primary"
+                                variant="flat"
+                                fullWidth
+                                onPress={() => {
+                                  openDetailsModal(event);
+                                }}
+                                aria-label={messages.calendar.viewDetailsButton}
+                              >
+                                {messages.calendar.viewDetailsButton}
+                              </Button>
+                              <Button
+                                size="sm"
+                                color="primary"
+                                variant="flat"
+                                fullWidth
+                                onPress={() => {
+                                  openEditModal(event);
+                                }}
+                                aria-label={messages.calendar.editButton}
+                              >
+                                {messages.calendar.editButton}
+                              </Button>
+                              <Button
+                                size="sm"
+                                color="danger"
+                                variant="flat"
+                                fullWidth
+                                isLoading={isDeletingEventId === event.id}
+                                onPress={() => {
+                                  void deleteEvent(event);
+                                }}
+                                aria-label={messages.calendar.deleteButton}
+                              >
+                                {messages.calendar.deleteButton}
+                              </Button>
+                            </div>
                           </div>
                         </CardBody>
                       </Card>
@@ -1197,6 +1241,94 @@ export default function CalendarPage() {
           </Card>
         </div>
       </div>
+
+      <Modal
+        isOpen={isEventDetailsOpen}
+        onOpenChange={(open) => {
+          setIsEventDetailsOpen(open);
+          if (!open) {
+            setViewingEvent(null);
+          }
+        }}
+        size="lg"
+      >
+        <ModalContent>
+          <ModalHeader>{messages.calendar.viewDetailsButton}</ModalHeader>
+          <ModalBody className="space-y-3">
+            {viewingEvent ? (
+              <>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    {viewingEvent.title}
+                  </p>
+                  <p className="text-xs text-default-500">
+                    {displayDateTime(
+                      viewingEvent.starts_at,
+                      viewingEvent.timezone || calendarTimezone,
+                      locale,
+                    )}
+                    {viewingEvent.ends_at
+                      ? ` - ${timeKeyFromIsoInTimezone(
+                          viewingEvent.ends_at,
+                          viewingEvent.timezone || calendarTimezone,
+                        )}`
+                      : ""}
+                  </p>
+                </div>
+
+                <Chip size="sm" variant="flat" color={statusColor(viewingEvent.status)}>
+                  {statusLabel(viewingEvent.status)}
+                </Chip>
+
+                {viewingEvent.client ? (
+                  <div className="rounded-medium bg-default-50 p-3 text-sm">
+                    <p className="font-medium text-foreground">{viewingEvent.client.name}</p>
+                    <p className="text-default-600">{viewingEvent.client.phone}</p>
+                    {viewingEvent.client.email ? (
+                      <p className="text-default-500">{viewingEvent.client.email}</p>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {viewingEvent.assistant ? (
+                    <Chip size="sm" variant="flat">
+                      {viewingEvent.assistant.name}
+                    </Chip>
+                  ) : null}
+                  {viewingEvent.service ? (
+                    <Chip size="sm" variant="flat">
+                      {viewingEvent.service.name}
+                    </Chip>
+                  ) : null}
+                  {viewingEvent.location ? (
+                    <Chip size="sm" variant="flat">
+                      {viewingEvent.location}
+                    </Chip>
+                  ) : null}
+                </div>
+
+                {viewingEvent.description ? (
+                  <p className="rounded-medium bg-default-50 p-3 text-sm text-default-700">
+                    {viewingEvent.description}
+                  </p>
+                ) : null}
+              </>
+            ) : null}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="light"
+              onPress={() => {
+                setIsEventDetailsOpen(false);
+                setViewingEvent(null);
+              }}
+            >
+              {messages.calendar.cancelButton}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       <Modal
         isOpen={eventModal.isOpen}
