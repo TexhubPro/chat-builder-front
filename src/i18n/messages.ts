@@ -773,6 +773,26 @@ export type Messages = {
     telegramTokenLabel: string;
     telegramTokenPlaceholder: string;
     telegramTokenRequired: string;
+    widgetSettingsButton: string;
+    widgetSettingsModalTitle: string;
+    widgetSettingsModalDescription: string;
+    widgetPositionLabel: string;
+    widgetPositionRight: string;
+    widgetPositionLeft: string;
+    widgetThemeLabel: string;
+    widgetThemeLight: string;
+    widgetThemeDark: string;
+    widgetPrimaryColorLabel: string;
+    widgetTitleLabel: string;
+    widgetWelcomeLabel: string;
+    widgetPlaceholderLabel: string;
+    widgetLauncherLabel: string;
+    widgetScriptLabel: string;
+    widgetCopyScript: string;
+    widgetScriptCopied: string;
+    widgetSaveSettings: string;
+    widgetSettingsLoadFailed: string;
+    widgetSettingsSaveFailed: string;
     loadFailed: string;
     updateFailed: string;
     unauthorized: string;
@@ -1677,6 +1697,27 @@ export const MESSAGES: Record<Locale, Messages> = {
       telegramTokenLabel: "Токен бота",
       telegramTokenPlaceholder: "Например: 123456789:AA...",
       telegramTokenRequired: "Введите токен Telegram бота.",
+      widgetSettingsButton: "Настройки",
+      widgetSettingsModalTitle: "Настройки веб-виджета",
+      widgetSettingsModalDescription:
+        "Укажите внешний вид виджета и скопируйте скрипт для вставки на сайт.",
+      widgetPositionLabel: "Позиция",
+      widgetPositionRight: "Справа снизу",
+      widgetPositionLeft: "Слева снизу",
+      widgetThemeLabel: "Тема",
+      widgetThemeLight: "Светлая",
+      widgetThemeDark: "Тёмная",
+      widgetPrimaryColorLabel: "Основной цвет (#RRGGBB)",
+      widgetTitleLabel: "Заголовок чата",
+      widgetWelcomeLabel: "Приветствие",
+      widgetPlaceholderLabel: "Плейсхолдер поля ввода",
+      widgetLauncherLabel: "Текст кнопки запуска",
+      widgetScriptLabel: "Скрипт для вставки в <head>",
+      widgetCopyScript: "Копировать скрипт",
+      widgetScriptCopied: "Скрипт скопирован.",
+      widgetSaveSettings: "Сохранить настройки",
+      widgetSettingsLoadFailed: "Не удалось загрузить настройки виджета.",
+      widgetSettingsSaveFailed: "Не удалось сохранить настройки виджета.",
       loadFailed: "Не удалось загрузить интеграции.",
       updateFailed: "Не удалось обновить состояние интеграции.",
       unauthorized: "Сессия истекла. Войдите снова.",
@@ -2586,6 +2627,27 @@ export const MESSAGES: Record<Locale, Messages> = {
       telegramTokenLabel: "Bot token",
       telegramTokenPlaceholder: "For example: 123456789:AA...",
       telegramTokenRequired: "Telegram bot token is required.",
+      widgetSettingsButton: "Settings",
+      widgetSettingsModalTitle: "Web widget settings",
+      widgetSettingsModalDescription:
+        "Customize widget appearance and copy the script snippet for your website.",
+      widgetPositionLabel: "Position",
+      widgetPositionRight: "Bottom right",
+      widgetPositionLeft: "Bottom left",
+      widgetThemeLabel: "Theme",
+      widgetThemeLight: "Light",
+      widgetThemeDark: "Dark",
+      widgetPrimaryColorLabel: "Primary color (#RRGGBB)",
+      widgetTitleLabel: "Chat title",
+      widgetWelcomeLabel: "Welcome text",
+      widgetPlaceholderLabel: "Input placeholder",
+      widgetLauncherLabel: "Launcher button label",
+      widgetScriptLabel: "Script to insert into <head>",
+      widgetCopyScript: "Copy script",
+      widgetScriptCopied: "Script copied.",
+      widgetSaveSettings: "Save settings",
+      widgetSettingsLoadFailed: "Failed to load widget settings.",
+      widgetSettingsSaveFailed: "Failed to save widget settings.",
       loadFailed: "Failed to load integrations.",
       updateFailed: "Failed to update integration state.",
       unauthorized: "Session expired. Please sign in again.",

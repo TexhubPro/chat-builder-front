@@ -56,6 +56,28 @@ export type TelegramConnectResponse = {
   };
 };
 
+export type WidgetIntegrationSettings = {
+  position: "bottom-right" | "bottom-left";
+  theme: "light" | "dark";
+  primary_color: string;
+  title: string;
+  welcome_message: string;
+  placeholder: string;
+  launcher_label: string;
+};
+
+export type WidgetSettingsResponse = {
+  message: string;
+  channel: AssistantIntegrationChannel;
+  widget: {
+    widget_key: string | null;
+    settings: WidgetIntegrationSettings;
+    script_url: string;
+    api_base_url: string;
+    embed_script_tag: string | null;
+  };
+};
+
 async function parseJson(response: Response): Promise<unknown> {
   const contentType = response.headers.get("content-type") ?? "";
 
@@ -178,6 +200,34 @@ export async function assistantTelegramConnectRequest(
       body: JSON.stringify({
         bot_token: botToken,
       }),
+    },
+  );
+}
+
+export async function assistantWidgetSettingsRequest(
+  token: string,
+  assistantId: number,
+): Promise<WidgetSettingsResponse> {
+  return request<WidgetSettingsResponse>(
+    `/assistant-channels/${assistantId}/widget/settings`,
+    token,
+    {
+      method: "GET",
+    },
+  );
+}
+
+export async function assistantWidgetSettingsUpdateRequest(
+  token: string,
+  assistantId: number,
+  payload: Partial<WidgetIntegrationSettings>,
+): Promise<WidgetSettingsResponse> {
+  return request<WidgetSettingsResponse>(
+    `/assistant-channels/${assistantId}/widget/settings`,
+    token,
+    {
+      method: "PUT",
+      body: JSON.stringify(payload),
     },
   );
 }

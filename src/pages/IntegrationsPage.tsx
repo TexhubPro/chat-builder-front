@@ -15,6 +15,7 @@ import {
   ModalHeader,
   Spinner,
   Switch,
+  Textarea,
 } from "@heroui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -29,13 +30,26 @@ import {
   assistantIntegrationsRequest,
   assistantTelegramConnectRequest,
   assistantIntegrationToggleRequest,
+  assistantWidgetSettingsRequest,
+  assistantWidgetSettingsUpdateRequest,
   type AssistantIntegrationChannel,
   type AssistantIntegrationLimits,
   type IntegrationAssistant,
+  type WidgetIntegrationSettings,
 } from "../integrations/integrationsClient";
 import { usePageSeo } from "../seo/usePageSeo";
 
 type ChannelKey = "instagram" | "telegram" | "widget" | "api";
+
+const DEFAULT_WIDGET_SETTINGS: WidgetIntegrationSettings = {
+  position: "bottom-right",
+  theme: "light",
+  primary_color: "#1677FF",
+  title: "Website Chat",
+  welcome_message: "Hello! Ask your question.",
+  placeholder: "Type a message...",
+  launcher_label: "Chat",
+};
 
 function initialsFromName(value: string | null | undefined): string {
   const safe = (value ?? "").trim();
@@ -75,6 +89,14 @@ export default function IntegrationsPage() {
   const [isTelegramModalOpen, setIsTelegramModalOpen] = useState(false);
   const [telegramBotToken, setTelegramBotToken] = useState("");
   const [isTelegramConnecting, setIsTelegramConnecting] = useState(false);
+  const [isWidgetModalOpen, setIsWidgetModalOpen] = useState(false);
+  const [isWidgetSettingsLoading, setIsWidgetSettingsLoading] = useState(false);
+  const [isWidgetSettingsSaving, setIsWidgetSettingsSaving] = useState(false);
+  const [widgetSettings, setWidgetSettings] = useState<WidgetIntegrationSettings>(
+    DEFAULT_WIDGET_SETTINGS,
+  );
+  const [widgetScriptTag, setWidgetScriptTag] = useState("");
+  const [widgetScriptCopied, setWidgetScriptCopied] = useState(false);
 
   const [globalError, setGlobalError] = useState<string | null>(null);
   const callbackAssistantId = useMemo(() => {
@@ -332,6 +354,13 @@ export default function IntegrationsPage() {
           ),
         );
         setLimits(response.limits);
+
+        if (channel === "widget") {
+          setIsWidgetModalOpen(false);
+          setWidgetSettings(DEFAULT_WIDGET_SETTINGS);
+          setWidgetScriptTag("");
+          setWidgetScriptCopied(false);
+        }
       } catch (error) {
         setChannels(previousChannels);
         setGlobalError(
@@ -556,6 +585,110 @@ export default function IntegrationsPage() {
     telegramBotToken,
   ]);
 
+  const loadWidgetSettings = useCallback(async () => {
+    if (!selectedAssistantId) {
+      return;
+    }
+
+    const token = getAuthToken();
+    if (!token) {
+      setGlobalError(messages.integrations.unauthorized);
+      return;
+    }
+
+    setIsWidgetSettingsLoading(true);
+    setWidgetScriptCopied(false);
+    setGlobalError(null);
+
+    try {
+      const response = await assistantWidgetSettingsRequest(token, selectedAssistantId);
+      setWidgetSettings(response.widget.settings);
+      setWidgetScriptTag(response.widget.embed_script_tag ?? "");
+      setIsWidgetModalOpen(true);
+    } catch (error) {
+      setGlobalError(
+        error instanceof ApiError
+          ? error.message
+          : messages.integrations.widgetSettingsLoadFailed,
+      );
+    } finally {
+      setIsWidgetSettingsLoading(false);
+    }
+  }, [
+    messages.integrations.unauthorized,
+    messages.integrations.widgetSettingsLoadFailed,
+    selectedAssistantId,
+  ]);
+
+  const closeWidgetSettingsModal = useCallback(() => {
+    if (isWidgetSettingsSaving) {
+      return;
+    }
+
+    setIsWidgetModalOpen(false);
+    setWidgetScriptCopied(false);
+  }, [isWidgetSettingsSaving]);
+
+  const handleWidgetSettingsSave = useCallback(async () => {
+    if (!selectedAssistantId) {
+      return;
+    }
+
+    const token = getAuthToken();
+    if (!token) {
+      setGlobalError(messages.integrations.unauthorized);
+      return;
+    }
+
+    setIsWidgetSettingsSaving(true);
+    setGlobalError(null);
+
+    try {
+      const response = await assistantWidgetSettingsUpdateRequest(
+        token,
+        selectedAssistantId,
+        widgetSettings,
+      );
+
+      setWidgetSettings(response.widget.settings);
+      setWidgetScriptTag(response.widget.embed_script_tag ?? "");
+      setChannels((previous) =>
+        previous.map((item) =>
+          item.channel === "widget" ? response.channel : item,
+        ),
+      );
+    } catch (error) {
+      setGlobalError(
+        error instanceof ApiError
+          ? error.message
+          : messages.integrations.widgetSettingsSaveFailed,
+      );
+    } finally {
+      setIsWidgetSettingsSaving(false);
+    }
+  }, [
+    messages.integrations.unauthorized,
+    messages.integrations.widgetSettingsSaveFailed,
+    selectedAssistantId,
+    widgetSettings,
+  ]);
+
+  const handleCopyWidgetScript = useCallback(async () => {
+    if (widgetScriptTag.trim() === "") {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(widgetScriptTag.trim());
+      setWidgetScriptCopied(true);
+      window.setTimeout(() => {
+        setWidgetScriptCopied(false);
+      }, 1800);
+    } catch {
+      setGlobalError(messages.integrations.updateFailed);
+    }
+  }, [messages.integrations.updateFailed, widgetScriptTag]);
+
   return (
     <DashboardLayout
       title={messages.integrations.title}
@@ -741,22 +874,38 @@ export default function IntegrationsPage() {
                                     </p>
                                   </div>
                                 </div>
-                                <Switch
-                                  size="sm"
-                                  isSelected={
-                                    channelItem.is_connected && channelItem.is_active
-                                  }
-                                  isDisabled={
-                                    isUpdating
-                                    || isComingSoonChannel
-                                    || !limits?.has_active_subscription
-                                    || !channelItem.is_connected
-                                  }
-                                  onValueChange={(value) => {
-                                    void handleToggleChannel(channelKey, value);
-                                  }}
-                                  aria-label={messages.integrations.toggleLabel}
-                                />
+                                <div className="flex items-center gap-1">
+                                  {channelKey === "widget" && channelItem.is_connected ? (
+                                    <Button
+                                      isIconOnly
+                                      size="sm"
+                                      variant="light"
+                                      aria-label={messages.integrations.widgetSettingsButton}
+                                      onPress={() => {
+                                        void loadWidgetSettings();
+                                      }}
+                                      isDisabled={isUpdating || isWidgetSettingsLoading}
+                                    >
+                                      <Icon icon="solar:settings-linear" width={18} />
+                                    </Button>
+                                  ) : null}
+                                  <Switch
+                                    size="sm"
+                                    isSelected={
+                                      channelItem.is_connected && channelItem.is_active
+                                    }
+                                    isDisabled={
+                                      isUpdating
+                                      || isComingSoonChannel
+                                      || !limits?.has_active_subscription
+                                      || !channelItem.is_connected
+                                    }
+                                    onValueChange={(value) => {
+                                      void handleToggleChannel(channelKey, value);
+                                    }}
+                                    aria-label={messages.integrations.toggleLabel}
+                                  />
+                                </div>
                               </div>
 
                               <Divider />
@@ -861,6 +1010,184 @@ export default function IntegrationsPage() {
           </Card>
         </div>
       </div>
+
+      <Modal
+        isOpen={isWidgetModalOpen}
+        size="2xl"
+        onOpenChange={(open) => {
+          if (!open) {
+            closeWidgetSettingsModal();
+          }
+        }}
+      >
+        <ModalContent>
+          <ModalHeader>{messages.integrations.widgetSettingsModalTitle}</ModalHeader>
+          <ModalBody>
+            {isWidgetSettingsLoading ? (
+              <div className="flex items-center justify-center py-10">
+                <Spinner size="sm" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-sm text-default-500">
+                  {messages.integrations.widgetSettingsModalDescription}
+                </p>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="space-y-1 text-sm">
+                    <span className="text-default-600">
+                      {messages.integrations.widgetPositionLabel}
+                    </span>
+                    <select
+                      className="w-full rounded-medium border border-default-300 bg-white px-3 py-2 text-sm"
+                      value={widgetSettings.position}
+                      onChange={(event) => {
+                        const value = event.target.value as
+                          | "bottom-right"
+                          | "bottom-left";
+
+                        setWidgetSettings((previous) => ({
+                          ...previous,
+                          position: value,
+                        }));
+                      }}
+                    >
+                      <option value="bottom-right">
+                        {messages.integrations.widgetPositionRight}
+                      </option>
+                      <option value="bottom-left">
+                        {messages.integrations.widgetPositionLeft}
+                      </option>
+                    </select>
+                  </label>
+
+                  <label className="space-y-1 text-sm">
+                    <span className="text-default-600">
+                      {messages.integrations.widgetThemeLabel}
+                    </span>
+                    <select
+                      className="w-full rounded-medium border border-default-300 bg-white px-3 py-2 text-sm"
+                      value={widgetSettings.theme}
+                      onChange={(event) => {
+                        const value = event.target.value as "light" | "dark";
+
+                        setWidgetSettings((previous) => ({
+                          ...previous,
+                          theme: value,
+                        }));
+                      }}
+                    >
+                      <option value="light">
+                        {messages.integrations.widgetThemeLight}
+                      </option>
+                      <option value="dark">
+                        {messages.integrations.widgetThemeDark}
+                      </option>
+                    </select>
+                  </label>
+                </div>
+
+                <Input
+                  label={messages.integrations.widgetPrimaryColorLabel}
+                  value={widgetSettings.primary_color}
+                  onValueChange={(value) => {
+                    setWidgetSettings((previous) => ({
+                      ...previous,
+                      primary_color: value.toUpperCase(),
+                    }));
+                  }}
+                />
+
+                <Input
+                  label={messages.integrations.widgetTitleLabel}
+                  value={widgetSettings.title}
+                  onValueChange={(value) => {
+                    setWidgetSettings((previous) => ({
+                      ...previous,
+                      title: value,
+                    }));
+                  }}
+                />
+
+                <Textarea
+                  label={messages.integrations.widgetWelcomeLabel}
+                  value={widgetSettings.welcome_message}
+                  onValueChange={(value) => {
+                    setWidgetSettings((previous) => ({
+                      ...previous,
+                      welcome_message: value,
+                    }));
+                  }}
+                  minRows={3}
+                />
+
+                <Input
+                  label={messages.integrations.widgetPlaceholderLabel}
+                  value={widgetSettings.placeholder}
+                  onValueChange={(value) => {
+                    setWidgetSettings((previous) => ({
+                      ...previous,
+                      placeholder: value,
+                    }));
+                  }}
+                />
+
+                <Input
+                  label={messages.integrations.widgetLauncherLabel}
+                  value={widgetSettings.launcher_label}
+                  onValueChange={(value) => {
+                    setWidgetSettings((previous) => ({
+                      ...previous,
+                      launcher_label: value,
+                    }));
+                  }}
+                />
+
+                <Textarea
+                  label={messages.integrations.widgetScriptLabel}
+                  value={widgetScriptTag}
+                  readOnly
+                  minRows={3}
+                />
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <div className="flex w-full flex-wrap items-center justify-between gap-2">
+              <div className="text-xs text-success-600">
+                {widgetScriptCopied ? messages.integrations.widgetScriptCopied : ""}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="flat"
+                  onPress={() => {
+                    void handleCopyWidgetScript();
+                  }}
+                  isDisabled={widgetScriptTag.trim() === ""}
+                >
+                  {messages.integrations.widgetCopyScript}
+                </Button>
+                <Button
+                  variant="light"
+                  onPress={closeWidgetSettingsModal}
+                  isDisabled={isWidgetSettingsSaving}
+                >
+                  {messages.common.cancel}
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={() => {
+                    void handleWidgetSettingsSave();
+                  }}
+                  isLoading={isWidgetSettingsSaving}
+                >
+                  {messages.integrations.widgetSaveSettings}
+                </Button>
+              </div>
+            </div>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       <Modal
         isOpen={isTelegramModalOpen}
