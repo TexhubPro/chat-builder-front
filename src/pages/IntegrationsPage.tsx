@@ -292,6 +292,8 @@ export default function IntegrationsPage() {
   const handleAssistantSelect = useCallback(
     (assistantId: number) => {
       setGlobalError(null);
+      setIsWidgetModalOpen(false);
+      setWidgetScriptCopied(false);
       setSelectedAssistantId(assistantId);
       setIsMobileDetailsOpen(true);
       void loadChannels(assistantId);
@@ -304,6 +306,8 @@ export default function IntegrationsPage() {
     setChannels([]);
     setIsMobileDetailsOpen(false);
     setGlobalError(null);
+    setIsWidgetModalOpen(false);
+    setWidgetScriptCopied(false);
   }, []);
 
   const handleToggleChannel = useCallback(
