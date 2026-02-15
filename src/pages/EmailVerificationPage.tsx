@@ -287,7 +287,7 @@ export default function EmailVerificationPage() {
             <img
               src={BRANDING.logoUrl}
               alt={BRANDING.logoAlt}
-              className="h-10 w-10 rounded-md object-contain"
+              className="h-9 w-auto object-contain"
             />
           </div>
           <LanguageSwitcher />
