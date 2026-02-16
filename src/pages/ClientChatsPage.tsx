@@ -1387,11 +1387,11 @@ export default function ClientChatsPage() {
         <div className="grid gap-4 lg:grid-cols-[360px_minmax(0,1fr)]">
           <Card
             shadow="none"
-            className={`border border-default-200 bg-white ${
+            className={`border border-default-200 bg-white lg:h-[calc(100vh-180px)] ${
               isMobileConversationOpen ? "hidden lg:flex" : "flex"
             }`}
           >
-            <CardBody className="p-0">
+            <CardBody className="flex h-full flex-col p-0">
               <div className="space-y-3 border-b border-default-200 px-4 py-4">
                 <p className="text-sm text-default-500">
                   {messages.clientChats.subtitle}
@@ -1441,7 +1441,7 @@ export default function ClientChatsPage() {
                 />
               </div>
 
-              <ScrollShadow className="">
+              <ScrollShadow className="min-h-0 flex-1">
                 {isLoadingChats ? (
                   <div className="flex h-full items-center justify-center py-12">
                     <Spinner
