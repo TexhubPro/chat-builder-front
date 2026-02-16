@@ -549,8 +549,6 @@ export default function ProductsServicesPage() {
       defaultSelectedKey="products-services"
     >
       <div className="space-y-4">
-        <p className="text-sm text-default-500">{messages.catalog.subtitle}</p>
-
         {globalError ? (
           <Alert
             color="danger"
