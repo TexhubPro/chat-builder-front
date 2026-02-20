@@ -16,6 +16,7 @@ const HomePage = lazy(() => import('./pages/HomePage'))
 const IntegrationsPage = lazy(() => import('./pages/IntegrationsPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const ModerationPage = lazy(() => import('./pages/ModerationPage'))
+const ModerationApplicationPage = lazy(() => import('./pages/ModerationApplicationPage'))
 const EmployeesPage = lazy(() => import('./pages/EmployeesPage'))
 const ProductsServicesPage = lazy(() => import('./pages/ProductsServicesPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
@@ -73,6 +74,7 @@ function App() {
         </Route>
 
         <Route element={<ModerationRoute />}>
+          <Route path="/moderation/application" element={<ModerationApplicationPage />} />
           <Route path="/moderation" element={<ModerationPage />} />
         </Route>
 

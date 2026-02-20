@@ -191,7 +191,7 @@ export default function EmailVerificationPage() {
       setSession(response.token, response.user);
 
       if (response.requires_moderation) {
-        navigate("/moderation", { replace: true });
+        navigate("/moderation/application", { replace: true });
         return;
       }
 

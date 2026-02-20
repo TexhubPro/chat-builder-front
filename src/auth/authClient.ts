@@ -64,6 +64,41 @@ export type ModerationStatusResponse = {
   user: AuthUser
 }
 
+export type ModerationApplicationUseCase =
+  | 'lead_generation'
+  | 'support_automation'
+  | 'sales_automation'
+  | 'appointments'
+  | 'orders'
+  | 'other'
+
+export type ModerationApplicationPayload = {
+  company_name: string
+  industry?: string
+  short_description?: string
+  primary_goal?: string
+  liddo_use_case: ModerationApplicationUseCase
+  contact_email?: string
+  contact_phone?: string
+}
+
+export type ModerationApplicationResponse = {
+  message: string
+  company: {
+    id: number
+    name: string
+    industry: string | null
+    short_description: string | null
+    primary_goal: string | null
+    contact_email: string | null
+    contact_phone: string | null
+  }
+  application: {
+    liddo_use_case: ModerationApplicationUseCase
+    submitted_at: string
+  }
+}
+
 export type UpdateProfileResponse = {
   message: string
   user: AuthUser
@@ -212,6 +247,19 @@ export async function moderationStatusRequest(
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  })
+}
+
+export async function moderationApplicationSubmitRequest(
+  token: string,
+  payload: ModerationApplicationPayload,
+): Promise<ModerationApplicationResponse> {
+  return request<ModerationApplicationResponse>('/auth/moderation-application', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
   })
 }
 
